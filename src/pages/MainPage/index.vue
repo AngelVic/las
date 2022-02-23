@@ -30,41 +30,40 @@
                     active-text-color="#badeff"
                     background-color="#001529"
                     text-color="#b3b9bf"
-                    default-active="gradeScore"
-                    @open="handleOpen"
-                    @close="handleClose"
+                    @select="navSelect"
                 >
-                    <el-sub-menu index="score">
+                    <el-sub-menu index="Score">
                         <template #title>
                             <el-icon><Stopwatch /></el-icon>
                             <span>成绩分析</span>
                         </template>
-                        <el-menu-item index="gradeScore">年级成绩</el-menu-item>
-                        <el-menu-item index="classScore">班级成绩</el-menu-item>
+                        <el-menu-item index="GradeScore">年级成绩</el-menu-item>
+                        <el-menu-item index="ClassScore">班级成绩</el-menu-item>
                     </el-sub-menu>
-                    <el-menu-item index="file">
+                    <el-menu-item index="FileManage">
                         <el-icon><Edit /></el-icon>
                         <span>文件管理</span>
                     </el-menu-item>
-                    <el-menu-item index="student">
+                    <el-menu-item index="StudentInfo">
                         <el-icon><Document /></el-icon>
                         <span>学生信息</span>
                     </el-menu-item>
-                    <el-menu-item index="account">
+                    <el-menu-item index="AccountManage">
                         <el-icon><User /></el-icon>
                         <span>账号管理</span>
                     </el-menu-item>
-                    <el-sub-menu index="admin">
+                    <el-sub-menu index="Admin">
                         <template #title>
                             <el-icon><UserFilled /></el-icon>
                             <span>管理员</span>
                         </template>
-                        <el-menu-item index="adminInfo">负责人信息</el-menu-item>
-                        <el-menu-item index="gradeCompare">年级成绩对比</el-menu-item>
+                        <el-menu-item index="AdminInfo">负责人信息</el-menu-item>
+                        <el-menu-item index="GradeCompare">年级成绩对比</el-menu-item>
                     </el-sub-menu>
                 </el-menu>
             </div>
             <div class="layout-content">
+                <router-view></router-view>
             </div>
         </div>
     </div>
@@ -73,6 +72,7 @@
 <script>
 
 import { Stopwatch, Edit, Document, User, UserFilled, Tickets } from '@element-plus/icons-vue'
+import router from '@/router';
 
 export default {
     name: 'MainPage',
@@ -90,7 +90,10 @@ export default {
         }
     },
     methods: {
-
+        navSelect(value) {
+            console.log('nav to', value);
+            router.push('/main/'+value);
+        },
     }
 }
 </script>

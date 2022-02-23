@@ -1,12 +1,12 @@
-<!-- 班级成绩 -->
+<!-- 账号管理 -->
 <template>
-    <div class='ClassScore'>ClassScore</div>
+    <div class='AccountManage'>AccountManage</div>
 </template>
 
 <script>
 
 export default {
-    name: 'ClassScore',
+    name: 'AccountManage',
     components: {},
     data () {
         return {
