@@ -80,6 +80,7 @@ export default {
         justify-content: center;
         align-items: center;
         width: 60%;
+        max-width: 720px;
         height: 100%;
         background-color: #3267ff;
 
@@ -97,9 +98,9 @@ export default {
 
     .right {
         display: flex;
+        flex: 1;
         justify-content: center;
         align-items: center;
-        width: 40%;
         height: 100%;
 
         .loginBlock {
