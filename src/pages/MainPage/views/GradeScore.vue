@@ -2,29 +2,11 @@
 <template>
     <div class='GradeScore'>
         <div class="filter">
-            <el-form :inline="true" :model="filterForm" class="filter-form">
-                <el-form-item label="专业:">
-                    <el-select v-model="filterForm.major" placeholder="请选择专业">
-                        <el-option label="专业1" value="major1"></el-option>
-                        <el-option label="专业2" value="major2"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="年级:">
-                    <el-select v-model="filterForm.grade" placeholder="请选择年级">
-                        <el-option label="2000级" value="2000"></el-option>
-                        <el-option label="2001级" value="2001"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="学期:">
-                    <el-select v-model="filterForm.term" placeholder="请选择学期">
-                        <el-option label="200001" value="200001"></el-option>
-                        <el-option label="200002" value="200002"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                <el-button type="primary" @click="onSubmit">查询</el-button>
-                </el-form-item>
-            </el-form>
+            <FilterBar
+                @on-filter="filter"
+                :gradeFilter="true"
+                :termFilter="true"
+            ></FilterBar>
         </div>
         <div class="charts">
             <div class="row-1">
@@ -122,6 +104,7 @@
                                 multiple
                                 collapse-tags
                                 placeholder="选择显示的科目"
+                                @change="changeShowSubject"
                             >
                                 <el-option
                                 v-for="subject in subjects"
@@ -144,21 +127,24 @@
 
 <script>
 
-import StasticCard from '../../../components/StasticCard.vue';
+import StasticCard from '../../../components/StasticCard';
+import FilterBar from '../../../components/FilterBar';
 import { Pie, Radar } from '@antv/g2plot';
+
+const scoreList = {
+    'id1': { id: 1, name: '高等数学', score: 75 },
+    'id2': { id: 2, name: '软件工程', score: 88 },
+    'id3': { id: 3, name: '基础电路与电子学基础电路与电子学（重修）', score: 62 },
+}
 
 export default {
     name: 'GradeScore',
     components: {
-        StasticCard
+        StasticCard,
+        FilterBar
     },
     data () {
         return {
-            filterForm: {
-                major: '',
-                grade: '',
-                term: ''
-            },
             stasticList: [
                 {
                     label: '总人数',
@@ -269,11 +255,16 @@ export default {
                     passed: 70.90
                 },
             ],
-            advantageSubject: []
+            advantageSubject: [],
+            advantageRadarPlot: null
         }
     },
     methods: {
+        filter(data) {
+            console.log('grade filter', data);
+        },
         drawScoreDistribution() {
+            // 绘制成绩分布饼图
             const columnPlot = new Pie('distributionChart', {
                 data: [
                     { type: '0≤x<1', value: 2 },
@@ -293,13 +284,15 @@ export default {
 
             columnPlot.render();
         },
+        changeShowSubject(value) {
+            // 切换展示学科
+            console.log(value);
+            this.updateAdvantageRadar(value);
+        },
         drawAdvantageRadar() {
-            const data = [
-                { id: 1, name: '高等数学', score: 75 },
-                { id: 2, name: '软件工程', score: 88 },
-                { id: 3, name: '基础电路与电子学基础电路与电子学（重修）', score: 62 },
-            ];
-            const radarPlot = new Radar('advantageChart', {
+            // 绘制学科优势雷达图
+            const data = [];
+            this.advantageRadarPlot = new Radar('advantageChart', {
                 data: data,
                 xField: 'name',
                 yField: 'score',
@@ -315,7 +308,19 @@ export default {
                     }
                 }
             });
-            radarPlot.render();
+            this.advantageRadarPlot.render();
+        },
+        updateAdvantageRadar(selectedSubject) {
+            console.log('update with', selectedSubject);
+            const newData = [];
+            for(let i=0; i<selectedSubject.length; i++) {
+                console.log('id', selectedSubject[i]);
+                console.log('update add', scoreList['id'+selectedSubject[i]]);
+                newData.push(scoreList['id'+selectedSubject[i]]);
+            }
+            this.advantageRadarPlot.update({
+                data: newData
+            })
         }
     },
     mounted() {
@@ -328,20 +333,6 @@ export default {
 
 .GradeScore {
     width: 100%;
-}
-
-.filter {
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    box-sizing: border-box;
-    width: 100%;
-    height: 56px;
-    background-color: #fff;
-
-    .filter-form {
-        height: 32px;
-    }
 }
 
 .charts {
