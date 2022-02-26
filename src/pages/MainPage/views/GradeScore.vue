@@ -300,10 +300,18 @@ export default {
                     name: {
                         formatter: (value) => {
                             console.log(value);
+                            let subjectName = value;
+                            // let str = ""; 
+                            // for (let i = 0,s = subjectName.length;i<s;i++){
+                            //     str += subjectName[i];
+                            //     if((i+1)%5 == 0) str += "\n";
+                            // }                        
+                            subjectName = subjectName.replace(/.{5}/g,'$&\n');
                             // value为一个字符串
                             // 每5个字符添加一个 \n
                             // return添加完成的字符串
-                            return '添加完成字符串';
+                            //return str;
+                            return subjectName;
                         }
                     }
                 }
