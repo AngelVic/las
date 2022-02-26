@@ -1,6 +1,6 @@
 <!-- StasticCard -->
 <template>
-    <div class='StasticCard'>
+    <div class='contentCard StasticCard'>
         <div class="left">
             <div class="label">
                 <span>{{ label }}</span>
@@ -76,11 +76,6 @@ export default {
     display: flex;
     width: 100%;
     height: 100%;
-    padding: 16px;
-    box-sizing: border-box;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: #555555 1px 1px 20px;
 }
 
 .left {

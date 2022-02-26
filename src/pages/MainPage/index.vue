@@ -63,7 +63,7 @@
                 </el-menu>
             </div>
             <div class="layout-content">
-                <router-view></router-view>
+                <router-view class="router-view" />
             </div>
         </div>
     </div>
@@ -184,6 +184,8 @@ export default {
 .layout-main {
     display: flex;
     height: 100%;
+    box-sizing: border-box;
+    overflow: auto;
 
     .nav {
         width: 260px;
@@ -202,8 +204,8 @@ export default {
     .layout-content {
         display: flex;
         flex: 1;
-        height: 100%;
-        background-color: #666666;
+        background-color: #f0f2f5;
+        overflow-y: scroll;
     }
 }
 
