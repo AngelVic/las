@@ -33,8 +33,36 @@
                 </div>
             </div>
             <div class="row-2">
-                <div class="column-1"></div>
-                <div class="column-2"></div>
+                <div class="contentCard scoreCard">
+                    <div class="topLine">
+                        <span class="cardTitle">班级成绩（黄底中括号内的成绩为该同学的补考成绩）</span>
+                        <el-input
+                            class="searchInput"
+                            v-model="scoreSearch"
+                            placeholder="搜索学号 or 姓名"
+                        >
+                            <template #append>
+                                <el-button :icon="Search"></el-button>
+                            </template>
+                        </el-input>
+                    </div>
+                    <el-table
+                        :data="scoreData"
+                        :default-sort="{ prop: 'studentId', order: 'descending' }"
+                        style="width: 100%"
+                    >
+                        <el-table-column prop="studentId" label="学号" sortable fixed />
+                        <el-table-column prop="name" label="姓名" fixed />
+                        <el-table-column prop="gpa" label="学期绩点" sortable fixed />
+                        <el-table-column
+                            v-for="subject in subjectList"
+                            :key="subject.id"
+                            :prop="'scores['+subject.id+'].score'"
+                            :label="subject.name"
+                            sortable
+                        ></el-table-column>
+                    </el-table>
+                </div>
             </div>
         </div>
     </div>
@@ -46,6 +74,7 @@ import FilterBar from '../../../components/FilterBar';
 import AdvantageRadar from '../../../components/AdvantageRadar';
 import GpaDistribution from '../../../components/GpaDistribution';
 import { Column } from '@antv/g2plot';
+import { Search } from '@element-plus/icons-vue'
 
 export default {
     name: 'ClassScore',
@@ -62,6 +91,50 @@ export default {
                 term: '',
                 class: ''
             },
+            scoreData: [
+                {
+                    id: 0,
+                    studentId: '100000000',
+                    name: '姓名1',
+                    gpa: 2.5,
+                    scores: [
+                        {
+                            id: 1,
+                            name: '高等数学',
+                            state: 'normal',
+                            score: 76
+                        },
+                        {
+                            id: 2,
+                            name: '概率论',
+                            state: 'failed',
+                            score: 52,
+                            secScore: 62
+                        },
+                        {
+                            id: 3,
+                            name: '软件工程',
+                            state: 'normal',
+                            score: 88
+                        }
+                    ]
+                }
+            ],
+            subjectList: [
+                {
+                    id: 1,
+                    name: '高等数学'
+                },
+                {
+                    id: 2,
+                    name: '软件工程'
+                },
+                {
+                    id: 3,
+                    name: '概率论'
+                }
+            ],
+            Search
         }
     },
     methods: {
@@ -136,8 +209,9 @@ export default {
 
     .row-1 {
         display: flex;
+        justify-content: space-between;
         width: 100%;
-        height: 320px;
+        height: 376px;
 
         .column-1,
         .column-2,
@@ -164,6 +238,28 @@ export default {
                     display: flex;
                     width: 100%;
                     height: 100%;
+                }
+            }
+        }
+    }
+
+    .row-2 {
+        display: flex;
+        width: 100%;
+        margin-bottom: 24px;
+        padding: 8px;
+        box-sizing: border-box;
+
+        .scoreCard {
+            width: 100%;
+
+            .topLine {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                .searchInput {
+                    width: 240px;
                 }
             }
         }
