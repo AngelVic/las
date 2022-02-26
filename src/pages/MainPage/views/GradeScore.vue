@@ -345,7 +345,7 @@ export default {
     .row-1 {
         display: flex;
         width: 100%;
-        height: 320px;
+        height: 376px;
 
         .column-1 {
             display: flex;
@@ -355,7 +355,7 @@ export default {
             .stastic {
                 display: flex;
                 width: 50%;
-                height: 160px;
+                height: 50%;
                 padding: 8px;
                 box-sizing: border-box;
             }
@@ -370,7 +370,7 @@ export default {
                 display: flex;
                 flex-direction: column;
                 width: 100%;
-                height: 100%;
+                height: 360px;
 
                 .secTitle {
                     margin-top: 8px;

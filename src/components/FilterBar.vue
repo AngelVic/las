@@ -3,25 +3,25 @@
     <div class="filterBar">
         <el-form :inline="true" :model="filterForm" class="filter-form">
             <el-form-item label="专业:">
-                <el-select v-model="filterForm.major" placeholder="请选择专业">
+                <el-select class="formInput" v-model="filterForm.major" placeholder="请选择专业">
                     <el-option label="专业1" value="major1"></el-option>
                     <el-option label="专业2" value="major2"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item v-if="gradeFilter" label="年级:">
-                <el-select v-model="filterForm.grade" placeholder="请选择年级">
+                <el-select class="formInput" v-model="filterForm.grade" placeholder="请选择年级">
                     <el-option label="2000级" value="2000"></el-option>
                     <el-option label="2001级" value="2001"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item v-if="termFilter" label="学期:">
-                <el-select v-model="filterForm.term" placeholder="请选择学期">
+                <el-select class="formInput" v-model="filterForm.term" placeholder="请选择学期">
                     <el-option label="200001" value="200001"></el-option>
                     <el-option label="200002" value="200002"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item v-if="classFilter" label="班级:">
-                <el-select v-model="filterForm.class" placeholder="请选择班级">
+                <el-select class="formInput" v-model="filterForm.class" placeholder="请选择班级">
                     <el-option label="1班" value="1"></el-option>
                     <el-option label="2班" value="2"></el-option>
                 </el-select>
@@ -73,6 +73,10 @@ export default {
 
     .filter-form {
         height: 32px;
+    }
+
+    .formInput {
+        width: 160px;
     }
 }
 </style>
