@@ -26,6 +26,12 @@
                     <el-option label="2班" value="2"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item v-if="subjectFilter" label="科目:">
+                <el-select class="formInput" v-model="filterForm.major" placeholder="请选择科目">
+                    <el-option label="科目1" value="subject1"></el-option>
+                    <el-option label="科目2" value="subject2"></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="filter">查询</el-button>
             </el-form-item>
@@ -41,7 +47,8 @@ export default {
     props: [
         'gradeFilter',
         'termFilter',
-        'classFilter'
+        'classFilter',
+        'subjectFilter'
     ],
     data () {
         return {
@@ -49,7 +56,8 @@ export default {
                 major: '',
                 grade: '',
                 term: '',
-                class: ''
+                class: '',
+                subject: ''
             },
         }
     },
