@@ -16,6 +16,13 @@ import { Pie } from '@antv/g2plot';
 export default {
     name: 'GpaDistribution',
     components: {},
+    props: [
+        'type',
+        'major',
+        'grade',
+        'term',
+        'class'
+    ],
     data () {
         return {
 

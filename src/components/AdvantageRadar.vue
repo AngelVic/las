@@ -61,7 +61,9 @@ export default {
                     id: 3,
                     name: '基础电路与电子学基础电路与电子学（重修）'
                 }
-            ]
+            ],
+            advantageSubject: [],
+            advantageRadarPlot: null
         }
     },
     methods: {
@@ -80,11 +82,12 @@ export default {
                 meta: {
                     name: {
                         formatter: (value) => {
+                            if(value == 0) {
+                                return 0;
+                            }
                             console.log(value);
-                            // value为一个字符串
-                            // 每5个字符添加一个 \n
-                            // return添加完成的字符串
-                            return '添加完成字符串';
+                            let subjectName = value.replace(/.{5}/g,'$&\n');
+                            return subjectName;
                         }
                     }
                 }

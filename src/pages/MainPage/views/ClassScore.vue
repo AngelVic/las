@@ -57,10 +57,18 @@
                         <el-table-column
                             v-for="subject in subjectList"
                             :key="subject.id"
-                            :prop="'scores['+subject.id+'].score'"
                             :label="subject.name"
                             sortable
-                        ></el-table-column>
+                        >
+                            <template #default="scope">
+                                <span
+                                    :style="{color: getScoreColor(scope, subject.id)}"
+                                >{{ getScoreWithId(scope, subject.id) }}</span>
+                                <span
+                                    v-if="getScoreStateWithId(scope, subject.id) === 'failed'"
+                                > ({{ getSecScoreWithId(scope, subject.id) }})</span>
+                            </template>
+                        </el-table-column>
                     </el-table>
                 </div>
             </div>
@@ -75,6 +83,11 @@ import AdvantageRadar from '../../../components/AdvantageRadar';
 import GpaDistribution from '../../../components/GpaDistribution';
 import { Column } from '@antv/g2plot';
 import { Search } from '@element-plus/icons-vue'
+
+const SCORE_COLOR = {
+    normal: '#303133',
+    failed: '#f56c6c'
+}
 
 export default {
     name: 'ClassScore',
@@ -97,27 +110,27 @@ export default {
                     studentId: '100000000',
                     name: '姓名1',
                     gpa: 2.5,
-                    scores: [
-                        {
+                    scores: {
+                        sub1: {
                             id: 1,
                             name: '高等数学',
                             state: 'normal',
                             score: 76
                         },
-                        {
+                        sub2: {
                             id: 2,
                             name: '概率论',
                             state: 'failed',
                             score: 52,
                             secScore: 62
                         },
-                        {
+                        sub3: {
                             id: 3,
                             name: '软件工程',
                             state: 'normal',
                             score: 88
                         }
-                    ]
+                    }
                 }
             ],
             subjectList: [
@@ -126,11 +139,11 @@ export default {
                     name: '高等数学'
                 },
                 {
-                    id: 2,
+                    id: 3,
                     name: '软件工程'
                 },
                 {
-                    id: 3,
+                    id: 2,
                     name: '概率论'
                 }
             ],
@@ -188,6 +201,22 @@ export default {
             });
 
             stackedColumnPlot.render();
+        },
+        getScoreWithId(scope, id) {
+            return scope.row.scores[`sub${id}`].score;
+        },
+        getSecScoreWithId(scope, id) {
+            return scope.row.scores[`sub${id}`].secScore;
+        },
+        getScoreStateWithId(scope, id) {
+            return scope.row.scores[`sub${id}`].state;
+        },
+        getScoreColor(scope, id) {
+            if(scope.row.scores[`sub${id}`].state == 'failed') {
+                return SCORE_COLOR['failed'];
+            } else {
+                return SCORE_COLOR['normal'];
+            }
         }
     },
     mounted() {

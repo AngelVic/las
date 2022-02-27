@@ -23,13 +23,7 @@
                     </div>
                 </div>
                 <div class="column-2">
-                    <div class="contentCard distribution">
-                        <span class="cardTitle">成绩分布</span>
-                        <span class="secTitle">年级学生绩点分布</span>
-                        <div class="chartContainer">
-                            <div id="distributionChart"></div>
-                        </div>
-                    </div>
+                    <GpaDistribution></GpaDistribution>
                 </div>
             </div>
             <div class="row-2">
@@ -96,29 +90,12 @@
                     </div>
                 </div>
                 <div class="column-2">
-                    <div class="contentCard advantage">
-                        <div class="topLine">
-                            <span class="cardTitle">科目优势分析雷达图</span>
-                            <el-select
-                                v-model="advantageSubject"
-                                multiple
-                                collapse-tags
-                                placeholder="选择显示的科目"
-                                @change="changeShowSubject"
-                            >
-                                <el-option
-                                v-for="subject in subjects"
-                                :key="subject.id"
-                                :label="subject.name"
-                                :value="subject.id"
-                                >
-                                </el-option>
-                            </el-select>
-                        </div>
-                        <div class="chartContainer">
-                            <div id="advantageChart"></div>
-                        </div>
-                    </div>
+                    <AdvantageRadar
+                        type="grade"
+                        :major="curFilter.major"
+                        :grade="curFilter.grade"
+                        :term="curFilter.term"
+                    ></AdvantageRadar>
                 </div>
             </div>
         </div>
@@ -129,22 +106,25 @@
 
 import StasticCard from '../../../components/StasticCard';
 import FilterBar from '../../../components/FilterBar';
-import { Pie, Radar } from '@antv/g2plot';
-
-const scoreList = {
-    'id1': { id: 1, name: '高等数学', score: 75 },
-    'id2': { id: 2, name: '软件工程', score: 88 },
-    'id3': { id: 3, name: '基础电路与电子学基础电路与电子学（重修）', score: 62 },
-}
+import AdvantageRadar from '../../../components/AdvantageRadar';
+import GpaDistribution from '../../../components/GpaDistribution';
 
 export default {
     name: 'GradeScore',
     components: {
         StasticCard,
-        FilterBar
+        FilterBar,
+        AdvantageRadar,
+        GpaDistribution
     },
     data () {
         return {
+            curFilter: {
+                major: '',
+                grade: '',
+                term: '',
+                class: ''
+            },
             stasticList: [
                 {
                     label: '总人数',
@@ -255,85 +235,14 @@ export default {
                     passed: 70.90
                 },
             ],
-            advantageSubject: [],
-            advantageRadarPlot: null
         }
     },
     methods: {
         filter(data) {
             console.log('grade filter', data);
-        },
-        drawScoreDistribution() {
-            // 绘制成绩分布饼图
-            const columnPlot = new Pie('distributionChart', {
-                data: [
-                    { type: '0≤x<1', value: 2 },
-                    { type: '1≤x<2', value: 32 },
-                    { type: '2≤x<3', value: 310 },
-                    { type: '3≤x<4', value: 60 }
-                ],
-                angleField: 'value',
-                colorField: 'type',
-                radius: 0.9,
-                label: {
-                    content: ({type, value}) => {
-                        return type + ', ' + value;
-                    }
-                },
-            });
-
-            columnPlot.render();
-        },
-        changeShowSubject(value) {
-            // 切换展示学科
-            console.log(value);
-            this.updateAdvantageRadar(value);
-        },
-        drawAdvantageRadar() {
-            // 绘制学科优势雷达图
-            const data = [];
-            this.advantageRadarPlot = new Radar('advantageChart', {
-                data: data,
-                xField: 'name',
-                yField: 'score',
-                meta: {
-                    name: {
-                        formatter: (value) => {
-                            console.log(value);
-                            let subjectName = value;
-                            // let str = ""; 
-                            // for (let i = 0,s = subjectName.length;i<s;i++){
-                            //     str += subjectName[i];
-                            //     if((i+1)%5 == 0) str += "\n";
-                            // }                        
-                            subjectName = subjectName.replace(/.{5}/g,'$&\n');
-                            // value为一个字符串
-                            // 每5个字符添加一个 \n
-                            // return添加完成的字符串
-                            //return str;
-                            return subjectName;
-                        }
-                    }
-                }
-            });
-            this.advantageRadarPlot.render();
-        },
-        updateAdvantageRadar(selectedSubject) {
-            console.log('update with', selectedSubject);
-            const newData = [];
-            for(let i=0; i<selectedSubject.length; i++) {
-                console.log('id', selectedSubject[i]);
-                console.log('update add', scoreList['id'+selectedSubject[i]]);
-                newData.push(scoreList['id'+selectedSubject[i]]);
-            }
-            this.advantageRadarPlot.update({
-                data: newData
-            })
         }
     },
     mounted() {
-        this.drawScoreDistribution();
-        this.drawAdvantageRadar();
     }
 }
 </script>
@@ -373,31 +282,6 @@ export default {
             width: 45%;
             padding: 8px;
             box-sizing: border-box;
-
-            .distribution {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                height: 360px;
-
-                .secTitle {
-                    margin-top: 8px;
-                    margin-left: 8px;
-                }
-
-                .chartContainer {
-                    width: 100%;
-                    height: 100%;
-                    margin-top: 16px;
-                    margin-left: 8px;
-                    
-                    #distributionChart {
-                        display: flex;
-                        width: 100%;
-                        height: 100%;
-                    }
-                }
-            }
         }
     }
 
@@ -435,32 +319,6 @@ export default {
             width: 35%;
             padding: 8px;
             box-sizing: border-box;
-
-            .advantage {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                height: 360px;
-
-                .topLine {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                }
-
-                .chartContainer {
-                    width: 100%;
-                    height: 100%;
-                    margin-top: 16px;
-                    margin-left: 8px;
-                    
-                    #advantageChart {
-                        display: flex;
-                        width: 100%;
-                        height: 100%;
-                    }
-                }
-            }
         }
     }
 }
