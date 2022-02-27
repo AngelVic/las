@@ -19,7 +19,7 @@
                     <el-table :data="studentTable" style="width: 100%">
                         <el-table-column type="index" />
                         <el-table-column prop="studentId" label="学号" />
-                        <el-table-column prop="name" label="学号" />
+                        <el-table-column prop="name" label="姓名" />
                         <el-table-column label="年级">
                             <template #default="scope">
                                 <span>{{ scope.row.grade }}级</span>
