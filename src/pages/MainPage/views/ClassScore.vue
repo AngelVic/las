@@ -27,7 +27,7 @@
                     <div class="contentCard compare">
                         <span class="cardTitle">年级-班级对比</span>
                         <div class="chartContainer">
-                            <div id="compareChart"></div>
+                            <div id="compareChart" ref="compareContainer"></div>
                         </div>
                     </div>
                 </div>
@@ -220,6 +220,10 @@ export default {
         }
     },
     mounted() {
+        this.drawCompare();
+    },
+    updated() {
+        this.$ref.compareContainer.innerHTML = null;
         this.drawCompare();
     }
 }

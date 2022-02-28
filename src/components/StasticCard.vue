@@ -1,4 +1,4 @@
-<!-- StasticCard -->
+<!-- 数据统计卡片 -->
 <template>
     <div class='contentCard StasticCard'>
         <div class="left">
