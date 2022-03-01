@@ -21,7 +21,7 @@
             </el-select>
         </div>
         <div class="chartContainer">
-            <div id="advantageChart"></div>
+            <div :id="`${position}AdvantageChart`" :style="{height: '280px'}"></div>
         </div>
     </div>
 </template>
@@ -44,7 +44,8 @@ export default {
         'major',
         'grade',
         'term',
-        'class'
+        'class',
+        'position'
     ],
     data () {
         return {
@@ -75,7 +76,7 @@ export default {
         drawAdvantageRadar() {
             // 绘制学科优势雷达图
             const data = [];
-            this.advantageRadarPlot = new Radar('advantageChart', {
+            this.advantageRadarPlot = new Radar(`${this.position}AdvantageChart`, {
                 data: data,
                 xField: 'name',
                 yField: 'score',
@@ -110,6 +111,7 @@ export default {
     mounted() {
         // 根据传入参数请求全部学科成绩
         // get scoreList
+        console.log('Advantage Radar mounted');
         this.drawAdvantageRadar();
     }
 }

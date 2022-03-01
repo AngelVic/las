@@ -19,6 +19,7 @@
                             :type="stastic.type"
                             :description="stastic.description"
                             :rule="stastic.rule"
+                            @on-set="(tab) => { this.openIndicatorDialog(tab) }"
                         ></StasticCard>
                     </div>
                 </div>
@@ -32,8 +33,16 @@
                         <div class="topLine">
                             <span class="cardTitle">年级-班级科目成绩对比</span>
                             <div class="ops">
-                                <el-button class="ruleSet" type="text">优秀率规则</el-button>
-                                <el-button class="ruleSet" type="text">及格分数线</el-button>
+                                <el-button
+                                    class="ruleSet"
+                                    type="text"
+                                    @click="openIndicatorDialog('excellent')"
+                                >优秀率规则</el-button>
+                                <el-button
+                                    class="ruleSet"
+                                    type="text"
+                                    @click="openIndicatorDialog('pass')"
+                                >及格分数线</el-button>
                                 <el-select
                                     v-model="compareSubject"
                                     placeholder="请选择科目"
@@ -95,10 +104,16 @@
                         :major="curFilter.major"
                         :grade="curFilter.grade"
                         :term="curFilter.term"
+                        position="gradeScore"
                     ></AdvantageRadar>
                 </div>
             </div>
         </div>
+        <IndicatorSetDialog
+            :indicatorSetVisible="indicatorDialog.visible"
+            :indicatorSetTab="indicatorDialog.tab"
+            @on-close="() => {this.indicatorDialog.visible = false}"
+        ></IndicatorSetDialog>
     </div>
 </template>
 
@@ -108,6 +123,7 @@ import StasticCard from '../../../components/StasticCard';
 import FilterBar from '../../../components/FilterBar';
 import AdvantageRadar from '../../../components/AdvantageRadar';
 import GpaDistribution from '../../../components/GpaDistribution';
+import IndicatorSetDialog from '../components/IndicatorSetDialog';
 
 export default {
     name: 'GradeScore',
@@ -115,7 +131,8 @@ export default {
         StasticCard,
         FilterBar,
         AdvantageRadar,
-        GpaDistribution
+        GpaDistribution,
+        IndicatorSetDialog
     },
     data () {
         return {
@@ -235,11 +252,19 @@ export default {
                     passed: 70.90
                 },
             ],
+            indicatorDialog: {
+                visible: false,
+                tab: 'excellent'
+            }
         }
     },
     methods: {
         filter(data) {
             console.log('grade filter', data);
+        },
+        openIndicatorDialog(tab) {
+            this.indicatorDialog.tab = tab;
+            this.indicatorDialog.visible = true;
         }
     },
     mounted() {

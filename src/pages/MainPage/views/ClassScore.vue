@@ -18,6 +18,7 @@
                         :grade="curFilter.grade"
                         :term="curFilter.term"
                         :class="curFilter.class"
+                        position="classScore"
                     ></AdvantageRadar>
                 </div>
                 <div class="column-2">
@@ -42,7 +43,7 @@
                             placeholder="搜索学号 or 姓名"
                         >
                             <template #append>
-                                <el-button :icon="Search"></el-button>
+                                <el-button :icon="Search" @click="searchStudent"></el-button>
                             </template>
                         </el-input>
                     </div>
@@ -73,6 +74,10 @@
                 </div>
             </div>
         </div>
+        <StudentScoreDialog
+            :studentScoreVisible="scoreDialog.visible"
+            @on-close="() => {this.scoreDialog.visible = false}"
+        ></StudentScoreDialog>
     </div>
 </template>
 
@@ -81,6 +86,7 @@
 import FilterBar from '../../../components/FilterBar';
 import AdvantageRadar from '../../../components/AdvantageRadar';
 import GpaDistribution from '../../../components/GpaDistribution';
+import StudentScoreDialog from '../components/StudentScoreDialog'
 import { Column } from '@antv/g2plot';
 import { Search } from '@element-plus/icons-vue'
 
@@ -94,7 +100,8 @@ export default {
     components: {
         FilterBar,
         AdvantageRadar,
-        GpaDistribution
+        GpaDistribution,
+        StudentScoreDialog
     },
     data () {
         return {
@@ -147,6 +154,10 @@ export default {
                     name: '概率论'
                 }
             ],
+            scoreDialog: {
+                visible: false
+            },
+            scoreSearch: '',
             Search
         }
     },
@@ -217,13 +228,14 @@ export default {
             } else {
                 return SCORE_COLOR['normal'];
             }
+        },
+        searchStudent() {
+            console.log('search student', this.scoreSearch);
+            this.scoreDialog.visible = true;
         }
     },
     mounted() {
-        this.drawCompare();
-    },
-    updated() {
-        this.$ref.compareContainer.innerHTML = null;
+        // this.$ref.compareContainer.innerHTML = null;
         this.drawCompare();
     }
 }

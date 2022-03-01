@@ -4,7 +4,7 @@
         <div class="left">
             <div class="label">
                 <span>{{ label }}</span>
-                <el-button class="ruleBtn" type="text">{{ rule }}</el-button>
+                <el-button class="ruleBtn" type="text" @click="clickOpen(this.type)">{{ rule }}</el-button>
             </div>
             <div class="data">
                 <span>{{ data }}</span>
@@ -67,7 +67,14 @@ export default {
         }
     },
     methods: {
-
+        clickOpen(type) {
+            if(type === 'excellentRate') {
+                this.$emit('onSet', 'excellent');
+            }
+            else if(type === 'passRate') {
+                this.$emit('onSet', 'pass');
+            }
+        }
     }
 }
 </script>
