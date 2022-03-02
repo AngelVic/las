@@ -48,17 +48,23 @@
                 </div>
             </div>
         </div>
+        <StudentInfoDialog
+            :studentInfoVisible="infoDialog.visible"
+            @on-close="() => {this.infoDialog.visible = false}"
+        ></StudentInfoDialog>
     </div>
 </template>
 
 <script>
 
-import FilterBar from '../../../components/FilterBar.vue'
+import FilterBar from '../../../components/FilterBar.vue';
+import StudentInfoDialog from '../components/StudentInfoDialog';
 
 export default {
     name: 'StudentInfo',
     components: {
-        FilterBar
+        FilterBar,
+        StudentInfoDialog
     },
     data () {
         return {
@@ -85,6 +91,9 @@ export default {
                     room: '111'
                 }
             ],
+            infoDialog: {
+                visible: false
+            }
         }
     },
     methods: {
@@ -92,7 +101,9 @@ export default {
             console.log('file filter', data);
             this.curFilter = data;
         },
-        editStudent() {}
+        editStudent() {
+            this.infoDialog.visible = true;
+        }
     }
 }
 </script>

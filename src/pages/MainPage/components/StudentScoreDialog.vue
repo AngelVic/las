@@ -4,6 +4,8 @@
         :model-value="studentScoreVisible"
         title="学生个人成绩"
         @close="close"
+        width="80%"
+        destroy-on-close
     >
         <div class="dialogContent">
             <div class="studentInfo">

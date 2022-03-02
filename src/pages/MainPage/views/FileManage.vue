@@ -114,6 +114,7 @@
 
 import FilterBar from '../../../components/FilterBar.vue'
 import { Upload } from '@element-plus/icons-vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 export default {
     name: 'FileManage',
@@ -161,6 +162,29 @@ export default {
         },
         submitUpload() {
             this.upload.value.submit();
+        },
+        deleteFile() {
+            ElMessageBox.confirm(
+                '是否删除文件，删除后系统中与该文件相关的数据将全部删除？',
+                {
+                    title: '删除文件',
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'info',
+                }
+            )
+                .then(() => {
+                    ElMessage({
+                        type: 'success',
+                        message: '删除成功',
+                    })
+                })
+                .catch(() => {
+                    ElMessage({
+                        type: 'info',
+                        message: '删除失败',
+                    })
+                })
         }
     }
 }
