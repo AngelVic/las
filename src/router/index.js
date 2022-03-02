@@ -8,6 +8,7 @@ import StudentInfo from '../pages/MainPage/views/StudentInfo'
 import AccountManage from '../pages/MainPage/views/AccountManage'
 import AdminInfo from '../pages/MainPage/views/AdminInfo'
 import GradeCompare from '../pages/MainPage/views/GradeCompare'
+import StudentWarning from '../pages/MainPage/views/StudentWarning'
 
 const routes = [
   {
@@ -20,6 +21,10 @@ const routes = [
     name: '管理',
     component: MainPage,
     children: [
+      {
+        path: 'index',
+        component: StudentWarning
+      },
       {
         path: 'GradeScore',
         component: GradeScore

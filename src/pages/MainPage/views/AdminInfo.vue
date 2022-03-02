@@ -66,6 +66,7 @@ import FilterBar from '../../../components/FilterBar';
 import { Search } from '@element-plus/icons-vue';
 import AdminInfoDialog from '../components/AdminInfoDialog';
 import AdminCreateDialog from '../components/AdminCreateDialog';
+import { ElMessageBox, ElMessage } from 'element-plus';
 
 export default {
     name: 'AdminInfo',
@@ -105,6 +106,52 @@ export default {
         },
         createAdmin() {
             this.createDialog.visible = true;
+        },
+        deleteAdmin() {
+            ElMessageBox.confirm(
+                '是否删除负责人，删除后该账号将无法登录，且该账号负责的年级为无负责人状态？',
+                '删除负责人',
+                {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'info',
+                }
+            )
+            .then(() => {
+                ElMessage({
+                    type: 'success',
+                    message: '删除成功',
+                })
+            })
+            .catch(() => {
+                ElMessage({
+                    type: 'info',
+                    message: '删除失败',
+                })
+            })
+        },
+        resetAdmin() {
+            ElMessageBox.confirm(
+                '是否重置密码，重置后该账号的密码将被重置为“12345678”，需用新密码才可登录账号？',
+                '重置密码',
+                {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'info',
+                }
+            )
+            .then(() => {
+                ElMessage({
+                    type: 'success',
+                    message: '重置成功',
+                })
+            })
+            .catch(() => {
+                ElMessage({
+                    type: 'info',
+                    message: '重置失败',
+                })
+            })
         }
     }
 }
