@@ -1,31 +1,28 @@
-<!-- 负责人信息修改 -->
+<!-- 创建负责人弹窗 -->
 <template>
     <el-dialog
-        :model-value="adminInfoVisible"
-        title="负责人信息修改"
+        :model-value="adminCreateVisible"
+        title="负责人添加"
         @close="close"
         width="480px"
         destroy-on-close
     >
-        <el-form class="infoForm" :model="adminInfoForm">
+        <el-form class="infoForm" :model="adminCreateForm">
             <el-form-item label="年级专业" required>
                 <el-cascader
                     :props="gradeClassProps"
-                    v-model="adminInfoForm.gradeClass"
+                    v-model="adminCreateForm.gradeClass"
                     :options="gradeClassOptions"
+                    placeholder="请选择年级专业"
                 ></el-cascader>
             </el-form-item>
             <el-form-item label="姓名" required>
-                <el-input v-model="adminInfoForm.name" />
-            </el-form-item>
-            <el-form-item label="账号" required>
-                <el-input v-model="adminInfoForm.account" disabled />
-                <span class="tip">账号为系统自动生成，无法进行修改。</span>
+                <el-input v-model="adminCreateForm.name" />
             </el-form-item>
         </el-form>
         <template #footer>
             <span class="dialog-footer">
-                <el-button type="primary" @click="save">保存</el-button>
+                <el-button type="primary" @click="save">添加</el-button>
             </span>
         </template>
   </el-dialog>
@@ -34,9 +31,9 @@
 <script>
 
 export default {
-    name: 'AdminInfoDialog',
+    name: 'AdminCreateDialog',
     components: {},
-    props: ['adminInfoVisible'],
+    props: ['adminCreateVisible'],
     data () {
         return {
             gradeClassOptions: [
@@ -86,12 +83,9 @@ export default {
             gradeClassProps: {
                 multiple: true,
             },
-            adminInfoForm: {
-                gradeClass: [
-                    [2000, 'major1']
-                ],
-                name: '你的名字',
-                account: '111111111'
+            adminCreateForm: {
+                gradeClass: [],
+                name: ''
             }
         }
     },
@@ -100,7 +94,7 @@ export default {
             this.$emit('onClose');
         },
         save() {
-            console.log('save', this.adminInfoForm);
+            console.log('save', this.adminCreateForm);
             this.$emit('onClose');
         }
     }

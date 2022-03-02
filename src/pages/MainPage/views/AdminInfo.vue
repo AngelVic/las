@@ -23,7 +23,7 @@
                                 <el-button :icon="Search"></el-button>
                             </template>
                         </el-input>
-                        <el-button class="addBtn" type="primary">添加负责人</el-button>
+                        <el-button class="addBtn" type="primary" @click="createAdmin">添加负责人</el-button>
                     </div>
                 </div>
                 <div class="admintable">
@@ -49,18 +49,30 @@
                 </div>
             </div>
         </div>
+        <AdminInfoDialog
+            :adminInfoVisible="adminDialog.visible"
+            @on-close="() => {this.adminDialog.visible = false}"
+        ></AdminInfoDialog>
+        <AdminCreateDialog
+            :adminCreateVisible="createDialog.visible"
+            @on-close="() => {this.createDialog.visible = false}"
+        ></AdminCreateDialog>
     </div>
 </template>
 
 <script>
 
 import FilterBar from '../../../components/FilterBar';
-import { Search } from '@element-plus/icons-vue'
+import { Search } from '@element-plus/icons-vue';
+import AdminInfoDialog from '../components/AdminInfoDialog';
+import AdminCreateDialog from '../components/AdminCreateDialog';
 
 export default {
     name: 'AdminInfo',
     components: {
-        FilterBar
+        FilterBar,
+        AdminInfoDialog,
+        AdminCreateDialog
     },
     data () {
         return {
@@ -74,6 +86,12 @@ export default {
                     time: '2000-02-02 11:11',
                 }
             ],
+            adminDialog: {
+                visible: false
+            },
+            createDialog: {
+                visible: false
+            },
             Search
         }
     },
@@ -82,6 +100,12 @@ export default {
             console.log('adminInfo filter', data);
             this.curFilter = data;
         },
+        editAdmin() {
+            this.adminDialog.visible = true;
+        },
+        createAdmin() {
+            this.createDialog.visible = true;
+        }
     }
 }
 </script>
