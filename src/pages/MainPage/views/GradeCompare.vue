@@ -27,7 +27,7 @@
                                 empty-text="-"
                             >
                                 <el-table-column prop="title" label="年级" sortable fixed />
-                                <el-table-column prop="size" label="总人数" />
+                                <el-table-column prop="size" label="总人数" sortable />
                                 <el-table-column
                                     prop="gpaExcellent"
                                     label="绩点优秀率"
@@ -38,7 +38,7 @@
                                         <span>{{ scope.row.gpaExcellent }}%</span>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="average" label="平均分" />
+                                <el-table-column prop="average" label="平均分" sortable />
                                 <el-table-column prop="failed" label="挂科人数" width="108" sortable />
                                 <el-table-column
                                     prop="subjectExcellent"
