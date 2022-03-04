@@ -95,7 +95,7 @@ export default {
         },
         save() {
             console.log('save', this.adminCreateForm);
-            this.$emit('onClose');
+            this.$emit('onSuccess');
         }
     }
 }

@@ -56,7 +56,15 @@
         <AdminCreateDialog
             :adminCreateVisible="createDialog.visible"
             @on-close="() => {this.createDialog.visible = false}"
+            @on-success="() => {
+                this.createDialog.visible = false;
+                this.successDialog.visible = true;
+            }"
         ></AdminCreateDialog>
+        <AdminInfoSuccessDialog
+            :adminInfoVisible="successDialog.visible"
+            @on-close="() => {this.successDialog.visible = false}"
+        ></AdminInfoSuccessDialog>
     </div>
 </template>
 
@@ -66,6 +74,7 @@ import FilterBar from '../../../components/FilterBar';
 import { Search } from '@element-plus/icons-vue';
 import AdminInfoDialog from '../components/AdminInfoDialog';
 import AdminCreateDialog from '../components/AdminCreateDialog';
+import AdminInfoSuccessDialog from '../components/AdminInfoSuccessDialog';
 import { ElMessageBox, ElMessage } from 'element-plus';
 
 export default {
@@ -73,7 +82,8 @@ export default {
     components: {
         FilterBar,
         AdminInfoDialog,
-        AdminCreateDialog
+        AdminCreateDialog,
+        AdminInfoSuccessDialog,
     },
     data () {
         return {
@@ -92,6 +102,9 @@ export default {
             },
             createDialog: {
                 visible: false
+            },
+            successDialog:{
+                visible:false
             },
             Search
         }
