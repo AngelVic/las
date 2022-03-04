@@ -24,10 +24,11 @@
                 <el-select class="formInput" v-model="filterForm.class" placeholder="请选择班级">
                     <el-option label="1班" value="1"></el-option>
                     <el-option label="2班" value="2"></el-option>
+                    <el-option label="无归属班级" value="3"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item v-if="subjectFilter" label="科目:">
-                <el-select class="formInput" v-model="filterForm.major" placeholder="请选择科目">
+                <el-select class="formInput" v-model="filterForm.subject" placeholder="请选择科目">
                     <el-option label="科目1" value="subject1"></el-option>
                     <el-option label="科目2" value="subject2"></el-option>
                 </el-select>

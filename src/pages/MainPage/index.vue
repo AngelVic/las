@@ -8,7 +8,7 @@
             </div>
             <div class="right">
                 <div class="notice">
-                    <el-button type="text">
+                    <el-button type="text" @click="toWarning">
                         <el-icon class="notice-icon"><Tickets /></el-icon>
                     </el-button>
                 </div>
@@ -94,6 +94,9 @@ export default {
             console.log('nav to', value);
             router.push('/main/'+value);
         },
+        toWarning(){
+            router.push('/main/index');
+        }
     }
 }
 </script>
