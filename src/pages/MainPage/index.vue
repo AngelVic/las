@@ -31,6 +31,7 @@
                     background-color="#001529"
                     text-color="#b3b9bf"
                     @select="navSelect"
+                    :default-active="menuActive"
                 >
                     <el-sub-menu index="Score">
                         <template #title>
@@ -86,16 +87,26 @@ export default {
     },
     data () {
         return {
-
+            menuActive: ''
         }
     },
     methods: {
         navSelect(value) {
             console.log('nav to', value);
+            this.menuActive = value;
+            localStorage.setItem('activeMenu', value);
             router.push('/main/'+value);
         },
         toWarning(){
             router.push('/main/index');
+        }
+    },
+    mounted() {
+        if (localStorage.getItem('activeMenu')) {
+            this.menuActive = localStorage.getItem('activeMenu')
+        }
+        else {
+            localStorage.setItem('activeMenu', '');
         }
     }
 }

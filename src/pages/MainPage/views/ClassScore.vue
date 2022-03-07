@@ -22,7 +22,7 @@
                     ></AdvantageRadar>
                 </div>
                 <div class="column-2">
-                    <GpaDistribution></GpaDistribution>
+                    <GpaDistribution type="class"></GpaDistribution>
                 </div>
                 <div class="column-3">
                     <div class="contentCard compare">

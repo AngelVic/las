@@ -51,7 +51,7 @@
 
 import { User, Lock } from '@element-plus/icons-vue'
 
-export default {
+export default {  
     name: 'FirstPage',
     components: {},
     data () {

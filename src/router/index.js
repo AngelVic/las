@@ -22,7 +22,7 @@ const routes = [
     component: MainPage,
     children: [
       {
-        path: 'index',
+        path: '',
         component: StudentWarning
       },
       {

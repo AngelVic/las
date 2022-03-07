@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <div class="column-2">
-                    <GpaDistribution></GpaDistribution>
+                    <GpaDistribution type="grade"></GpaDistribution>
                 </div>
             </div>
             <div class="row-2">
