@@ -4,7 +4,7 @@
         <div class="layout-top">
             <div class="left">
                 <img class="logo" src="../../assets/img/logo.png" />
-                <span class="title">学情分析系统</span>
+                <span class="title">学情分析系统</span> 
             </div>
             <div class="right">
                 <div class="notice">
