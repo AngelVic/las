@@ -94,20 +94,18 @@ export default {
         navSelect(value) {
             console.log('nav to', value);
             this.menuActive = value;
-            localStorage.setItem('activeMenu', value);
             router.push('/main/'+value);
         },
         toWarning(){
-            router.push('/main/index');
+            router.push('/main');
+            this.menuActive = '';
         }
     },
     mounted() {
-        if (localStorage.getItem('activeMenu')) {
-            this.menuActive = localStorage.getItem('activeMenu')
-        }
-        else {
-            localStorage.setItem('activeMenu', '');
-        }
+        console.log(router.options.history.location);
+        const path = router.options.history.location.split('/');
+        console.log(path[path.length-1]);
+        this.menuActive = path[path.length-1];
     }
 }
 </script>

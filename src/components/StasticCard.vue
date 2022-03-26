@@ -31,6 +31,7 @@
 
 <script>
 
+// 脚本文件
 const imgList = {
     totalSize: {
         src: '/user.svg',
@@ -78,6 +79,8 @@ export default {
     }
 }
 </script>
+
+<!-- 样式文件 -->
 <style lang='scss' scoped>
 .StasticCard {
     display: flex;
