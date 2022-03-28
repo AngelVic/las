@@ -50,6 +50,7 @@
 <script>
 
 import { User, Lock } from '@element-plus/icons-vue'
+import { createAccount } from '../../common/request'
 
 export default {  
     name: 'FirstPage',
@@ -65,7 +66,9 @@ export default {
         }
     },
     methods: {
-
+        async onSubmit() {
+            console.log('submit');
+        }
     }
 }
 </script>
