@@ -1,7 +1,11 @@
 // @forward 'element-plus/theme-chalk/src/common/var.scss' with ();
 
+//上面是导入定义，下面是导入全部；定义是定义主题色之类的，不修改主题色所以不需要上面的内容
+
+// 如果只是按需导入，则可以忽略以下内容。如果想导入所有样式:
 @use "element-plus/theme-chalk/src/index.scss" as *;
 
 .el-dialog__body {
     padding-top: 0;
+    //dialog主体上内边距 padding-top
 }
