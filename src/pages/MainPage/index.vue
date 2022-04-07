@@ -14,10 +14,10 @@
                 </div>
                 <div class="user">
                     <el-icon class="user-icon"><user-filled /></el-icon>
-                    <span class="userName">用户名</span>
+                    <span class="userName">{{username}}</span>
                 </div>
                 <div class="quit">
-                    <el-button class="quit-btn" type="text">
+                    <el-button class="quit-btn" type="text" @click="handelQuitClick">
                         <img class="quit-icon" src="../../assets/img/quit.svg" />
                     </el-button>
                 </div>
@@ -74,6 +74,7 @@
 
 import { Stopwatch, Edit, Document, User, UserFilled, Tickets } from '@element-plus/icons-vue'
 import router from '@/router';
+import { ElMessage } from 'element-plus';
 
 export default {
     name: 'MainPage',
@@ -87,7 +88,8 @@ export default {
     },
     data () {
         return {
-            menuActive: ''
+            menuActive: '',
+            username: '-',
         }
     },
     methods: {
@@ -99,9 +101,15 @@ export default {
         toWarning(){
             router.push('/main');
             this.menuActive = '';
+        },
+        handelQuitClick() {
+            router.push('/');
+            localStorage.clear();
+            ElMessage.success('退出成功')
         }
     },
     mounted() {
+        this.username = localStorage.getItem('username');
         console.log(router.options.history.location);
         const path = router.options.history.location.split('/');
         console.log(path[path.length-1]);
@@ -184,10 +192,14 @@ export default {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                transition: 0.3s;
 
                 .quit-icon {
                     width: 18px;
                 }
+            }
+            .quit-btn:hover {
+                opacity: 0.8;
             }
         }
     }

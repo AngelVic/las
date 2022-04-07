@@ -64,10 +64,10 @@ export default {
             },
             formRules: {
                 id: [
-                { required: true, message: '请输入账号', trigger: 'blur' },
+                    { required: true, message: '请输入账号', trigger: 'blur' },
                 ],
                 password: [
-                { required: true, message: '请输入密码', trigger: 'blur' },
+                    { required: true, message: '请输入密码', trigger: 'blur' },
                 ],
             },
             LoginFormError: {
@@ -87,7 +87,10 @@ export default {
             if(this.form.id === this.form.password) {
                 res = {
                     code: 200,
-                    msg: '登录成功'
+                    msg: '登录成功',
+                    data: {
+                        username: '测试名'
+                    }
                 }
             }
             else {
@@ -104,6 +107,7 @@ export default {
                     message: '登录成功',
                     type: 'success',
                 })
+                localStorage.setItem('username', data.data.username)
                 router.push('/main');
             }
             else {
