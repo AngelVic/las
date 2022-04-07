@@ -11,8 +11,8 @@
                     <span>登录</span>
                 </div>
                 <div class="loginForm">
-                    <el-form :model="form">
-                        <el-form-item>
+                    <el-form :model="form" :rules="formRules" ref="loginFormRef">
+                        <el-form-item prop="id" :error="LoginFormError.id">
                             <el-input
                                 v-model="form.id"
                                 placeholder="账号"
@@ -20,7 +20,7 @@
                                 size="large"
                             ></el-input>
                         </el-form-item>
-                        <el-form-item>
+                        <el-form-item prop="password" :error="LoginFormError.password">
                             <el-input
                                 v-model="form.password"
                                 placeholder="密码"
@@ -30,13 +30,13 @@
                             ></el-input>
                         </el-form-item>
                         <div class="forget">
-                            <el-button class="forget-btn" type="text">忘记密码？</el-button>
+                            <el-button class="forget-btn" type="text" @click="handelForgetClick">忘记密码？</el-button>
                         </div>
                         <el-form-item>
                             <el-button
                                 class="login-btn"
                                 type="primary"
-                                @click="onSubmit"
+                                @click="onLoginSubmit(this.$refs.loginFormRef)"
                                 size="large"
                             >登录</el-button>
                         </el-form-item>
@@ -50,7 +50,8 @@
 <script>
 
 import { User, Lock } from '@element-plus/icons-vue'
-import { createAccount } from '../../common/request'
+import { ElMessage } from 'element-plus'
+import router from '@/router';
 
 export default {  
     name: 'FirstPage',
@@ -61,13 +62,56 @@ export default {
                 id: '',
                 password: ''
             },
+            formRules: {
+                id: [
+                { required: true, message: '请输入账号', trigger: 'blur' },
+                ],
+                password: [
+                { required: true, message: '请输入密码', trigger: 'blur' },
+                ],
+            },
+            LoginFormError: {
+                id: '',
+                password: '',
+            },
             User,
             Lock
         }
     },
     methods: {
-        async onSubmit() {
-            console.log('submit');
+        async onLoginSubmit(formRef) {
+            await formRef.validate();
+            console.log('submit login', this.form);
+            // valid data
+            let res;
+            if(this.form.id === this.form.password) {
+                res = {
+                    code: 200,
+                    msg: '登录成功'
+                }
+            }
+            else {
+                res = {
+                    code: 10001,
+                    msg: '账号或密码错误'
+                }
+            }
+            this.dealLogin(res);
+        },
+        dealLogin(data) {
+            if(data.code === 200) {
+                ElMessage({
+                    message: '登录成功',
+                    type: 'success',
+                })
+                router.push('/main');
+            }
+            else {
+                this.LoginFormError.password = data.msg
+            }
+        },
+        handelForgetClick() {
+            ElMessage.error('请您联系学院管理员重置密码，感谢~');
         }
     }
 }
@@ -83,7 +127,7 @@ export default {
         justify-content: center;
         align-items: center;
         width: 60%;
-        max-width: 720px;
+        max-width: 800px;
         height: 100%;
         background-color: #3267ff;
 
