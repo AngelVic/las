@@ -18,10 +18,8 @@
                 </el-select>
             </el-form-item>
             <el-form-item v-if="classFilter" label="班级:">
-                <el-select class="formInput" v-model="filterForm.class" placeholder="请选择班级">
-                    <el-option label="1班" value="1"></el-option>
-                    <el-option label="2班" value="2"></el-option>
-                    <el-option label="无归属班级" value="3"></el-option>
+                <el-select class="formInput" v-model="filterForm.class" placeholder="请选择班级" :disabled="classSelectDisabled">
+                    <el-option v-for="classItem in classList" :key="classItem.id" :label="classItem.name" :value="classItem.id"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item v-if="subjectFilter" label="科目:">
@@ -56,7 +54,7 @@ export default {
         'termFilter',
         'classFilter',
         'subjectFilter',
-        'gradeMajorList'
+        'sourceList',
     ],
     data () {
         return {
@@ -69,7 +67,8 @@ export default {
             },
             termList: [201601, 201602, 201701, 201702, 201801, 201802, 201901, 201902, 202001, 202002],
             gradeList: [],
-            majorList: []
+            majorList: [],
+            classList: []
         }
     },
     methods: {
@@ -77,7 +76,7 @@ export default {
             console.log('filter', this.filterForm);
             let extra = {};
             if(this.gradeFilter) {
-                const gradeMajor = this.gradeMajorList.find(element => {
+                const gradeMajor = this.sourceList.find(element => {
                     return (element.majorName===this.filterForm.major && element.grade===this.filterForm.grade)
                 })
                 extra = {
@@ -93,8 +92,11 @@ export default {
         handelMajorSelect(value) {
             if(this.gradeFilter) {
                 this.filterForm.grade = '';
+                this.filterForm.term = '';
+                this.filterForm.class = '';
+                this.filterForm.subject = '';
                 const gradeSet = new Set();
-                this.gradeMajorList.forEach(element => {
+                this.sourceList.forEach(element => {
                     if(element.majorName === value)
                         gradeSet.add(element.grade);
                 });
@@ -102,8 +104,23 @@ export default {
             }
         },
         handelGradeSelect(value) {
+            this.filterForm.term = '';
+            this.filterForm.class = '';
+            this.filterForm.subject = '';
             if(this.termFilter) {
                 this.termList = getTermByGrade(value);
+            }
+            if(this.classFilter) {
+                this.filterForm.class = '';
+                const classSet = new Set();
+                this.sourceList.forEach(element => {
+                    if(element.grade === value && element.majorName === this.filterForm.major)
+                        classSet.add({
+                            id: element.classId,
+                            name: element.name
+                        });
+                });
+                this.classList = Array.from(classSet);
             }
         }
     },
@@ -128,13 +145,19 @@ export default {
                 return (this.filterForm.grade === '')
             else
                 return (this.filterForm.major === '')
+        },
+        classSelectDisabled() {
+            if(this.termFilter)
+                return (this.filterForm.term === '')
+            else
+                return (this.filterForm.grade === '')
         }
     },
     mounted() {
         console.log('mount filter')
         if(this.gradeFilter) {
             const majorSet = new Set();
-            this.gradeMajorList.forEach(element => {
+            this.sourceList.forEach(element => {
                 majorSet.add(element.majorName);
             });
             this.majorList = Array.from(majorSet);

@@ -7,7 +7,7 @@
                 @on-filter="filter"
                 :gradeFilter="true"
                 :termFilter="true"
-                :gradeMajorList="gradeMajorList"
+                :sourceList="gradeMajorList"
             ></FilterBar>
         </div>
         <div class="charts">
@@ -127,7 +127,7 @@ import AdvantageRadar from '../../../components/AdvantageRadar';
 import GpaDistribution from '../../../components/GpaDistribution';
 import IndicatorSetDialog from '../components/IndicatorSetDialog';
 import { getGradeMajor, getGradeScorePieChart, getGradeScoreRadarChart, getGradeSubjectList, getScoreGradeClass } from '@/common/request';
-import { gradeAverageParse, gradeClassScoreParse, gradeSubjectsParse, resParse } from '@/common/methods';
+import { averageScoreParse, gradeClassScoreParse, subjectsParse, resParse } from '@/common/methods';
 import { parsePieData } from '@/common/utils';
 
 export default {
@@ -207,7 +207,7 @@ export default {
                 term: this.curFilter.term
             })
             const subjectListData = resParse('获取科目列表', subjectListRes);
-            this.subjects = gradeSubjectsParse(subjectListData);
+            this.subjects = subjectsParse(subjectListData);
             // 饼图数据处理
             this.updatePieChart(1);
             // 雷达图数据处理
@@ -233,7 +233,7 @@ export default {
             })
             const chartData = resParse('获取年级平均分', radarChartRes);
             console.log('average data', chartData);
-            this.averageScore = gradeAverageParse(chartData);
+            this.averageScore = averageScoreParse(chartData);
             console.log('average data', this.averageScore);
         },
         onGpaBetweenChange(between) {

@@ -327,7 +327,7 @@ export const getScoreGradeClass = async (props) => {
     return (response);
 }
 
-// 辅导员可对比班级成绩列表
+// 辅导员可对比课程列表
 export const getGradeSubjectList = async (props) => {
     console.log('request', '/course/counselorList', props);
     // const response = await axiosRequest('get', '/course/counselorList', props);
@@ -373,6 +373,186 @@ export const getGradeScoreRadarChart = async (props) => {
                 "average": 90,
                 "courseId": 2,
                 "courseName": "课程3"
+            }
+        ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 根据账号获取管理班级列表
+export const getGradeMajorClass = async (props) => {
+    console.log('request', '/class/counselor', props);
+    // const response = await axiosRequest('get', '/class/counselor', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                id: 122333,
+                grade: 2018,
+                majorName: '软件工程',
+                "classId": 0,
+                "name": 1
+            },
+            {
+                id: 122333,
+                grade: 2018,
+                majorName: '软件工程',
+                "classId": 3,
+                "name": 2
+            },
+            {
+                id: 122334,
+                grade: 2018,
+                majorName: '计算机',
+                "classId": 1,
+                "name": 1
+            },
+            {
+                id: 122335,
+                grade: 2017,
+                majorName: '计算机',
+                "classId": 2,
+                "name": 1
+            }
+        ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 班级成绩优势雷达图
+export const getClassRadarChart = async (props) => {
+    console.log('request', '/score/class/average', props);
+    // const response = await axiosRequest('get', '/score/class/average', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                "average": 60,
+                "courseId": 0,
+                "courseName": "课程1"
+            },
+            {
+                "average": 70,
+                "courseId": 1,
+                "courseName": "课程2"
+            },
+            {
+                "average": 90,
+                "courseId": 2,
+                "courseName": "课程3"
+            }
+        ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 班级课程列表
+export const getClassSubjectList = async (props) => {
+    console.log('request', '/course/classScore', props);
+    // const response = await axiosRequest('get', '/course/classScore', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                "courseId": 0,
+                "courseName": "课程1"
+            },
+            {
+                "courseId": 1,
+                "courseName": "课程2"
+            },
+            {
+                "courseId": 2,
+                "courseName": "课程3"
+            }
+        ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 班级成绩分布饼状图
+export const getClassScorePieChart = async (props) => {
+    console.log('request', '/score/class/pieChart', props);
+    // const response = await axiosRequest('get', '/score/class/pieChart', props);
+    const response = {
+        "code": 200,
+        "data": [2, 32, 52],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 年级-班级优秀及格率
+export const getClassGradeRate = async (props) => {
+    console.log('request', '/score/class/comparison', props);
+    // const response = await axiosRequest('get', '/score/class/comparison', props);
+    const response = {
+        "code": 200,
+        "data": {
+            "classAB": 1,
+            "classPass": 2,
+            "gradeAB": 3,
+            "gradePass": 4
+        },
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 班级成绩列表
+export const getClassScoretList = async (props) => {
+    console.log('request', '/score/class', props);
+    // const response = await axiosRequest('get', '/score/class', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                "gradePoint": 1.5,
+                "name": "姓名1",
+                "scoreList": [
+                    {
+                        courseId: 0,
+                        score: 66,
+                        makeUp: 0
+                    },
+                    {
+                        courseId: 1,
+                        score: 51,
+                        makeUp: 65
+                    },
+                    {
+                        courseId: 2,
+                        score: 71,
+                        makeUp: 0
+                    }
+                ],
+                "studentId": 111111111
+            },
+            {
+                "gradePoint": 1.7,
+                "name": "姓名2",
+                "scoreList": [
+                    {
+                        courseId: 0,
+                        score: 66,
+                        makeUp: 0
+                    },
+                    {
+                        courseId: 1,
+                        score: 88,
+                        makeUp: 0
+                    },
+                    {
+                        courseId: 2,
+                        score: 71,
+                        makeUp: 0
+                    }
+                ],
+                "studentId": 111111112
             }
         ],
         "msg": "success"

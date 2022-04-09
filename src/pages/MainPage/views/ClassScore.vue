@@ -3,10 +3,12 @@
     <div class='ClassScore'>
         <div class="filter">
             <FilterBar
+                v-if="showFilter"
                 @on-filter="filter"
                 :gradeFilter="true"
                 :termFilter="true"
                 :classFilter="true"
+                :sourceList="gradeMajorClassList"
             ></FilterBar>
         </div>
         <div class="charts">
@@ -14,15 +16,13 @@
                 <div class="column-1">
                     <AdvantageRadar
                         type="class"
-                        :major="curFilter.major"
-                        :grade="curFilter.grade"
-                        :term="curFilter.term"
-                        :class="curFilter.class"
+                        :subjects="subjects"
+                        :value="averageScore"
                         position="classScore"
                     ></AdvantageRadar>
                 </div>
                 <div class="column-2">
-                    <GpaDistribution type="class"></GpaDistribution>
+                    <GpaDistribution type="class" :value="gpaDistribution" @betweenChange="onGpaBetweenChange"></GpaDistribution>
                 </div>
                 <div class="column-3">
                     <div class="contentCard compare">
@@ -56,7 +56,7 @@
                         <el-table-column prop="name" label="姓名" fixed />
                         <el-table-column prop="gpa" label="学期绩点" sortable fixed />
                         <el-table-column
-                            v-for="subject in subjectList"
+                            v-for="subject in subjects"
                             :key="subject.id"
                             :label="subject.name"
                             sortable
@@ -89,6 +89,9 @@ import GpaDistribution from '../../../components/GpaDistribution';
 import StudentScoreDialog from '../components/StudentScoreDialog'
 import { Column } from '@antv/g2plot';
 import { Search } from '@element-plus/icons-vue'
+import { getClassGradeRate, getClassRadarChart, getClassScorePieChart, getClassScoretList, getClassSubjectList, getGradeMajorClass } from '@/common/request';
+import { averageScoreParse, classGradeRateParse, classScoreListParse, resParse, subjectsParse } from '@/common/methods';
+import { parsePieData } from '@/common/utils';
 
 const SCORE_COLOR = {
     normal: '#303133',
@@ -105,92 +108,80 @@ export default {
     },
     data () {
         return {
+            showFilter: false,
             curFilter: {
-                major: '',
-                grade: '',
+                gradeMajorId: '',
                 term: '',
                 class: ''
             },
-            scoreData: [
-                {
-                    id: 0,
-                    studentId: '100000000',
-                    name: '姓名1',
-                    gpa: 2.5,
-                    scores: {
-                        sub1: {
-                            id: 1,
-                            name: '高等数学',
-                            state: 'normal',
-                            score: 76
-                        },
-                        sub2: {
-                            id: 2,
-                            name: '概率论',
-                            state: 'failed',
-                            score: 52,
-                            secScore: 62
-                        },
-                        sub3: {
-                            id: 3,
-                            name: '软件工程',
-                            state: 'normal',
-                            score: 88
-                        }
-                    }
-                }
-            ],
-            subjectList: [
-                {
-                    id: 1,
-                    name: '高等数学'
-                },
-                {
-                    id: 3,
-                    name: '软件工程'
-                },
-                {
-                    id: 2,
-                    name: '概率论'
-                }
-            ],
+            gradeMajorClassList: [],
+            scoreData: [],
             scoreDialog: {
                 visible: false
             },
             scoreSearch: '',
+            gpaDistribution: [],
+            subjects: [],
+            averageScore: [],
+            classGradeRate: [],
+            stackedColumnPlot: {},
             Search
         }
     },
     methods: {
-        filter(data) {
+        async filter(data) {
             console.log('class filter', data);
             this.curFilter = data;
+            // 科目列表获取
+            const subjectListRes = await getClassSubjectList({
+                classId: this.curFilter.class,
+                term: this.curFilter.term
+            })
+            const subjectListData = resParse('获取科目列表', subjectListRes);
+            this.subjects = subjectsParse(subjectListData);
+            // 优势雷达数据
+            this.updateRadarChart();
+            // 饼图数据处理
+            this.updatePieChart(1);
+            // 年级班级对比数据
+            const rateRes = await getClassGradeRate({
+                classId: this.curFilter.class,
+                term: this.curFilter.term
+            })
+            const rateData = resParse('获取优秀及格率', rateRes);
+            this.classGradeRate = classGradeRateParse(rateData);
+            this.updateCompare();
+            // 成绩列表
+            const scoreListRes = await getClassScoretList({
+                classId: this.curFilter.class,
+                term: this.curFilter.term
+            })
+            const scoreListData = resParse('获取班级成绩列表', scoreListRes);
+            this.scoreData = classScoreListParse(scoreListData, this.subjects);
+            console.log('dealed scoreData', this.scoreData)
+        },
+        async updateRadarChart() {
+            const radarChartRes = await getClassRadarChart({
+                classId: this.curFilter.class,
+                term: this.curFilter.term
+            })
+            const chartData = resParse('获取班级平均分', radarChartRes);
+            this.averageScore = averageScoreParse(chartData);
+            console.log('average data', this.averageScore);
+        },
+        async updatePieChart(between) {
+            const pieChartRes = await getClassScorePieChart({
+                extent: between,
+                classId: this.curFilter.class,
+                term: this.curFilter.term
+            })
+            const chartData = resParse('获取班级绩点分布', pieChartRes);
+            this.gpaDistribution = parsePieData(chartData, between);
         },
         drawCompare() {
-            const data = [
-                {
-                    type: '班级',
-                    xData: '优秀率',
-                    yData: 11,
-                },
-                {
-                    type: '班级',
-                    xData: '及格率',
-                    yData: 92,
-                },
-                {
-                    type: '年级',
-                    xData: '优秀率',
-                    yData: 13,
-                },
-                {
-                    type: '年级',
-                    xData: '及格率',
-                    yData: 98,
-                },
-            ];
+            const data = this.classGradeRate;
 
-            const stackedColumnPlot = new Column('compareChart', {
+            this.stackedColumnPlot = new Column('compareChart', {
                 data,
                 isGroup: true,
                 xField: 'xData',
@@ -211,19 +202,24 @@ export default {
                 },
             });
 
-            stackedColumnPlot.render();
+            this.stackedColumnPlot.render();
+        },
+        updateCompare() {
+            this.stackedColumnPlot.update({
+                data: this.classGradeRate
+            })
         },
         getScoreWithId(scope, id) {
-            return scope.row.scores[`sub${id}`].score;
+            return scope.row.scores[`${id}`].score;
         },
         getSecScoreWithId(scope, id) {
-            return scope.row.scores[`sub${id}`].secScore;
+            return scope.row.scores[`${id}`].secScore;
         },
         getScoreStateWithId(scope, id) {
-            return scope.row.scores[`sub${id}`].state;
+            return scope.row.scores[`${id}`].state;
         },
         getScoreColor(scope, id) {
-            if(scope.row.scores[`sub${id}`].state == 'failed') {
+            if(scope.row.scores[`${id}`].state == 'failed') {
                 return SCORE_COLOR['failed'];
             } else {
                 return SCORE_COLOR['normal'];
@@ -232,10 +228,18 @@ export default {
         searchStudent() {
             console.log('search student', this.scoreSearch);
             this.scoreDialog.visible = true;
+        },
+        onGpaBetweenChange(between) {
+            this.updatePieChart(between);
         }
     },
-    mounted() {
-        // this.$ref.compareContainer.innerHTML = null;
+    async mounted() {
+        // 筛选数据处理
+        const gradeMajorClassRes = await getGradeMajorClass({});
+        console.log('await getGradeMajorClass', gradeMajorClassRes);
+        this.gradeMajorClassList = resParse('获取专业班级列表', gradeMajorClassRes);
+        console.log('get gradeMajorClassList', this.gradeMajorClassList);
+        this.showFilter = true;
         this.drawCompare();
     }
 }
