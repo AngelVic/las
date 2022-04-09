@@ -52,6 +52,7 @@
 import { User, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';
+import { login } from '@/common/request';
 
 export default {  
     name: 'FirstPage',
@@ -83,22 +84,7 @@ export default {
             await formRef.validate();
             console.log('submit login', this.form);
             // valid data
-            let res;
-            if(this.form.id === this.form.password) {
-                res = {
-                    code: 200,
-                    msg: '登录成功',
-                    data: {
-                        username: '测试名'
-                    }
-                }
-            }
-            else {
-                res = {
-                    code: 10001,
-                    msg: '账号或密码错误'
-                }
-            }
+            let res = await login(this.form);
             this.dealLogin(res);
         },
         dealLogin(data) {
@@ -107,7 +93,8 @@ export default {
                     message: '登录成功',
                     type: 'success',
                 })
-                localStorage.setItem('username', data.data.username)
+                // localStorage.setItem('username', data.data.username);
+                localStorage.setItem('account', this.form.id);
                 router.push('/main');
             }
             else {

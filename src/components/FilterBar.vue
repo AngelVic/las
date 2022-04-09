@@ -3,21 +3,18 @@
     <div class="filterBar">
         <el-form :inline="true" :model="filterForm" class="filter-form">
             <el-form-item label="专业:">
-                <el-select class="formInput" v-model="filterForm.major" placeholder="请选择专业">
-                    <el-option label="专业1" value="major1"></el-option>
-                    <el-option label="专业2" value="major2"></el-option>
+                <el-select class="formInput" v-model="filterForm.major" placeholder="请选择专业" @change="handelMajorSelect">
+                    <el-option v-for="major in majorList" :key="major" :label="major" :value="major"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item v-if="gradeFilter" label="年级:">
-                <el-select class="formInput" v-model="filterForm.grade" placeholder="请选择年级">
-                    <el-option label="2000级" value="2000"></el-option>
-                    <el-option label="2001级" value="2001"></el-option>
+                <el-select class="formInput" v-model="filterForm.grade" placeholder="请选择年级" @change="handelGradeSelect" :disabled="filterForm.major === ''">
+                    <el-option v-for="grade in gradeList" :key="grade" :label="grade" :value="grade"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item v-if="termFilter" label="学期:">
-                <el-select class="formInput" v-model="filterForm.term" placeholder="请选择学期">
-                    <el-option label="200001" value="200001"></el-option>
-                    <el-option label="200002" value="200002"></el-option>
+                <el-select class="formInput" v-model="filterForm.term" placeholder="请选择学期" :disabled="termSelectDisabled">
+                    <el-option v-for="term in termList" :key="term" :label="term" :value="term"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item v-if="classFilter" label="班级:">
@@ -34,13 +31,22 @@
                 </el-select>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="filter">查询</el-button>
+                <el-button type="primary" @click="filter" :disabled="filterDisabled">查询</el-button>
             </el-form-item>
         </el-form>
     </div>
 </template>
 
 <script>
+
+const FILTER_FORM_PROPS = {
+    grade: 'gradeFilter',
+    term: 'termFilter',
+    class: 'classFilter',
+    subject: 'subjectFilter'
+};
+
+import { getTermByGrade } from '@/common/utils';
 
 export default {
     name: 'FilterBar',
@@ -49,7 +55,8 @@ export default {
         'gradeFilter',
         'termFilter',
         'classFilter',
-        'subjectFilter'
+        'subjectFilter',
+        'gradeMajorList'
     ],
     data () {
         return {
@@ -60,12 +67,77 @@ export default {
                 class: '',
                 subject: ''
             },
+            termList: [201601, 201602, 201701, 201702, 201801, 201802, 201901, 201902, 202001, 202002],
+            gradeList: [],
+            majorList: []
         }
     },
     methods: {
         filter() {
             console.log('filter', this.filterForm);
-            this.$emit('onFilter', this.filterForm);
+            let extra = {};
+            if(this.gradeFilter) {
+                const gradeMajor = this.gradeMajorList.find(element => {
+                    return (element.majorName===this.filterForm.major && element.grade===this.filterForm.grade)
+                })
+                extra = {
+                    ...extra,
+                    gradeMajorId: gradeMajor.id
+                }
+            }
+            this.$emit('onFilter', {
+                ...this.filterForm,
+                ...extra
+            });
+        },
+        handelMajorSelect(value) {
+            if(this.gradeFilter) {
+                this.filterForm.grade = '';
+                const gradeSet = new Set();
+                this.gradeMajorList.forEach(element => {
+                    if(element.majorName === value)
+                        gradeSet.add(element.grade);
+                });
+                this.gradeList = Array.from(gradeSet);
+            }
+        },
+        handelGradeSelect(value) {
+            if(this.termFilter) {
+                this.termList = getTermByGrade(value);
+            }
+        }
+    },
+    computed: {
+        filterDisabled() {
+            const keys = Object.keys(this.filterForm);
+            for(let i=0; i<keys.length; i++) {
+                if(keys[i] === 'major' && this.filterForm.major === '')
+                    return true;
+                else {
+                    const propKey = FILTER_FORM_PROPS[keys[i]];
+                    if(this.$props[propKey]) {
+                        if(this.filterForm[keys[i]] === '')
+                            return true;
+                    }
+                }
+            }
+            return false;
+        },
+        termSelectDisabled() {
+            if(this.gradeFilter)
+                return (this.filterForm.grade === '')
+            else
+                return (this.filterForm.major === '')
+        }
+    },
+    mounted() {
+        console.log('mount filter')
+        if(this.gradeFilter) {
+            const majorSet = new Set();
+            this.gradeMajorList.forEach(element => {
+                majorSet.add(element.majorName);
+            });
+            this.majorList = Array.from(majorSet);
         }
     }
 }

@@ -3,9 +3,11 @@
     <div class='GradeScore'>
         <div class="filter">
             <FilterBar
+                v-if="showFilter"
                 @on-filter="filter"
                 :gradeFilter="true"
                 :termFilter="true"
+                :gradeMajorList="gradeMajorList"
             ></FilterBar>
         </div>
         <div class="charts">
@@ -24,7 +26,7 @@
                     </div>
                 </div>
                 <div class="column-2">
-                    <GpaDistribution type="grade"></GpaDistribution>
+                    <GpaDistribution type="grade" :value="gpaDistribution" @betweenChange="onGpaBetweenChange"></GpaDistribution>
                 </div>
             </div>
             <div class="row-2">
@@ -47,6 +49,7 @@
                                     v-model="compareSubject"
                                     placeholder="请选择科目"
                                     size="small"
+                                    @change="onCompareSubjectSelect"
                                 >
                                     <el-option
                                         v-for="subject in subjects"
@@ -101,9 +104,8 @@
                 <div class="column-2">
                     <AdvantageRadar
                         type="grade"
-                        :major="curFilter.major"
-                        :grade="curFilter.grade"
-                        :term="curFilter.term"
+                        :subjects="subjects"
+                        :value="averageScore"
                         position="gradeScore"
                     ></AdvantageRadar>
                 </div>
@@ -124,6 +126,9 @@ import FilterBar from '../../../components/FilterBar';
 import AdvantageRadar from '../../../components/AdvantageRadar';
 import GpaDistribution from '../../../components/GpaDistribution';
 import IndicatorSetDialog from '../components/IndicatorSetDialog';
+import { getGradeMajor, getGradeScorePieChart, getGradeScoreRadarChart, getGradeSubjectList, getScoreGradeClass } from '@/common/request';
+import { gradeAverageParse, gradeClassScoreParse, gradeSubjectsParse, resParse } from '@/common/methods';
+import { parsePieData } from '@/common/utils';
 
 export default {
     name: 'GradeScore',
@@ -136,138 +141,121 @@ export default {
     },
     data () {
         return {
+            showFilter: false,
             curFilter: {
-                major: '',
-                grade: '',
+                gradeMajorId: '',
                 term: '',
-                class: ''
             },
+            gradeMajorList: [],
             stasticList: [
                 {
                     label: '总人数',
-                    data: '999',
+                    data: '-',
                     type: 'totalSize'
                 },
                 {
                     label: '挂科人数',
-                    data: '23',
+                    data: '-',
                     type: 'failSize',
-                    rate: '3.48%',
-                    description: '自上学期以来'
+                    rate: '-',
+                    description: ''
                 },
                 {
                     label: '优秀率',
-                    data: '52.12%',
+                    data: '-',
                     type: 'excellentRate',
                     rule: '优秀率规则',
-                    rate: '3.48%',
-                    description: '自上学期以来'
+                    rate: '-',
+                    description: ''
                 },
                 {
                     label: '及格率 (通过所有科目)',
-                    data: '79.65%',
+                    data: '-',
                     type: 'passRate',
                     rule: '及格分数线',
-                    rate: '3.48%',
-                    description: '自上学期以来'
+                    rate: '-',
+                    description: ''
                 },
             ],
-            subjects: [
-                {
-                    id: 1,
-                    name: '高等数学'
-                },
-                {
-                    id: 2,
-                    name: '软件工程' 
-                },
-                {
-                    id: 3,
-                    name: '基础电路与电子学基础电路与电子学（重修）'
-                }
-            ],
+            subjects: [],
             compareSubject: null,
-            compareTable: [
-                {
-                    title: '年级',
-                    size: 756,
-                    gpaExcellent: 12.8,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                },
-                {
-                    title: '计算机1班',
-                    size: 756,
-                    gpaExcellent: 11.8,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                },
-                {
-                    title: '计算机2班',
-                    size: 756,
-                    gpaExcellent: 10.8,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                },
-                {
-                    title: '计算机3班',
-                    size: 756,
-                    gpaExcellent: 9.8,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                },
-                {
-                    title: '计算机4班',
-                    size: 756,
-                    gpaExcellent: 10.2,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                },
-                {
-                    title: '计算机5班',
-                    size: 756,
-                    gpaExcellent: 22.7,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                },
-                {
-                    title: '计算机6班',
-                    size: 756,
-                    gpaExcellent: 3.2,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                },
-            ],
+            compareTable: [],
             indicatorDialog: {
                 visible: false,
                 tab: 'excellent'
-            }
+            },
+            gpaDistribution: [],
+            averageScore: []
         }
     },
     methods: {
-        filter(data) {
+        async filter(data) {
             console.log('grade filter', data);
+            this.curFilter = data;
+            // 统计数据以及对比列表处理
+            const scoreRes = await getScoreGradeClass({
+                gradeId: this.curFilter.gradeMajorId,
+                term: this.curFilter.term
+            })
+            const scoreData = resParse('获取成绩概览', scoreRes);
+            // 年级成绩
+            // const gradeScoreData = scoreData.find(element => (element.classNum === 0));
+            this.compareTable = gradeClassScoreParse(scoreData);
+            // 科目列表获取
+            const subjectListRes = await getGradeSubjectList({
+                gradeId: this.curFilter.gradeMajorId,
+                term: this.curFilter.term
+            })
+            const subjectListData = resParse('获取科目列表', subjectListRes);
+            this.subjects = gradeSubjectsParse(subjectListData);
+            // 饼图数据处理
+            this.updatePieChart(1);
+            // 雷达图数据处理
+            this.updateRadarChart();
         },
         openIndicatorDialog(tab) {
             this.indicatorDialog.tab = tab;
             this.indicatorDialog.visible = true;
+        },
+        async updatePieChart(between) {
+            const pieChartRes = await getGradeScorePieChart({
+                extent: between,
+                gradeId: this.curFilter.gradeMajorId,
+                term: this.curFilter.term
+            })
+            const chartData = resParse('获取年级绩点分布', pieChartRes);
+            this.gpaDistribution = parsePieData(chartData, between);
+        },
+        async updateRadarChart() {
+            const radarChartRes = await getGradeScoreRadarChart({
+                gradeId: this.curFilter.gradeMajorId,
+                term: this.curFilter.term
+            })
+            const chartData = resParse('获取年级平均分', radarChartRes);
+            console.log('average data', chartData);
+            this.averageScore = gradeAverageParse(chartData);
+            console.log('average data', this.averageScore);
+        },
+        onGpaBetweenChange(between) {
+            this.updatePieChart(between);
+        },
+        async onCompareSubjectSelect(subject) {
+            // 对比列表更新
+            const scoreRes = await getScoreGradeClass({
+                gradeId: this.curFilter.gradeMajorId,
+                term: this.curFilter.term,
+                courseId: subject
+            });
+            const scoreData = resParse('获取成绩概览', scoreRes);
+            this.compareTable = gradeClassScoreParse(scoreData);
         }
     },
-    mounted() {
+    async mounted() {
+        // 筛选数据处理
+        const gradeMajorRes = await getGradeMajor({});
+        this.gradeMajorList = resParse('获取专业列表', gradeMajorRes);
+        console.log('get gradeMajorList', this.gradeMajorList);
+        this.showFilter = true;
     }
 }
 </script>

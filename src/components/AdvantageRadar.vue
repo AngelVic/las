@@ -12,10 +12,10 @@
                 @change="changeShowSubject"
             >
                 <el-option
-                v-for="subject in subjects"
-                :key="subject.id"
-                :label="subject.name"
-                :value="subject.id"
+                    v-for="subject in subjects"
+                    :key="subject.id"
+                    :label="subject.name"
+                    :value="subject.id"
                 >
                 </el-option>
             </el-select>
@@ -30,39 +30,17 @@
 
 import { Radar } from '@antv/g2plot';
 
-const scoreList = {
-    'id1': { id: 1, name: '高等数学', score: 75 },
-    'id2': { id: 2, name: '软件工程', score: 88 },
-    'id3': { id: 3, name: '基础电路与电子学基础电路与电子学（重修）', score: 62 },
-}
-
 export default {
     name: 'AdvantageRadar',
     components: {},
     props: [
         'type',
-        'major',
-        'grade',
-        'term',
-        'class',
-        'position'
+        'position',
+        'subjects',
+        'value'
     ],
     data () {
         return {
-            subjects: [
-                {
-                    id: 1,
-                    name: '高等数学'
-                },
-                {
-                    id: 2,
-                    name: '软件工程' 
-                },
-                {
-                    id: 3,
-                    name: '基础电路与电子学基础电路与电子学（重修）'
-                }
-            ],
             advantageSubject: [],
             advantageRadarPlot: null
         }
@@ -75,7 +53,7 @@ export default {
         },
         drawAdvantageRadar() {
             // 绘制学科优势雷达图
-            const data = [];
+            const data = this.value;
             this.advantageRadarPlot = new Radar(`${this.position}AdvantageChart`, {
                 data: data,
                 xField: 'name',
@@ -86,7 +64,6 @@ export default {
                             if(value == 0) {
                                 return 0;
                             }
-                            console.log(value);
                             let subjectName = value.replace(/.{5}/g,'$&\n');
                             return subjectName;
                         }
@@ -99,9 +76,7 @@ export default {
             console.log('update with', selectedSubject);
             const newData = [];
             for(let i=0; i<selectedSubject.length; i++) {
-                console.log('id', selectedSubject[i]);
-                console.log('update add', scoreList['id'+selectedSubject[i]]);
-                newData.push(scoreList['id'+selectedSubject[i]]);
+                newData.push(this.value[selectedSubject[i]]);
             }
             this.advantageRadarPlot.update({
                 data: newData

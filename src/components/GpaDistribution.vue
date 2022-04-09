@@ -33,26 +33,16 @@
 
 import { Pie } from '@antv/g2plot';
 
-const between05Data = [
-    { type: '0≤x<0.5', value: 0 },
-    { type: '0.5≤x<1', value: 2 },
-    { type: '1≤x<1.5', value: 12 },
-    { type: '1.5≤x<2', value: 43 },
-    { type: '2≤x<2.5', value: 123 },
-    { type: '2.5≤x<3', value: 200 },
-    { type: '3≤x<3.5', value: 120 },
-    { type: '3.5≤x<4', value: 20 }
-];
-
 export default {
     name: 'GpaDistribution',
     components: {},
     props: [
         'type',
-        'major',
-        'grade',
-        'term',
-        'class'
+        // 'major',
+        // 'grade',
+        // 'term',
+        // 'class',
+        'value'
     ],
     data () {
         return {
@@ -62,19 +52,14 @@ export default {
             },
             columnPlot: null,
             spaceBetween: 1,
-            betweens: [0.3, 0.5, 0.7, 1]
+            betweens: [0.3, 0.5, 1]
         }
     },
     methods: {
         drawScoreDistribution() {
             // 绘制成绩分布饼图
             this.columnPlot = new Pie('distributionChart', {
-                data: [
-                    { type: '0≤x<1', value: 2 },
-                    { type: '1≤x<2', value: 32 },
-                    { type: '2≤x<3', value: 310 },
-                    { type: '3≤x<4', value: 60 }
-                ],
+                data: this.value,
                 angleField: 'value',
                 colorField: 'type',
                 radius: 0.9,
@@ -90,8 +75,17 @@ export default {
         betweenChange(val) {
             console.log('between', val);
             // between05Data
+            // this.columnPlot.update({
+            //     data: between05Data
+            // })
+            this.$emit('betweenChange', val);
+        }
+    },
+    watch: {
+        value: function () {
+            console.log('update value', this.value);
             this.columnPlot.update({
-                data: between05Data
+                data: this.value
             })
         }
     },

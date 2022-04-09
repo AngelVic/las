@@ -16,15 +16,34 @@ const errorFilter = (data) => {
 }
 
 // axios请求
+// eslint-disable-next-line no-unused-vars
 const axiosRequest = async (method, suffix, props) => {
     const url = `${baseUrl}/${suffix}`;
-    return await axios({
+    return errorFilter(await axios({
         method: method,
         url: url,
         data: {
-            ...props
+            account: localStorage.getItem('account'),
+            ...props,
         }
-    });
+    }));
+}
+
+// 登录
+export const login = async (props) => {
+    console.log('request', '/login', props);
+    // const response = await axiosRequest('post', '/login', {
+    //     account: props.id,
+    //     password: props.password
+    // });
+    const response = {
+        "code": 200,
+        "data": {
+            username: '测试名'
+        },
+        "msg": "login success"
+    }
+    return (response);
 }
 
 // 创建辅导员账号
@@ -36,7 +55,7 @@ export const createAccount = async (props) => {
         "data": 0,
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 修改辅导员账号
@@ -48,7 +67,7 @@ export const updateAccount = async (props) => {
         "data": 0,
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 批量删除账号
@@ -59,7 +78,7 @@ export const deleteAccount = async (props) => {
         "code": 200,
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 
@@ -72,7 +91,7 @@ export const alterAccount = async (props) => {
         "data": 0,
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 查询负责人列表
@@ -92,7 +111,7 @@ export const searchCounselor = async (props) => {
           ],
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 查找专业年级下属班级
@@ -106,7 +125,7 @@ export const searchClass = async (props) => {
         ],
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 查找学生信息列表
@@ -126,7 +145,7 @@ export const searchStudent = async (props) => {
           ],
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 编辑学生信息
@@ -137,21 +156,35 @@ export const updateStudent = async (props) => {
         "code": 200,
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
-// 根据账号获取管理年级id列表
-export const getGrade = async (props) => {
+// 根据账号获取管理年级列表
+export const getGradeMajor = async (props) => {
     console.log('request', '/counselor/grade', props);
     // const response = await axiosRequest('get', '/counselor/grade', props);
     const response = {
         "code": 200,
         "data": [
-            0
+            {
+                id: 122333,
+                grade: 2018,
+                majorName: '软件工程'
+            },
+            {
+                id: 122334,
+                grade: 2018,
+                majorName: '计算机'
+            },
+            {
+                id: 122335,
+                grade: 2017,
+                majorName: '计算机'
+            }
         ],
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 获取科目列表
@@ -168,7 +201,7 @@ export const getCourse = async (props) => {
           ],
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 获取学院管理的专业列表
@@ -185,7 +218,7 @@ export const getMajor = async (props) => {
           ],
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 获取年级成绩列表
@@ -207,7 +240,7 @@ export const getScore = async (props) => {
           ],
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 上传excel文件
@@ -219,7 +252,7 @@ export const uploadFile = async (props) => {
         "data": "string",
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 获取优秀率规则
@@ -237,7 +270,7 @@ export const getQuota = async (props) => {
         },
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
 // 编辑优秀率规则
@@ -248,6 +281,101 @@ export const updateQuota = async (props) => {
         "code": 200,
         "msg": "success"
     }
-    return errorFilter(response);
+    return (response);
 }
 
+// 年级成绩分布饼状图
+export const getGradeScorePieChart = async (props) => {
+    console.log('request', '/score/grade/pieChart', props);
+    // const response = await axiosRequest('get', '/score/grade/pieChart', props);
+    const response = {
+        "code": 200,
+        "data": [2, 32, 52],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 获取年级成绩列表
+export const getScoreGradeClass = async (props) => {
+    console.log('request', '/score/counselor', props);
+    // const response = await axiosRequest('get', '/score/counselor', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                "average": 0,
+                "classNum": 0,
+                "failNum": 0,
+                "gradePointAB": 0,
+                "pass": 0,
+                "subjectAB": 0,
+                "totalNum": 0
+            },
+            {
+                "average": 1,
+                "classNum": 1,
+                "failNum": 1,
+                "gradePointAB": 1,
+                "pass": 1,
+                "subjectAB": 1,
+                "totalNum": 1
+            }
+          ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 辅导员可对比班级成绩列表
+export const getGradeSubjectList = async (props) => {
+    console.log('request', '/course/counselorList', props);
+    // const response = await axiosRequest('get', '/course/counselorList', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                "courseId": 0,
+                "courseName": "课程1"
+            },
+            {
+                "courseId": 1,
+                "courseName": "课程2"
+            },
+            {
+                "courseId": 2,
+                "courseName": "课程3"
+            }
+        ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 年级成绩优势雷达图
+export const getGradeScoreRadarChart = async (props) => {
+    console.log('request', '/score/grade/average', props);
+    // const response = await axiosRequest('get', '/score/grade/average', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                "average": 60,
+                "courseId": 0,
+                "courseName": "课程1"
+            },
+            {
+                "average": 70,
+                "courseId": 1,
+                "courseName": "课程2"
+            },
+            {
+                "average": 90,
+                "courseId": 2,
+                "courseName": "课程3"
+            }
+        ],
+        "msg": "success"
+    }
+    return (response);
+}
