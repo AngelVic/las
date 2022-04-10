@@ -3,6 +3,8 @@
     <div class='AdminInfo'>
         <div class="filter">
             <FilterBar
+                v-if="showFilter"
+                :sourceList="gradeMajorList"
                 @on-filter="filter"
                 :gradeFilter="true"
             ></FilterBar>
@@ -76,6 +78,8 @@ import AdminInfoDialog from '../components/AdminInfoDialog';
 import AdminCreateDialog from '../components/AdminCreateDialog';
 import AdminInfoSuccessDialog from '../components/AdminInfoSuccessDialog';
 import { ElMessageBox, ElMessage } from 'element-plus';
+import { getGradeMajor } from '@/common/request';
+import { resParse } from '@/common/methods';
 
 export default {
     name: 'AdminInfo',
@@ -87,6 +91,8 @@ export default {
     },
     data () {
         return {
+            showFilter: false,
+            gradeMajorList: [],
             curFilter: {},
             adminTable: [
                 {
@@ -110,9 +116,13 @@ export default {
         }
     },
     methods: {
-        filter(data) {
+        async filter(data) {
             console.log('adminInfo filter', data);
             this.curFilter = data;
+            // 获取负责人列表
+            // const adminListRes = await searchCounselor({
+
+            // })
         },
         editAdmin() {
             this.adminDialog.visible = true;
@@ -166,6 +176,13 @@ export default {
                 })
             })
         }
+    },
+    async mounted() {
+        // 筛选数据处理
+        const gradeMajorRes = await getGradeMajor({});
+        this.gradeMajorList = resParse('获取专业列表', gradeMajorRes);
+        console.log('get gradeMajorList', this.gradeMajorList);
+        this.showFilter = true;
     }
 }
 </script>

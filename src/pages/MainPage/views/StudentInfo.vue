@@ -3,10 +3,12 @@
     <div class='StudentInfo'>
         <div class="filter">
             <FilterBar
+                v-if="showFilter"
                 @on-filter="filter"
                 :gradeFilter="true"
                 :termFilter="true"
                 :classFilter="true"
+                :sourceList="gradeMajorClassList"
             ></FilterBar>
         </div>
         <div class="mainContent">
@@ -59,6 +61,8 @@
 
 import FilterBar from '../../../components/FilterBar.vue';
 import StudentInfoDialog from '../components/StudentInfoDialog';
+import { getGradeMajorClass, searchStudent } from '@/common/request';
+import { resParse, studentListParse } from '@/common/methods';
 
 export default {
     name: 'StudentInfo',
@@ -68,42 +72,36 @@ export default {
     },
     data () {
         return {
+            showFilter: false,
+            gradeMajorClassList: [],
             curFilter: {},
-            studentTable: [
-                {
-                    studentId: '000000000',
-                    name: '你的名字',
-                    grade: '2018',
-                    major: '计算机',
-                    class: '1',
-                    HMT: true,
-                    dormitory: '11',
-                    room: '111'
-                },
-                {
-                    studentId: '000000000',
-                    name: '你的名字',
-                    grade: '2018',
-                    major: '计算机',
-                    class: '1',
-                    HMT: false,
-                    dormitory: '11',
-                    room: '111'
-                }
-            ],
+            studentTable: [],
             infoDialog: {
                 visible: false
             }
         }
     },
     methods: {
-        filter(data) {
+        async filter(data) {
             console.log('file filter', data);
             this.curFilter = data;
+            const studentListRes = await searchStudent({
+                classId: this.curFilter.class,
+            })
+            const studentList = resParse('获取班级学生列表', studentListRes);
+            this.studentTable = studentListParse(studentList, this.curFilter.grade, this.curFilter.major, this.curFilter.className);
         },
         editStudent() {
             this.infoDialog.visible = true;
         }
+    },
+    async mounted() {
+        // 筛选数据处理
+        const gradeMajorClassRes = await getGradeMajorClass({});
+        console.log('await getGradeMajorClass', gradeMajorClassRes);
+        this.gradeMajorClassList = resParse('获取专业班级列表', gradeMajorClassRes);
+        console.log('get gradeMajorClassList', this.gradeMajorClassList);
+        this.showFilter = true;
     }
 }
 </script>

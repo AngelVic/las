@@ -9,45 +9,29 @@
                     style="max-width: 460px"
                     label-position="Right"
                     label-width="auto"
+                    :rules="rules"
+                    ref="changeFormRef"
                 >
                     <el-form-item
                         label="旧密码"
-                        :rules="[
-                            {
-                                required: true,
-                                message: '请输入旧密码',
-                                trigger: 'blur',
-                            }
-                        ]"
+                        prop="oldPass"
                     >
-                        <el-input v-model="changeForm.oldPass" placeholder="6 - 16位密码，区分大小写"></el-input>
+                        <el-input type="password" v-model="changeForm.oldPass" placeholder="6 - 16位密码，区分大小写"></el-input>
                     </el-form-item>
                     <el-form-item
                         label="新密码"
-                        :rules="[
-                            {
-                                required: true,
-                                message: '请输入新密码',
-                                trigger: 'blur',
-                            }
-                        ]"
+                        prop="newPass"
                     >
-                        <el-input v-model="changeForm.newPass" placeholder="6 - 16位密码，区分大小写"></el-input>
+                        <el-input type="password" v-model="changeForm.newPass" placeholder="6 - 16位密码，区分大小写"></el-input>
                     </el-form-item>
                     <el-form-item
                         label="确认新密码"
-                        :rules="[
-                            {
-                                required: true,
-                                message: '请再次输入新密码',
-                                trigger: 'blur',
-                            }
-                        ]"
+                        prop="confirmPass"
                     >
-                        <el-input v-model="changeForm.confirmPass" placeholder="6 - 16位密码，区分大小写"></el-input>
+                        <el-input type="password" v-model="changeForm.confirmPass" placeholder="6 - 16位密码，区分大小写"></el-input>
                     </el-form-item>
                     <el-form-item class="btnContainer">
-                        <el-button type="primary" @click="confirmChange">确认修改</el-button>
+                        <el-button type="primary" @click="confirmChange(this.$refs.changeFormRef)">确认修改</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -56,6 +40,9 @@
 </template>
 
 <script>
+import { alterAccount } from '@/common/request';
+import { resParse } from '@/common/methods';
+import { ElMessage } from 'element-plus';
 
 export default {
     name: 'AccountManage',
@@ -63,15 +50,53 @@ export default {
     data () {
         return {
             changeForm: {
-                oldPadd: '',
+                oldPass: '',
                 newPass: '',
                 confirmPass: ''
+            },
+            rules: {
+                oldPass: [
+                    {
+                        required: true,
+                        message: '请输入旧密码',
+                        trigger: 'blur',
+                    }
+                ],
+                newPass: [
+                    {
+                        required: true,
+                        message: '请输入新密码',
+                        trigger: 'blur',
+                    }
+                ],
+                confirmPass: [
+                    {
+                        required: true,
+                        message: '请再次输入新密码',
+                        trigger: 'blur',
+                    },
+                    { validator: this.validatePassConfirm, trigger: 'blur' }
+                ]
             }
         }
     },
     methods: {
-        confirmChange() {
-
+        async confirmChange(formRef) {
+            await formRef.validate();
+            const alterRes = await alterAccount({
+                oldPwd: this.changeForm.oldPass,
+                newPwd: this.changeForm.newPass
+            });
+            if(resParse('修改密码', alterRes) !== null) {
+                ElMessage.success('修改成功');
+            }
+        },
+        validatePassConfirm(rule , value , callback ) {
+            if (value !== this.changeForm.newPass) {
+                callback(new Error("两次输入密码不一致"))
+            } else {
+                callback()
+            }
         }
     }
 }

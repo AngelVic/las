@@ -63,7 +63,8 @@ export default {
                 grade: '',
                 term: '',
                 class: '',
-                subject: ''
+                subject: '',
+                className: ''
             },
             termList: [201601, 201602, 201701, 201702, 201801, 201802, 201901, 201902, 202001, 202002],
             gradeList: [],
@@ -75,6 +76,7 @@ export default {
         filter() {
             console.log('filter', this.filterForm);
             let extra = {};
+            // 增加gradeMajorId参数
             if(this.gradeFilter) {
                 const gradeMajor = this.sourceList.find(element => {
                     return (element.majorName===this.filterForm.major && element.grade===this.filterForm.grade)
@@ -82,6 +84,17 @@ export default {
                 extra = {
                     ...extra,
                     gradeMajorId: gradeMajor.id
+                }
+            }
+            // 增加className参数
+            console.log('check class', this.classList);
+            if(this.classFilter) {
+                const classItem = this.classList.find(element => {
+                    return (element.id===this.filterForm.class)
+                })
+                extra = {
+                    ...extra,
+                    className: classItem.name
                 }
             }
             this.$emit('onFilter', {

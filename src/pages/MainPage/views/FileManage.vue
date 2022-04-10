@@ -3,9 +3,11 @@
     <div class='FileManage'>
         <div class="filter">
             <FilterBar
+                v-if="showFilter"
                 @on-filter="filter"
                 :gradeFilter="true"
                 :termFilter="true"
+                :sourceList="gradeMajorList"
             ></FilterBar>
         </div>
         <div class="main_container">
@@ -13,19 +15,8 @@
                 <div class="contentCard">
                     <span class="cardTitle">成绩上传</span>
                     <div class="uploadForm">
-                        <el-form :inline="true" :model="uploadForm">
-                            <el-form-item label="上传年级" :rules="[
-                                {
-                                    required: true,
-                                    message: '请选择年级',
-                                    trigger: 'blur',
-                                }
-                            ]">
-                                <el-select v-model="uploadForm.grade" placeholder="请选择年级">
-                                    <el-option label="2018" value="2018"></el-option>
-                                    <el-option label="2012" value="2012"></el-option>
-                                </el-select>
-                            </el-form-item>
+                        <el-form :inline="true" :model="uploadForm" ref="uploadFormRef">
+                            
                             <el-form-item label="上传专业" :rules="[
                                 {
                                     required: true,
@@ -33,9 +24,19 @@
                                     trigger: 'blur',
                                 }
                             ]">
-                                <el-select v-model="uploadForm.major" placeholder="请选择专业">
-                                    <el-option label="软件工程" value="22"></el-option>
-                                    <el-option label="计算机" value="03"></el-option>
+                                <el-select v-model="uploadForm.major" placeholder="请选择专业" @change="handelUploadMajorSelect">
+                                    <el-option v-for="item in uploadMajorList" :key="item" :label="item" :value="item"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="上传年级" :rules="[
+                                {
+                                    required: true,
+                                    message: '请选择年级',
+                                    trigger: 'blur',
+                                }
+                            ]">
+                                <el-select v-model="uploadForm.grade" placeholder="请选择年级" :disabled="uploadGradeDisabled">
+                                    <el-option v-for="item in uploadGradeList" :key="item" :label="item" :value="item"></el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="选择文件" :rules="[
@@ -46,7 +47,7 @@
                                 }
                             ]">
                                 <el-upload
-                                    ref="upload"
+                                    ref="uploadFile"
                                     class="upload"
                                     :auto-upload="false"
                                     :limit="1"
@@ -56,7 +57,12 @@
                                     <template #trigger>
                                         <el-button :icon="Upload">上传文件</el-button>
                                     </template>
-                                    <el-button class="submit" type="primary" @click="submitUpload">确认上传</el-button>
+                                    <el-button
+                                        class="submit"
+                                        type="primary"
+                                        @click="submitUpload(this.$refs.uploadFormRef, this.$refs.uploadFile)"
+                                        :disabled="uploadBtnDisabled"
+                                    >确认上传</el-button>
                                 </el-upload>
                             </el-form-item>
                         </el-form>
@@ -115,6 +121,8 @@
 import FilterBar from '../../../components/FilterBar.vue'
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { getGradeMajor } from '@/common/request';
+import { resParse } from '@/common/methods';
 
 export default {
     name: 'FileManage',
@@ -123,9 +131,15 @@ export default {
     },
     data () {
         return {
+            showFilter: false,
+            gradeMajorList: [],
             curFilter: {},
-            uploadForm: {},
-            upload: {},
+            uploadForm: {
+                grade: '',
+                major: ''
+            },
+            uploadGradeList: [],
+            uploadMajorList: [],
             fileTable: [
                 {
                     grade: 2000,
@@ -155,13 +169,23 @@ export default {
             Upload
         }
     },
+    computed: {
+        uploadBtnDisabled: function() {
+            return (this.uploadForm.grade==='' || this.uploadForm.major==='')
+        },
+        uploadGradeDisabled: function() {
+            return this.uploadForm.major===''
+        }
+    },
     methods: {
         filter(data) {
             console.log('file filter', data);
             this.curFilter = data;
         },
-        submitUpload() {
-            this.upload.value.submit();
+        async submitUpload(formRef, fileRef) {
+            await formRef.validate();
+            console.log('submitUpload', this.uploadForm);
+            fileRef.submit();
         },
         deleteFile() {
             ElMessageBox.confirm(
@@ -185,7 +209,28 @@ export default {
                         message: '删除失败',
                     })
                 })
+        },
+        handelUploadMajorSelect(value) {
+            this.uploadForm.grade = '';
+            const gradeSet = new Set();
+            this.gradeMajorList.forEach(element => {
+                if(element.majorName === value)
+                    gradeSet.add(element.grade);
+            });
+            this.uploadGradeList = Array.from(gradeSet);
         }
+    },
+    async mounted() {
+        // 筛选数据处理
+        const gradeMajorRes = await getGradeMajor({});
+        this.gradeMajorList = resParse('获取专业列表', gradeMajorRes);
+        // 上传文件选项
+        const majorSet = new Set();
+        this.gradeMajorList.forEach(element => {
+            majorSet.add(element.majorName);
+        });
+        this.uploadMajorList = Array.from(majorSet);
+        this.showFilter = true;
     }
 }
 </script>

@@ -136,11 +136,11 @@ export const searchStudent = async (props) => {
         "code": 200,
         "data": [
             {
-              "building": 0,
+              "building": 111,
               "isSpecial": false,
               "name": "string",
-              "room": 0,
-              "studentId": 0
+              "room": 222,
+              "studentId": 333
             }
           ],
         "msg": "success"
