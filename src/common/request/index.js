@@ -46,13 +46,40 @@ export const login = async (props) => {
     return (response);
 }
 
+// 获取辅导员信息（接口未开发）
+export const getAccountDetail = async (props) => {
+    console.log('request', '/account', props);
+    // const response = await axiosRequest('get', '/account', props);
+    const response = {
+        "code": 200,
+        "data": {
+            "account": 111,
+            "gradeList": [
+                {
+                    "grade": 2018,
+                    "id": 122333,
+                    "majorName": "软件工程"
+                },
+                {
+                    "grade": 2017,
+                    "id": 122335,
+                    "majorName": "计算机"
+                }
+            ],
+            "name": "辅导员名"
+        },
+        "msg": "success"
+    }
+    return (response);
+}
+
 // 创建辅导员账号
 export const createAccount = async (props) => {
     console.log('request', '/account', props);
     // const response = await axiosRequest('post', '/account', props);
     const response = {
         "code": 200,
-        "data": 0,
+        "data": 111,
         "msg": "success"
     }
     return (response);
@@ -64,15 +91,26 @@ export const updateAccount = async (props) => {
     // const response = await axiosRequest('post', '/account', props);
     const response = {
         "code": 200,
-        "data": 0,
+        "data": 11,
         "msg": "success"
     }
     return (response);
 }
 
-// 批量删除账号
+// 删除账号
 export const deleteAccount = async (props) => {
     console.log('request', '/account', props);
+    // const response = await axiosRequest('delete', '/account', props);
+    const response = {
+        "code": 200,
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 重置辅导员账号密码
+export const resetAccount = async (props) => {
+    console.log('request', `/account/${props.account}/pwd`, {});
     // const response = await axiosRequest('delete', '/account', props);
     const response = {
         "code": 200,
@@ -159,7 +197,7 @@ export const updateStudent = async (props) => {
     return (response);
 }
 
-// 根据账号获取管理年级列表
+// 辅导员账号获取管理年级列表
 export const getGradeMajor = async (props) => {
     console.log('request', '/counselor/grade', props);
     // const response = await axiosRequest('get', '/counselor/grade', props);
@@ -553,6 +591,34 @@ export const getClassScoretList = async (props) => {
                     }
                 ],
                 "studentId": 111111112
+            }
+        ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 管理员账号获取管理专业年级
+export const getAdminGradeMajor = async (props) => {
+    console.log('request', '/admin/grade', props);
+    // const response = await axiosRequest('get', '/counselor/grade', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                id: 122333,
+                grade: 2018,
+                majorName: '软件工程'
+            },
+            {
+                id: 122334,
+                grade: 2018,
+                majorName: '计算机'
+            },
+            {
+                id: 122335,
+                grade: 2017,
+                majorName: '计算机'
             }
         ],
         "msg": "success"

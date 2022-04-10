@@ -21,3 +21,32 @@ export const parsePieData = (source, between) => {
     }
     return pieData;
 }
+
+export const parseGradeMajorData = (source) => {
+    const resData = new Map();
+    source.forEach(t => {
+        if(resData.has(t.grade)) {
+            const oldData = resData.get(t.grade);
+            oldData.children.push({
+                value: t.id,
+                label: t.majorName
+            });
+            resData.set(t.grade, {
+                ...oldData
+            })
+        }
+        else {
+            resData.set(t.grade, {
+                value: t.grade,
+                label: `${t.grade}级`,
+                children: [
+                    {
+                        value: t.id,
+                        label: t.majorName
+                    }
+                ]
+            })
+        }
+    });
+    return Array.from(resData.values());
+}

@@ -106,3 +106,27 @@ export const studentListParse = (data, grade, major, className) => {
         }
     })
 }
+
+export const adminListParse = (data, grade, major) => {
+    return data.map(element => {
+        const time = Date.parse(element.createTime)
+        return {
+            id: element.id,
+            grade: grade,
+            major: major,
+            principal: element.name,
+            account: element.account,
+            time: new Date(time).toLocaleString()
+        }
+    })
+}
+
+export const accountDetailParse = (data) => {
+    return {
+        account: data.account,
+        name: data.name,
+        gradeClass: data.gradeList.map(t => {
+            return [t.grade, t.id]
+        })
+    }
+}

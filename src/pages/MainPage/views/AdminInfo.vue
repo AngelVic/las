@@ -41,10 +41,10 @@
                         <el-table-column prop="account" label="账号" sortable />
                         <el-table-column prop="time" label="账号生成时间" sortable />
                         <el-table-column label="操作">
-                            <template #default>
-                                <el-button type="text" @click="editAdmin">编辑</el-button>
-                                <el-button type="text" @click="deleteAdmin">删除</el-button>
-                                <el-button type="text" @click="resetAdmin">重置密码</el-button>
+                            <template #default="scope">
+                                <el-button type="text" @click="editAdmin(scope.row.id)">编辑</el-button>
+                                <el-button type="text" @click="deleteAdmin(scope.row.id)">删除</el-button>
+                                <el-button type="text" @click="resetAdmin(scope.row.id)">重置密码</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -52,19 +52,24 @@
             </div>
         </div>
         <AdminInfoDialog
+            v-if="adminDialog.visible"
             :adminInfoVisible="adminDialog.visible"
+            :value="adminDialog.data"
+            :gradeMajorList="gradeMajorList"
             @on-close="() => {this.adminDialog.visible = false}"
         ></AdminInfoDialog>
         <AdminCreateDialog
+            v-if="createDialog.visible"
             :adminCreateVisible="createDialog.visible"
+            :gradeMajorList="gradeMajorList"
             @on-close="() => {this.createDialog.visible = false}"
-            @on-success="() => {
-                this.createDialog.visible = false;
-                this.successDialog.visible = true;
-            }"
+            @on-success="handelCreateSuccess"
         ></AdminCreateDialog>
         <AdminInfoSuccessDialog
+            v-if="successDialog.visible"
             :adminInfoVisible="successDialog.visible"
+            :value="successDialog.data"
+            :gradeMajorList="gradeMajorList"
             @on-close="() => {this.successDialog.visible = false}"
         ></AdminInfoSuccessDialog>
     </div>
@@ -78,8 +83,8 @@ import AdminInfoDialog from '../components/AdminInfoDialog';
 import AdminCreateDialog from '../components/AdminCreateDialog';
 import AdminInfoSuccessDialog from '../components/AdminInfoSuccessDialog';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import { getGradeMajor } from '@/common/request';
-import { resParse } from '@/common/methods';
+import { deleteAccount, getAdminGradeMajor, searchCounselor, resetAccount, getAccountDetail } from '@/common/request';
+import { accountDetailParse, adminListParse, resParse } from '@/common/methods';
 
 export default {
     name: 'AdminInfo',
@@ -94,23 +99,17 @@ export default {
             showFilter: false,
             gradeMajorList: [],
             curFilter: {},
-            adminTable: [
-                {
-                    grade: '2000',
-                    major: '计算机',
-                    principal: '你的名字',
-                    account: '1111111111111',
-                    time: '2000-02-02 11:11',
-                }
-            ],
+            adminTable: [],
             adminDialog: {
-                visible: false
+                visible: false,
+                data: {}
             },
             createDialog: {
                 visible: false
             },
             successDialog:{
-                visible:false
+                visible: false,
+                data: {}
             },
             Search
         }
@@ -120,17 +119,25 @@ export default {
             console.log('adminInfo filter', data);
             this.curFilter = data;
             // 获取负责人列表
-            // const adminListRes = await searchCounselor({
-
-            // })
+            const adminListRes = await searchCounselor({
+                gradeId: this.curFilter.gradeMajorId
+            });
+            const adminListData = resParse('获取负责人列表', adminListRes);
+            this.adminTable = adminListParse(adminListData, this.curFilter.grade, this.curFilter.major);
         },
-        editAdmin() {
+        async editAdmin(id) {
+            console.log('edit', id);
+            const accountDetailRes = await getAccountDetail({
+                account: id
+            });
+            const accountDetaiData = resParse('获取辅导员详情', accountDetailRes);
+            this.adminDialog.data = accountDetailParse(accountDetaiData);
             this.adminDialog.visible = true;
         },
         createAdmin() {
             this.createDialog.visible = true;
         },
-        deleteAdmin() {
+        deleteAdmin(id) {
             ElMessageBox.confirm(
                 '是否删除负责人，删除后该账号将无法登录，且该账号负责的年级为无负责人状态？',
                 '删除负责人',
@@ -140,20 +147,27 @@ export default {
                     type: 'info',
                 }
             )
-            .then(() => {
-                ElMessage({
-                    type: 'success',
-                    message: '删除成功',
-                })
+            .then(async () => {
+                console.log('reset', id);
+                const deleteRes = await deleteAccount({
+                    account: id
+                });
+                const deleteResult = resParse('辅导员账号删除', deleteRes);
+                if(deleteResult !== null){
+                    ElMessage({
+                        type: 'success',
+                        message: '删除成功',
+                    })
+                }
             })
             .catch(() => {
                 ElMessage({
                     type: 'info',
-                    message: '删除失败',
+                    message: '已取消',
                 })
             })
         },
-        resetAdmin() {
+        resetAdmin(id) {
             ElMessageBox.confirm(
                 '是否重置密码，重置后该账号的密码将被重置为“12345678”，需用新密码才可登录账号？',
                 '重置密码',
@@ -163,25 +177,41 @@ export default {
                     type: 'info',
                 }
             )
-            .then(() => {
-                ElMessage({
-                    type: 'success',
-                    message: '重置成功',
-                })
+            .then(async () => {
+                console.log('reset', id);
+                const resetRes = await resetAccount({
+                    account: id
+                });
+                const resetResult = resParse('辅导员账号删除', resetRes);
+                if(resetResult !== null){
+                    ElMessage({
+                        type: 'success',
+                        message: '重置成功',
+                    })
+                }
             })
             .catch(() => {
                 ElMessage({
                     type: 'info',
-                    message: '重置失败',
+                    message: '已取消',
                 })
             })
+        },
+        async handelCreateSuccess(account) {
+            console.log('create account success', account);
+            const accountDetailRes = await getAccountDetail({
+                account: account
+            });
+            const accountDetaiData = resParse('获取辅导员详情', accountDetailRes);
+            this.successDialog.data = accountDetailParse(accountDetaiData);
+            this.createDialog.visible = false;
+            this.successDialog.visible = true;
         }
     },
     async mounted() {
         // 筛选数据处理
-        const gradeMajorRes = await getGradeMajor({});
+        const gradeMajorRes = await getAdminGradeMajor({});
         this.gradeMajorList = resParse('获取专业列表', gradeMajorRes);
-        console.log('get gradeMajorList', this.gradeMajorList);
         this.showFilter = true;
     }
 }

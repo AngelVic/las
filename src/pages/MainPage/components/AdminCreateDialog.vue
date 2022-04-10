@@ -22,64 +22,24 @@
         </el-form>
         <template #footer>
             <span class="dialog-footer">
-                <el-button type="primary" @click="save">添加</el-button>
+                <el-button type="primary" @click="save" :disabled="saveDisabled">添加</el-button>
             </span>
         </template>
   </el-dialog>
 </template>
 
 <script>
+import { parseGradeMajorData } from '@/common/utils';
+import { createAccount } from '@/common/request';
+import { resParse } from '@/common/methods';
 
 export default {
     name: 'AdminCreateDialog',
     components: {},
-    props: ['adminCreateVisible'],
+    props: ['adminCreateVisible', 'gradeMajorList'],
     data () {
         return {
-            gradeClassOptions: [
-                {
-                    value: 2000,
-                    label: '2000级',
-                    children: [
-                        {
-                            value: 'major1',
-                            label: '计算机'
-                        }
-                    ]
-                },
-                {
-                    value: 2020,
-                    label: '2020级',
-                    children: [
-                        {
-                            value: 'major1',
-                            label: '计算机'
-                        },
-                        {
-                            value: 'major2',
-                            label: '软件工程'
-                        }
-                    ]
-                },
-                {
-                    value: 2021,
-                    label: '2021级',
-                    children: [
-                        {
-                            value: 'major1',
-                            label: '计算机'
-                        },
-                        {
-                            value: 'major2',
-                            label: '软件工程'
-                        },
-                        {
-                            value: 'major3',
-                            label: '大数据'
-                        },
-                    ]
-                },
-            ],
+            gradeClassOptions: [],
             gradeClassProps: {
                 multiple: true,
             },
@@ -93,10 +53,29 @@ export default {
         close() {
             this.$emit('onClose');
         },
-        save() {
+        async save() {
             console.log('save', this.adminCreateForm);
-            this.$emit('onSuccess');
+            const createRes = await createAccount({
+                gradeIdList: this.adminCreateForm.gradeClass.map(t => t[1]),
+                name: this.adminCreateForm.name
+            });
+            const createResult = resParse('创建辅导员账号', createRes)
+            if(createResult!==null) {
+                this.$emit('onSuccess', {
+                    account: createResult
+                });
+            }
         }
+    },
+    computed: {
+        saveDisabled: function() {
+            return (this.adminCreateForm.gradeClass.length===0 || this.adminCreateForm.name==='')
+        }
+    },
+    mounted() {
+        console.log('create dialog get', this.gradeMajorList);
+        this.gradeClassOptions = parseGradeMajorData(this.gradeMajorList);
+        console.log('parseGradeMajorData', this.gradeClassOptions);
     }
 }
 </script>

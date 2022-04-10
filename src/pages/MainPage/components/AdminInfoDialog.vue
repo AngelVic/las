@@ -33,76 +33,45 @@
 
 <script>
 
+import { parseGradeMajorData } from '@/common/utils';
+import { updateAccount } from '@/common/request';
+import { resParse } from '@/common/methods';
+import { ElMessage } from 'element-plus';
+
 export default {
     name: 'AdminInfoDialog',
     components: {},
-    props: ['adminInfoVisible'],
+    props: ['adminInfoVisible', 'value', 'gradeMajorList'],
     data () {
         return {
-            gradeClassOptions: [
-                {
-                    value: 2000,
-                    label: '2000级',
-                    children: [
-                        {
-                            value: 'major1',
-                            label: '计算机'
-                        }
-                    ]
-                },
-                {
-                    value: 2020,
-                    label: '2020级',
-                    children: [
-                        {
-                            value: 'major1',
-                            label: '计算机'
-                        },
-                        {
-                            value: 'major2',
-                            label: '软件工程'
-                        }
-                    ]
-                },
-                {
-                    value: 2021,
-                    label: '2021级',
-                    children: [
-                        {
-                            value: 'major1',
-                            label: '计算机'
-                        },
-                        {
-                            value: 'major2',
-                            label: '软件工程'
-                        },
-                        {
-                            value: 'major3',
-                            label: '大数据'
-                        },
-                    ]
-                },
-            ],
+            gradeClassOptions: [],
             gradeClassProps: {
                 multiple: true,
             },
-            adminInfoForm: {
-                gradeClass: [
-                    [2000, 'major1']
-                ],
-                name: '你的名字',
-                account: '111111111'
-            }
+            adminInfoForm: {}
         }
     },
     methods: {
         close() {
             this.$emit('onClose');
         },
-        save() {
+        async save() {
             console.log('save', this.adminInfoForm);
-            this.$emit('onClose');
+            const changeRes = await updateAccount({
+                gradeIdList: this.adminInfoForm.gradeClass.map(t => t[1]),
+                name: this.adminInfoForm.name
+            });
+            const changeResult = resParse('修改辅导员信息', changeRes);
+            if(changeResult!==null) {
+                ElMessage.success('修改成功');
+                this.$emit('onClose');
+            }
         }
+    },
+    mounted() {
+        this.gradeClassOptions = parseGradeMajorData(this.gradeMajorList);
+        console.log('parse', this.gradeClassOptions)
+        this.adminInfoForm = this.value;
     }
 }
 </script>
