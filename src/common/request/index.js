@@ -119,7 +119,6 @@ export const resetAccount = async (props) => {
     return (response);
 }
 
-
 // 修改辅导员密码
 export const alterAccount = async (props) => {
     console.log('request', '/account/alter', props);
@@ -260,7 +259,7 @@ export const getMajor = async (props) => {
 }
 
 // 获取年级成绩列表
-export const getScore = async (props) => {
+export const getGradeScore = async (props) => {
     console.log('request', '/score', props);
     // const response = await axiosRequest('get', '/score', props);
     const response = {
@@ -269,12 +268,21 @@ export const getScore = async (props) => {
             {
               "average": 0,
               "failNum": 0,
-              "grade": 0,
+              "grade": 2018,
               "gradeAB": 0,
               "pass": 0,
               "subjectAB": 0,
               "totalNum": 0
-            }
+            },
+            {
+                "average": 1,
+                "failNum": 1,
+                "grade": 2019,
+                "gradeAB": 1,
+                "pass": 1,
+                "subjectAB": 1,
+                "totalNum": 1
+              }
           ],
         "msg": "success"
     }
@@ -621,6 +629,52 @@ export const getAdminGradeMajor = async (props) => {
                 majorName: '计算机'
             }
         ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 学院管理的专业列表
+export const getAdminMajor = async (props) => {
+    console.log('request', '/major', props);
+    // const response = await axiosRequest('get', '/counselor/grade', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                "majorId": 0,
+                "majorName": "软件工程"
+            },
+            {
+                "majorId": 1,
+                "majorName": "计算机"
+            }
+        ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 获取专业下属课程
+export const getMajorCourse = async (props) => {
+    console.log('request', '/course/adminList', props);
+    // const response = await axiosRequest('get', '/course/adminList', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                "courseId": 1,
+                "courseName": "大学物理"
+            },
+            {
+                "courseId": 2,
+                "courseName": "高等数学"
+            },
+            {
+                "courseId": 2,
+                "courseName": "线性代数"
+            }
+          ],
         "msg": "success"
     }
     return (response);

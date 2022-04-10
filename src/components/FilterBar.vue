@@ -23,9 +23,8 @@
                 </el-select>
             </el-form-item>
             <el-form-item v-if="subjectFilter" label="科目:">
-                <el-select class="formInput" v-model="filterForm.subject" placeholder="请选择科目">
-                    <el-option label="科目1" value="subject1"></el-option>
-                    <el-option label="科目2" value="subject2"></el-option>
+                <el-select class="formInput" v-model="filterForm.subject" placeholder="请选择科目" :disabled="filterForm.major === ''">
+                    <el-option v-for="subject in subjectList" :key="subject.id" :label="subject.subject" :value="subject.id"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -45,6 +44,8 @@ const FILTER_FORM_PROPS = {
 };
 
 import { getTermByGrade } from '@/common/utils';
+import { getMajorCourse } from '@/common/request';
+import { resParse, subjectListParse } from '@/common/methods';
 
 export default {
     name: 'FilterBar',
@@ -64,12 +65,17 @@ export default {
                 term: '',
                 class: '',
                 subject: '',
-                className: ''
+                className: '',
+                majorId: 0,
             },
-            termList: [201601, 201602, 201701, 201702, 201801, 201802, 201901, 201902, 202001, 202002],
+            termList: [],
             gradeList: [],
             majorList: [],
-            classList: []
+            classList: [],
+            subjectList: [{
+                id: 0,
+                subject: ''
+            }],
         }
     },
     methods: {
@@ -102,7 +108,7 @@ export default {
                 ...extra
             });
         },
-        handelMajorSelect(value) {
+        async handelMajorSelect(value) {
             if(this.gradeFilter) {
                 this.filterForm.grade = '';
                 this.filterForm.term = '';
@@ -114,6 +120,18 @@ export default {
                         gradeSet.add(element.grade);
                 });
                 this.gradeList = Array.from(gradeSet);
+            }
+            else if(this.subjectFilter) {
+                this.filterForm.subject = '';
+                const majorSelected = this.sourceList.find((t) => t.major === value);
+                console.log('majorSelected', majorSelected);
+                this.filterForm.majorId = majorSelected.id;
+                const subjectListRes = await getMajorCourse({
+                    majorId: majorSelected.id
+                });
+                const subjectListData = resParse('获取课程列表', subjectListRes);
+                this.subjectList = subjectListParse(subjectListData);
+                console.log('update subjectList', this.subjectList);
             }
         },
         handelGradeSelect(value) {
@@ -174,6 +192,11 @@ export default {
                 majorSet.add(element.majorName);
             });
             this.majorList = Array.from(majorSet);
+        }
+        else if(this.subjectFilter) {
+            // 年级成绩对比的情况
+            this.majorList = this.sourceList.map(t => t.major);
+            console.log('greade compare this.majorList', this.majorList)
         }
     }
 }

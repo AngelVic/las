@@ -130,3 +130,44 @@ export const accountDetailParse = (data) => {
         })
     }
 }
+
+export const majorListParse = (data) => {
+    return data.map(element => {
+        return {
+            id: element.majorId,
+            major: element.majorName,
+        }
+    })
+}
+
+export const subjectListParse = (data) => {
+    return data.map(element => {
+        return {
+            id: element.courseId,
+            subject: element.courseName,
+        }
+    })
+}
+
+export const gradeScoreListParse = (data) => {
+    return data.map(element => {
+        return {
+            title: `${element.grade}级`,
+            size: element.totalNum,
+            gpaExcellent: element.gradeAB,
+            average: `${element.average}`,
+            failed: element.failNum,
+            subjectExcellent: element.subjectAB,
+            passed: element.pass
+        }
+    })
+}
+
+export const gradeScoreCompareParse = (data) => {
+    const resList = []
+    data.forEach(element => {
+        resList.push({ year: element.grade, type: '优秀率', value: element.gradeAB });
+        resList.push({ year: element.grade, type: '及格率', value: element.pass });
+    })
+    return resList;
+}

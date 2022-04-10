@@ -3,8 +3,10 @@
     <div class='GradeCompare'>
         <div class="filter">
             <FilterBar
+                v-if="showFilter"
                 @on-filter="filter"
                 :subjectFilter="true"
+                :sourceList="majorList"
             ></FilterBar>
         </div>
         <div class="compareContent">
@@ -76,6 +78,8 @@
 
 import FilterBar from '../../../components/FilterBar';
 import { Line } from '@antv/g2plot';
+import { getAdminMajor, getGradeScore } from '@/common/request';
+import { gradeScoreCompareParse, gradeScoreListParse, majorListParse, resParse } from '@/common/methods';
 
 export default {
     name: 'GradeCompare',
@@ -84,63 +88,25 @@ export default {
     },
     data () {
         return {
+            showFilter: false,
+            majorList: [],
             curFilter: {},
-            gradeCompareTable: [
-                {
-                    title: '2001级',
-                    size: 756,
-                    gpaExcellent: 12.8,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                },
-                {
-                    title: '2002级',
-                    size: 756,
-                    gpaExcellent: 11.8,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                },
-                {
-                    title: '2003级',
-                    size: 756,
-                    gpaExcellent: 10.8,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                },
-                {
-                    title: '2004级',
-                    size: 756,
-                    gpaExcellent: 9.8,
-                    average: '64',
-                    failed: 8,
-                    subjectExcellent: 18.9,
-                    passed: 70.90
-                }
-            ],
-            gradeCompareData: [
-                { year: '2001', type: '优秀率', value: 10 },
-                { year: '2002', type: '优秀率', value: 10.98  },
-                { year: '2003', type: '优秀率', value: 10.97  },
-                { year: '2004', type: '优秀率', value: 10.8  },
-                { year: '2005', type: '优秀率', value: 12.9  },
-                { year: '2001', type: '及格率', value: 60 },
-                { year: '2002', type: '及格率', value: 61 },
-                { year: '2003', type: '及格率', value: 62 },
-                { year: '2004', type: '及格率', value: 62 },
-                { year: '2005', type: '及格率', value: 65 },
-            ]
+            gradeCompareTable: [],
+            gradeCompareData: []
         }
     },
     methods: {
-        filter(data) {
+        async filter(data) {
             console.log('grade compare filter', data);
             this.curFilter = data;
+            const gradeScoreRes = await getGradeScore({
+                majorId: this.curFilter.majorId,
+                courseId: this.curFilter.course
+            });
+            const gradeScoreData = resParse('获取年级成绩列表', gradeScoreRes);
+            this.gradeCompareTable = gradeScoreListParse(gradeScoreData);
+            this.gradeCompareData = gradeScoreCompareParse(gradeScoreData);
+            this.drawCompareLine();
         },
         drawCompareLine() {
             const line = new Line('compareLineContainer', {
@@ -162,12 +128,13 @@ export default {
             line.render();
         }
     },
-    mounted() {
-        this.drawCompareLine();
-    },
-    updated() {
-        this.$ref.compareLineContainer.innerHTML = null;
-        this.drawCompareLine();
+    async mounted() {
+        const majorListRes = await getAdminMajor({
+            'admin-account': localStorage.getItem('account')
+        })
+        const majorListData = resParse('获取专业列表', majorListRes);
+        this.majorList = majorListParse(majorListData);
+        this.showFilter = true;
     }
 }
 </script>
