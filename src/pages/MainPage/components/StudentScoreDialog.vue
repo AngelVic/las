@@ -136,7 +136,9 @@ export default {
         'term',
         'classId',
         'major',
-        'gradeMajorId'
+        'gradeMajorId',
+        'score',
+        'gpa'
     ],
     data () {
         return {
@@ -205,7 +207,14 @@ export default {
             term: this.term
         });
         const studentDetailData = resParse('获取学生详情', studentDetailRes);
-        this.studentInfo = studentDetailParse(studentDetailData, this.subjects, this.classId, this.major);
+        this.studentInfo = studentDetailParse(
+            studentDetailData,
+            this.subjects,
+            this.classId,
+            this.major,
+            this.gpa,
+            this.score
+        );
         console.log('studentInfo', this.studentInfo);
     }
 }

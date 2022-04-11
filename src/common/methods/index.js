@@ -202,19 +202,8 @@ export const studentSuggestionParse = (data) => {
     })
 }
 
-export const studentDetailParse = (data, courseList, classId, major) => {
-    const scoreData = {};
+export const studentDetailParse = (data, courseList, classId, major, gpa, score) => {
     const gpaList = [];
-    data.scoreList.forEach(item => {
-        const subject = courseList.find(course => course.id===item.courseId);
-        scoreData[item.courseId] = {
-            id: item.courseId,
-            name: subject.name,
-            state: item.makeUp===0?'normal':'failed',
-            score: item.score,
-            secScore: item.makeUp
-        }
-    })
     data.gradeList.forEach(item => {
         gpaList.push({
             term: item.term,
@@ -233,8 +222,8 @@ export const studentDetailParse = (data, courseList, classId, major) => {
             {
                 classRank: data.classRank,
                 gradeRank: data.gradeRank,
-                gpa: data.gradePoint,
-                scores: scoreData
+                gpa: gpa,
+                scores: score
             }
         ],
         gpaList: gpaList

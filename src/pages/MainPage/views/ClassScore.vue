@@ -79,11 +79,13 @@
             v-if="scoreDialog.visible"
             :studentScoreVisible="scoreDialog.visible"
             :subjects="subjects"
-            :id="selectedStudentId"
+            :id="selectedStudent.id"
             :term="curFilter.term"
             :classId="curFilter.class"
             :major="curFilter.major"
             :gradeMajorId="curFilter.gradeMajorId"
+            :score="selectedStudent.scores"
+            :gpa="selectedStudent.gpa"
             @on-close="handelStudentDialogClose"
         ></StudentScoreDialog>
     </div>
@@ -133,7 +135,11 @@ export default {
             averageScore: [],
             classGradeRate: [],
             stackedColumnPlot: {},
-            selectedStudentId: 0,
+            selectedStudent: {
+                id: 1,
+                gpa: 0,
+                scores: []
+            },
             Search
         }
     },
@@ -253,13 +259,18 @@ export default {
             callback(studentSuggestionParse(suggestionData));
         },
         handelSearchSelect(value) {
-            console.log('select student', value);
-            this.selectedStudentId = value.id;
+            this.selectedStudent.id = value.id;
+            const selectData = Array.from(this.scoreData.values()).find(t => {
+                return t.studentId === value.id
+            });
+            console.log('selectedStudent', selectData)
+            this.selectedStudent.scores = selectData.scores;
+            this.selectedStudent.gpa = selectData.gpa;
             this.scoreDialog.visible = true;
         },
         handelStudentDialogClose() {
             this.scoreDialog.visible = false;
-            this.selectedStudentId = 0;
+            this.selectedStudent = {};
             this.filter(this.curFilter);
         },
         onGpaBetweenChange(between) {

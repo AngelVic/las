@@ -60,10 +60,10 @@ export const getUserName = async (props) => {
     return (response);
 }
 
-// 获取辅导员信息（接口未开发）
+// 获取辅导员信息
 export const getAccountDetail = async (props) => {
-    console.log('request', '/account', props);
-    // const response = await axiosRequest('get', '/account', props);
+    console.log('request', '/grade/counselor', props);
+    // const response = await axiosRequest('get', '/grade/counselor', props);
     const response = {
         "code": 200,
         "data": {
@@ -742,11 +742,11 @@ export const getStudentSuggestion = async (props) => {
         "code": 200,
         "data": [
             {
-                "studentId": 0,
+                "studentId": 111111111,
                 "name": "学生1",
             },
             {
-                "studentId": 1,
+                "studentId": 111111112,
                 "name": "学生2",
             }
         ],
@@ -769,24 +769,6 @@ export const getStudentScore = async (props) => {
             "studentId": 333,
             "classRank": 11,
             "gradeRank": 12,
-            "gradePoint": 2.0,
-            scoreList: [
-                {
-                    courseId: 0,
-                    score: 66,
-                    makeUp: 0
-                },
-                {
-                    courseId: 1,
-                    score: 51,
-                    makeUp: 65
-                },
-                {
-                    courseId: 2,
-                    score: 71,
-                    makeUp: 0
-                }
-            ],
             gradeList: [
                 {
                     term: 201802,
