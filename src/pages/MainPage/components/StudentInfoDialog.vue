@@ -11,25 +11,12 @@
             <span>{{studentInfoForm.studentId}}</span>
             <span class="name">{{studentInfoForm.name}}</span>
         </div>
-        <el-form class="infoForm" :model="studentInfoForm">
-            <el-form-item label="年级" required>
-                <el-select
-                    class="input" 
-                    v-model="studentInfoForm.grade"
-                >
-                    <el-option
-                        v-for="item in grades"
-                        :key="item"
-                        :label="`${item}级`"
-                        :value="item"
-                    >
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="专业" required>
+        <el-form class="infoForm" :model="studentInfoForm" ref="infoFormRef" :rules="formRules">
+            <el-form-item label="专业" prop="major">
                 <el-select 
                     class="input" 
                     v-model="studentInfoForm.major"
+                    @change="handelMajorChange"
                 >
                     <el-option
                         v-for="item in majors"
@@ -40,21 +27,38 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="班级" required>
+            <el-form-item label="年级" prop="grade">
                 <el-select
                     class="input" 
-                    v-model="studentInfoForm.class"
+                    v-model="studentInfoForm.grade"
+                    @change="handelGradeChange"
+                    placeholder="请选择年级"
                 >
                     <el-option
-                        v-for="item in classes"
+                        v-for="item in grades"
                         :key="item"
-                        :label="`${studentInfoForm.major}${item}班`"
+                        :label="`${item}级`"
                         :value="item"
                     >
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item class="HMT" label="是否港澳台等特殊类型学生" required>
+            <el-form-item label="班级" prop="class">
+                <el-select
+                    class="input" 
+                    v-model="studentInfoForm.class"
+                    placeholder="请选择班级"
+                >
+                    <el-option
+                        v-for="item in classes"
+                        :key="item.id"
+                        :label="`${studentInfoForm.major}${item.name}班`"
+                        :value="item.id"
+                    >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item class="HMT" label="是否港澳台等特殊类型学生" prop="HMT">
                 <el-radio
                     class="HMTradio"
                     v-model="studentInfoForm.HMT"
@@ -68,48 +72,124 @@
             </el-form-item>
             <span class="tip">特殊类型学生成绩及格线与普通学生不同，可在及格分数线中设置分数。</span>
             <div class="row">
-                <el-form-item label="宿舍楼" required>
+                <el-form-item label="宿舍楼" prop="dormitory">
                     <el-input v-model="studentInfoForm.dormitory" />
                 </el-form-item>
-                <el-form-item class="room" label="宿舍号" required>
+                <el-form-item class="room" label="宿舍号" prop="room">
                     <el-input v-model="studentInfoForm.room" />
                 </el-form-item>
             </div>
         </el-form>
         <template #footer>
             <span class="dialog-footer">
-                <el-button type="primary" @click="save">保存</el-button>
+                <el-button type="primary" @click="save(this.$refs.infoFormRef)">保存</el-button>
             </span>
         </template>
   </el-dialog>
 </template>
 
 <script>
+import { updateStudent } from '@/common/request';
+import { resParse } from '@/common/methods';
+import { ElMessage } from 'element-plus'
 
 export default {
     name: 'StudentInfoDialog',
     components: {},
     props: [
         'studentInfoVisible',
-        'value'
+        'value',
+        'gradeMajorClassList'
     ],
     data () {
         return {
-            grades: [2000, 2001, 2002, 2008, 2021, 2022],
-            majors: ['计算机', '软件工程', '大数据'],
-            classes: [1, 2, 3, 4],
-            studentInfoForm: {}
+            grades: [],
+            majors: [],
+            classes: [],
+            studentInfoForm: {},
+            formRules: {
+                major: [
+                    { required: true, message: '请选择专业', trigger: 'blur' },
+                ],
+                grade: [
+                    { required: true, message: '请选择年级', trigger: 'blur' },
+                ],
+                class: [
+                    { required: true, message: '请选择班级', trigger: 'blur' },
+                ],
+                HMT: [
+                    { required: true, message: '请选择', trigger: 'blur' },
+                ],
+                dormitory: [
+                    { required: true, message: '请输入', trigger: 'blur' },
+                ],
+                room: [
+                    { required: true, message: '请输入', trigger: 'blur' },
+                ],
+            },
         }
     },
     methods: {
         close() {
             this.$emit('onClose');
         },
-        save() {
-            this.$emit('onClose');
+        async save(formRef) {
+            await formRef.validate();
+            const changeRes = await updateStudent({
+                "building": this.studentInfoForm.dormitory,
+                "isSpecial": this.studentInfoForm.HMT,
+                "room": this.studentInfoForm.room,
+                "studentId": this.studentInfoForm.studentId,
+                "classId": this.studentInfoForm.class,
+            });
+            console.log('changeRes', changeRes);
+            const changeData = resParse('修改学生信息', changeRes);
+            if(changeData!==null) {
+                ElMessage({
+                    message: '修改成功',
+                    type: 'success',
+                })
+                this.$emit('onClose');
+            }
+        },
+        updateGradeList(major) {
+            const gradeSet = new Set();
+            this.gradeMajorClassList.forEach(element => {
+                if(element.majorName === major)
+                    gradeSet.add(element.grade);
+            });
+            this.grades = Array.from(gradeSet);
+        },
+        updateClassList(major, grade) {
+            const classSet = new Set();
+            this.gradeMajorClassList.forEach(element => {
+                if(element.grade === grade && element.majorName === major)
+                    classSet.add({
+                        id: element.classId,
+                        name: element.name
+                    });
+            });
+            this.classes = Array.from(classSet);
+        },
+        handelMajorChange(major) {
+            this.studentInfoForm.grade = null;
+            this.studentInfoForm.class = null;
+            this.updateGradeList(major);
+        },
+        handelGradeChange(grade) {
+            this.studentInfoForm.class = null;
+            this.updateClassList(this.studentInfoForm.major, grade);
         }
     },
     mounted() {
+        // 专业年级班级数据处理
+        const majorSet = new Set();
+        this.gradeMajorClassList.forEach(element => {
+            majorSet.add(element.majorName);
+        });
+        this.majors = Array.from(majorSet);
+        this.updateGradeList(this.value.major);
+        this.updateClassList(this.value.major, this.value.grade);
         this.studentInfoForm = this.value;
     }
 }

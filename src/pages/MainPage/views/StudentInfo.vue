@@ -30,7 +30,7 @@
                         <el-table-column prop="major" label="专业" />
                         <el-table-column prop="class" label="班级">
                             <template #default="scope">
-                                <span>{{ scope.row.major }}{{ scope.row.class }}班</span>
+                                <span>{{ scope.row.major }}{{ scope.row.className }}班</span>
                             </template>
                         </el-table-column>
                         <el-table-column label="港澳台等特殊类型学生">
@@ -54,6 +54,7 @@
             v-if="infoDialog.visible"
             :studentInfoVisible="infoDialog.visible"
             :value="editingStudent"
+            :gradeMajorClassList="gradeMajorClassList"
             @on-close="handelStudentInfoDialogClose"
         ></StudentInfoDialog>
     </div>
@@ -92,7 +93,7 @@ export default {
                 classId: this.curFilter.class,
             })
             const studentList = resParse('获取班级学生列表', studentListRes);
-            this.studentTable = studentListParse(studentList, this.curFilter.grade, this.curFilter.major, this.curFilter.className);
+            this.studentTable = studentListParse(studentList, this.curFilter.grade, this.curFilter.major, this.curFilter.className, this.curFilter.class);
         },
         editStudent(data) {
             console.log('editing student', data);
@@ -102,6 +103,7 @@ export default {
         handelStudentInfoDialogClose() {
             this.infoDialog.visible = false;
             this.editingStudent = {};
+            this.filter(this.curFilter);
         }
     },
     async mounted() {

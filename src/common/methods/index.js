@@ -92,14 +92,15 @@ export const classScoreListParse = (data, courseList) => {
     })
 }
 
-export const studentListParse = (data, grade, major, className) => {
+export const studentListParse = (data, grade, major, className, classId) => {
     return data.map(element => {
         return {
             studentId: element.studentId,
             name: element.name,
             grade: grade,
             major: major,
-            'class': className,
+            'class': classId,
+            className: className,
             HMT: element.isSpecial,
             dormitory: element.building,
             room: element.room
