@@ -22,7 +22,7 @@
                             class="adminSearch"
                         >
                             <template #append>
-                                <el-button :icon="Search"></el-button>
+                                <el-button :icon="Search" @click="searchAdmin"></el-button>
                             </template>
                         </el-input>
                         <el-button class="addBtn" type="primary" @click="createAdmin">添加负责人</el-button>
@@ -57,6 +57,7 @@
             :value="adminDialog.data"
             :gradeMajorList="gradeMajorList"
             @on-close="() => {this.adminDialog.visible = false}"
+            @on-success="handelChangeSuccess"
         ></AdminInfoDialog>
         <AdminCreateDialog
             v-if="createDialog.visible"
@@ -111,6 +112,7 @@ export default {
                 visible: false,
                 data: {}
             },
+            adminSearch: '',
             Search
         }
     },
@@ -158,6 +160,7 @@ export default {
                         type: 'success',
                         message: '删除成功',
                     })
+                    this.filter(this.curFilter);
                 }
             })
             .catch(() => {
@@ -187,7 +190,8 @@ export default {
                     ElMessage({
                         type: 'success',
                         message: '重置成功',
-                    })
+                    });
+                    this.filter(this.curFilter);
                 }
             })
             .catch(() => {
@@ -206,6 +210,19 @@ export default {
             this.successDialog.data = accountDetailParse(accountDetaiData);
             this.createDialog.visible = false;
             this.successDialog.visible = true;
+            this.filter(this.curFilter);
+        },
+        async handelChangeSuccess() {
+            this.adminDialog.visible = false;
+            this.filter(this.curFilter);
+        },
+        async searchAdmin() {
+            const adminListRes = await searchCounselor({
+                gradeId: this.curFilter.gradeMajorId,
+                key: this.adminSearch
+            });
+            const adminListData = resParse('获取负责人列表', adminListRes);
+            this.adminTable = adminListParse(adminListData, this.curFilter.grade, this.curFilter.major);
         }
     },
     async mounted() {

@@ -16,8 +16,16 @@
                         <div class="topLine">
                             <span class="cardTitle">科目成绩分析对比-年级对比</span>
                             <div class="ops">
-                                <el-button class="ruleSet" type="text">优秀率规则</el-button>
-                                <el-button class="ruleSet" type="text">及格分数线</el-button>
+                                <el-button
+                                    class="ruleSet"
+                                    type="text"
+                                    @click="openIndicatorDialog('excellent')"
+                                >优秀率规则</el-button>
+                                <el-button
+                                    class="ruleSet"
+                                    type="text"
+                                    @click="openIndicatorDialog('pass')"
+                                >及格分数线</el-button>
                             </div>
                         </div>
                         <div class="gradeScoreTable">
@@ -71,6 +79,12 @@
                 </div>
             </div>
         </div>
+        <IndicatorSetDialog
+            :indicatorSetVisible="indicatorDialog.visible"
+            :indicatorSetTab="indicatorDialog.tab"
+            @on-close="() => {this.indicatorDialog.visible = false}"
+            @on-save="handelIndicatorSave"
+        ></IndicatorSetDialog>
     </div>
 </template>
 
@@ -80,11 +94,13 @@ import FilterBar from '../../../components/FilterBar';
 import { Line } from '@antv/g2plot';
 import { getAdminMajor, getGradeScore } from '@/common/request';
 import { gradeScoreCompareParse, gradeScoreListParse, majorListParse, resParse } from '@/common/methods';
+import IndicatorSetDialog from '../components/IndicatorSetDialog';
 
 export default {
     name: 'GradeCompare',
     components: {
-        FilterBar
+        FilterBar,
+        IndicatorSetDialog
     },
     data () {
         return {
@@ -92,7 +108,12 @@ export default {
             majorList: [],
             curFilter: {},
             gradeCompareTable: [],
-            gradeCompareData: []
+            gradeCompareData: [],
+            indicatorDialog: {
+                visible: false,
+                tab: 'excellent'
+            },
+            compareLine: {}
         }
     },
     methods: {
@@ -106,11 +127,11 @@ export default {
             const gradeScoreData = resParse('获取年级成绩列表', gradeScoreRes);
             this.gradeCompareTable = gradeScoreListParse(gradeScoreData);
             this.gradeCompareData = gradeScoreCompareParse(gradeScoreData);
-            this.drawCompareLine();
+            this.compareLine.changeData(this.gradeCompareData);
         },
         drawCompareLine() {
-            const line = new Line('compareLineContainer', {
-                data: this.gradeCompareData,
+            this.compareLine = new Line('compareLineContainer', {
+                data: [],
                 xField: 'year',
                 yField: 'value',
                 seriesField: 'type',
@@ -125,8 +146,16 @@ export default {
                 },
             });
 
-            line.render();
-        }
+            this.compareLine.render();
+        },
+        handelIndicatorSave() {
+            this.indicatorDialog.visible = false;
+            this.filter(this.curFilter)
+        },
+        openIndicatorDialog(tab) {
+            this.indicatorDialog.tab = tab;
+            this.indicatorDialog.visible = true;
+        },
     },
     async mounted() {
         const majorListRes = await getAdminMajor({
@@ -134,6 +163,7 @@ export default {
         })
         const majorListData = resParse('获取专业列表', majorListRes);
         this.majorList = majorListParse(majorListData);
+        this.drawCompareLine();
         this.showFilter = true;
     }
 }

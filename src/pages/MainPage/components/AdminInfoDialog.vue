@@ -64,7 +64,7 @@ export default {
             const changeResult = resParse('修改辅导员信息', changeRes);
             if(changeResult!==null) {
                 ElMessage.success('修改成功');
-                this.$emit('onClose');
+                this.$emit('onSuccess');
             }
         }
     },
