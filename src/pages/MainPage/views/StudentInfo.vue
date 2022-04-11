@@ -42,8 +42,8 @@
                         <el-table-column prop="dormitory" label="宿舍楼" />
                         <el-table-column prop="room" label="宿舍号" />
                         <el-table-column label="操作">
-                            <template #default>
-                                <el-button type="text" @click="editStudent">编辑</el-button>
+                            <template #default="scope">
+                                <el-button type="text" @click="editStudent(scope.row)">编辑</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -51,8 +51,10 @@
             </div>
         </div>
         <StudentInfoDialog
+            v-if="infoDialog.visible"
             :studentInfoVisible="infoDialog.visible"
-            @on-close="() => {this.infoDialog.visible = false}"
+            :value="editingStudent"
+            @on-close="handelStudentInfoDialogClose"
         ></StudentInfoDialog>
     </div>
 </template>
@@ -78,7 +80,8 @@ export default {
             studentTable: [],
             infoDialog: {
                 visible: false
-            }
+            },
+            editingStudent: {},
         }
     },
     methods: {
@@ -91,8 +94,14 @@ export default {
             const studentList = resParse('获取班级学生列表', studentListRes);
             this.studentTable = studentListParse(studentList, this.curFilter.grade, this.curFilter.major, this.curFilter.className);
         },
-        editStudent() {
+        editStudent(data) {
+            console.log('editing student', data);
+            this.editingStudent = data;
             this.infoDialog.visible = true;
+        },
+        handelStudentInfoDialogClose() {
+            this.infoDialog.visible = false;
+            this.editingStudent = {};
         }
     },
     async mounted() {

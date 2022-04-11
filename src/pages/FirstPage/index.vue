@@ -52,7 +52,8 @@
 import { User, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';
-import { login } from '@/common/request';
+import { getUserName, login } from '@/common/request';
+import { resParse } from '@/common/methods';
 
 export default {  
     name: 'FirstPage',
@@ -87,15 +88,20 @@ export default {
             let res = await login(this.form);
             this.dealLogin(res);
         },
-        dealLogin(data) {
+        async dealLogin(data) {
             if(data.code === 200) {
                 ElMessage({
                     message: '登录成功',
                     type: 'success',
                 })
                 // localStorage.setItem('username', data.data.username);
-                localStorage.setItem('account', this.form.id);
-                router.push('/main');
+                const usernameRes = await getUserName({});
+                const username = resParse('获取辅导员信息', usernameRes);
+                if(username !== null) {
+                    localStorage.setItem('account', this.form.id);
+                    localStorage.setItem('username', username);
+                    router.push('/main');
+                }
             }
             else {
                 this.LoginFormError.password = data.msg

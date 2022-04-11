@@ -115,6 +115,7 @@
             :indicatorSetVisible="indicatorDialog.visible"
             :indicatorSetTab="indicatorDialog.tab"
             @on-close="() => {this.indicatorDialog.visible = false}"
+            @on-save="handelIndicatorSave"
         ></IndicatorSetDialog>
     </div>
 </template>
@@ -248,6 +249,10 @@ export default {
             });
             const scoreData = resParse('获取成绩概览', scoreRes);
             this.compareTable = gradeClassScoreParse(scoreData);
+        },
+        handelIndicatorSave() {
+            this.indicatorDialog.visible = false;
+            this.filter(this.curFilter)
         }
     },
     async mounted() {

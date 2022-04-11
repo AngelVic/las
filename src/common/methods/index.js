@@ -171,3 +171,23 @@ export const gradeScoreCompareParse = (data) => {
     })
     return resList;
 }
+
+export const indicatorParse = (data) => {
+    return {
+        gradeExcellent: data.gradeAB,
+        classExcellent: data.classAB,
+        subjectExcellent: data.subjectAB,
+        normalPass: data.cutOff,
+        specilalPass: data.specialCutoff
+    }
+}
+
+export const indicatorFormate = (data) => {
+    return {
+        "classAB": data.classExcellent,
+        "cutOff": data.normalPass,
+        "gradeAB": data.gradeExcellent,
+        "specialCutoff": data.specilalPass,
+        "subjectAB": data.subjectExcellent
+    }
+}

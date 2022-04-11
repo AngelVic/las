@@ -8,8 +8,8 @@
         destroy-on-close
     >
         <div class="topLine">
-            <span>011111111</span>
-            <span class="name">你的名字</span>
+            <span>{{studentInfoForm.studentId}}</span>
+            <span class="name">{{studentInfoForm.name}}</span>
         </div>
         <el-form class="infoForm" :model="studentInfoForm">
             <el-form-item label="年级" required>
@@ -90,21 +90,15 @@ export default {
     name: 'StudentInfoDialog',
     components: {},
     props: [
-        'studentInfoVisible'
+        'studentInfoVisible',
+        'value'
     ],
     data () {
         return {
             grades: [2000, 2001, 2002, 2008, 2021, 2022],
             majors: ['计算机', '软件工程', '大数据'],
             classes: [1, 2, 3, 4],
-            studentInfoForm: {
-                grade: 2018,
-                major: '计算机',
-                class: 1,
-                HMT: true,
-                dormitory: 33,
-                room: 111
-            }
+            studentInfoForm: {}
         }
     },
     methods: {
@@ -114,6 +108,9 @@ export default {
         save() {
             this.$emit('onClose');
         }
+    },
+    mounted() {
+        this.studentInfoForm = this.value;
     }
 }
 </script>

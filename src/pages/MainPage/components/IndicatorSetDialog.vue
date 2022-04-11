@@ -15,7 +15,7 @@
                                 <span class="title">年级优秀率指标：</span>
                                 <div class="input">
                                     <span class="prefix">学生绩点 ≥</span>
-                                    <el-input v-model="indicatorData.gradeExcellent" class="inputer" size="small"></el-input>
+                                    <el-input-number :controls="false" v-model="indicatorData.gradeExcellent" class="inputer" size="small"></el-input-number>
                                     <span class="append">为优秀。</span>
                                 </div>
                                 <span class="tip">学生绩点总分4分制，仅支持判断至小数点后两位。</span>
@@ -25,7 +25,7 @@
                                 <span class="title">班级绩点优秀率指标：</span>
                                 <div class="input">
                                     <span class="prefix">学生绩点排名年级前</span>
-                                    <el-input v-model="indicatorData.classExcellent" class="inputer" size="small"></el-input>
+                                    <el-input-number :controls="false" v-model="indicatorData.classExcellent" class="inputer" size="small"></el-input-number>
                                     <span class="append">%为优秀。</span>
                                 </div>
                                 <span class="tip">仅支持判断至小数点后一位。</span>
@@ -35,7 +35,7 @@
                                 <span class="title">班级科目优秀率指标：</span>
                                 <div class="input">
                                     <span class="prefix">学生该科目成绩 ≥</span>
-                                    <el-input v-model="indicatorData.subjectExcellent" class="inputer" size="small"></el-input>
+                                    <el-input-number :controls="false" v-model="indicatorData.subjectExcellent" class="inputer" size="small"></el-input-number>
                                     <span class="append">为优秀。</span>
                                 </div>
                             </div>
@@ -47,7 +47,7 @@
                                 <span class="title">普通学生及格线指标：</span>
                                 <div class="input">
                                     <span class="prefix">科目分数 ≥</span>
-                                    <el-input v-model="indicatorData.normalPass" class="inputer" size="small"></el-input>
+                                    <el-input-number :controls="false" v-model="indicatorData.normalPass" class="inputer" size="small"></el-input-number>
                                     <span class="append">为及格。</span>
                                 </div>
                                 <span class="tip">普通学生科目分数≥60分为及格，默认不可修改。</span>
@@ -57,7 +57,7 @@
                                 <span class="title">特殊学生及格线指标：</span>
                                 <div class="input">
                                     <span class="prefix">科目分数≥</span>
-                                    <el-input v-model="indicatorData.specilalPass" class="inputer" size="small"></el-input>
+                                    <el-input-number :controls="false" v-model="indicatorData.specilalPass" class="inputer" size="small"></el-input-number>
                                     <span class="append">为及格。</span>
                                 </div>
                                 <span class="tip">如港澳台、少数民族等及格线非60分的学生，及格线分数可修改；</span>
@@ -73,6 +73,8 @@
 </template>
 
 <script>
+import { getIndicator, setIndicator } from '@/common/request';
+import { indicatorFormate, indicatorParse, resParse } from '@/common/methods';
 
 export default {
     name: 'IndicatorSetDialog',
@@ -96,13 +98,21 @@ export default {
         tabClick() {
 
         },
-        save() {
+        async save() {
             // save async
-            this.$emit('onClose');
+            const setIndicatorData = indicatorFormate(this.indicatorData);
+            const setIndicatorRes = await setIndicator(setIndicatorData);
+            resParse('设置优秀及格指标', setIndicatorRes); 
+            this.$emit('onSave');
         },
         close() {
             this.$emit('onClose');
         }
+    },
+    async mounted() {
+        const indicatorRes = await getIndicator({});
+        const indicatorData = resParse('获取优秀及格指标', indicatorRes);
+        this.indicatorData = indicatorParse(indicatorData);
     }
 }
 </script>

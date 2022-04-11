@@ -46,6 +46,20 @@ export const login = async (props) => {
     return (response);
 }
 
+// 获取辅导员名
+export const getUserName = async (props) => {
+    console.log('request', '/counselor/name', props);
+    // const response = await axiosRequest('get', '/counselor/name', {
+    //     account: props.id,
+    // });
+    const response = {
+        "code": 200,
+        "data": '测试名1',
+        "msg": "success"
+    }
+    return (response);
+}
+
 // 获取辅导员信息（接口未开发）
 export const getAccountDetail = async (props) => {
     console.log('request', '/account', props);
@@ -675,6 +689,35 @@ export const getMajorCourse = async (props) => {
                 "courseName": "线性代数"
             }
           ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 获取优秀率及格率指标
+export const getIndicator = async (props) => {
+    console.log('request', '/quota', props);
+    // const response = await axiosRequest('get', '/quota', props);
+    const response = {
+        "code": 200,
+        "data": {
+            "classAB": 1,
+            "cutOff": 2,
+            "gradeAB": 3,
+            "specialCutoff": 4,
+            "subjectAB": 5
+        },
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 设置优秀率及格率指标
+export const setIndicator = async (props) => {
+    console.log('request', '/quota', props);
+    // const response = await axiosRequest('post', '/quota', props);
+    const response = {
+        "code": 200,
         "msg": "success"
     }
     return (response);
