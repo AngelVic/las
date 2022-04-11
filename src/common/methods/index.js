@@ -238,3 +238,22 @@ export const classListParse = (data) => {
         }
     })
 }
+
+export const fileListParse = (data) => {
+    return data.map(element => {
+        const time = Date.parse(element.uploadTime)
+        return {
+            id: element.fileId,
+            grade: element.grade,
+            major: element.majorName,
+            term: element.term,
+            principal: element.admin,
+            file: {
+                name: element.fileName,
+                link: element.fileUrl
+            },
+            time: new Date(time).toLocaleString(),
+            state: element.state
+        }
+    })
+}

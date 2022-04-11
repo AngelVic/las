@@ -51,8 +51,10 @@
                                     class="upload"
                                     :auto-upload="false"
                                     :limit="1"
-                                    action="..."
-                                    :data="uploadForm"
+                                    action="/file/excel"
+                                    :data="uploadParams"
+                                    :on-success="handelUploadSuccess"
+                                    :on-error="handelUploadError"
                                 >
                                     <template #trigger>
                                         <el-button :icon="Upload">上传文件</el-button>
@@ -77,11 +79,12 @@
                 <div class="contentCard">
                     <div class="topLine">
                         <span class="cardTitle">成绩上传</span>
-                        <el-button type="primary">批量删除</el-button>
+                        <el-button type="primary" @click="multiDeleteFile" :disabled="fileTableSelected.length===0">批量删除</el-button>
                     </div>
                     <div class="table">
-                        <el-table :data="fileTable" style="width: 100%">
-                            <el-table-column type="index" />
+                        <el-table :data="fileTable" style="width: 100%" @selection-change="handleSelectionChange">
+                            <el-table-column type="selection" width="40" />
+                            <el-table-column label="序号" type="index" width="64" />
                             <el-table-column label="年级">
                                 <template #default="scope">
                                     <span>{{ scope.row.grade }}级</span>
@@ -92,20 +95,21 @@
                             <el-table-column prop="principal" label="负责人" />
                             <el-table-column label="已上传文件" width="240">
                                 <template #default="scope">
-                                    <el-link type="primary" :href="scope.row.file.link">{{ scope.row.file.name }}</el-link>
+                                    <el-link type="primary" :href="scope.row.file.link" download>{{ scope.row.file.name }}</el-link>
                                 </template>
                             </el-table-column>
                             <el-table-column prop="time" label="上传时间" />
                             <el-table-column prop="state" label="文件状态">
                                 <template #default="scope">
-                                    <el-tag v-if="scope.row.state=='uploaded'" type="success">已上传</el-tag>
-                                    <el-tag v-else-if="scope.row.state=='deleted'" type="info">已删除</el-tag>
+                                    <el-tag v-if="scope.row.state=='1'" type="success">已上传</el-tag>
+                                    <el-tag v-else-if="scope.row.state=='2'" type="info">已删除</el-tag>
+                                    <el-tag v-else-if="scope.row.state=='0'">处理中</el-tag>
                                     <el-tag v-else type="info">未知</el-tag>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作">
-                                <template #default>
-                                    <el-button type="text" @click="deleteFile">删除文件</el-button>
+                                <template #default="scope">
+                                    <el-button type="text" @click="deleteFile(scope.row.id)">删除文件</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -121,8 +125,8 @@
 import FilterBar from '../../../components/FilterBar.vue'
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { getGradeMajor } from '@/common/request';
-import { resParse } from '@/common/methods';
+import { deleteFileMulti, getFileList, getGradeMajor } from '@/common/request';
+import { resParse, fileListParse } from '@/common/methods';
 
 export default {
     name: 'FileManage',
@@ -138,34 +142,14 @@ export default {
                 grade: '',
                 major: ''
             },
+            uploadParams: {
+                account: '',
+                gradeId: ''
+            },
             uploadGradeList: [],
             uploadMajorList: [],
-            fileTable: [
-                {
-                    grade: 2000,
-                    major: '计算机',
-                    term: '200001',
-                    principal: '你的名字',
-                    file: {
-                        name: '202002 18级计算机成绩.excel',
-                        link: 'https://baidu.com'
-                    },
-                    time: '2000-01-01 11:11',
-                    state: 'uploaded'
-                },
-                {
-                    grade: 2000,
-                    major: '计算机',
-                    term: '200001',
-                    principal: '你的名字',
-                    file: {
-                        name: '202002 18级计算机成绩.excel',
-                        link: 'https://baidu.com'
-                    },
-                    time: '2000-01-01 11:11',
-                    state: 'deleted'
-                }
-            ],
+            fileTable: [],
+            fileTableSelected: [],
             Upload
         }
     },
@@ -178,16 +162,27 @@ export default {
         }
     },
     methods: {
-        filter(data) {
+        async filter(data) {
             console.log('file filter', data);
             this.curFilter = data;
+            const fileListRes = await getFileList({
+                gradeId: this.curFilter.gradeMajorId,
+                term: this.curFilter.term
+            });
+            const fileListData = resParse('获取文件列表', fileListRes);
+            this.fileTable = fileListParse(fileListData);
         },
         async submitUpload(formRef, fileRef) {
             await formRef.validate();
-            console.log('submitUpload', this.uploadForm);
+            console.log('submitUpload', this.uploadForm, fileRef);
+            this.uploadParams.account = localStorage.getItem('account');
+            const uploadGradeData = this.gradeMajorList.find(t => {
+                return (t.majorName===this.uploadForm.major && t.grade===this.uploadForm.grade)
+            })
+            this.uploadParams.gradeId = uploadGradeData.id;
             fileRef.submit();
         },
-        deleteFile() {
+        deleteFile(id) {
             ElMessageBox.confirm(
                 '是否删除文件，删除后系统中与该文件相关的数据将全部删除？',
                 {
@@ -197,11 +192,48 @@ export default {
                     type: 'info',
                 }
             )
-                .then(() => {
+                .then(async () => {
+                    const deleteRes = await deleteFileMulti({
+                        fileIdList: [id] 
+                    });
+                    const deleteResult = resParse('文件删除', deleteRes);
+                    if(deleteResult !== null){
+                        ElMessage({
+                            type: 'success',
+                            message: '删除成功',
+                        })
+                        this.filter(this.curFilter);
+                    }
+                })
+                .catch(() => {
                     ElMessage({
-                        type: 'success',
-                        message: '删除成功',
+                        type: 'info',
+                        message: '删除失败',
                     })
+                })
+        },
+        async multiDeleteFile() {
+            ElMessageBox.confirm(
+                '是否删除文件，删除后系统中与该文件相关的数据将全部删除？',
+                {
+                    title: '删除文件',
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'info',
+                }
+            )
+                .then(async () => {
+                    const deleteRes = await deleteFileMulti({
+                        fileIdList: this.fileTableSelected.map(t => t.id)
+                    });
+                    const deleteResult = resParse('文件删除', deleteRes);
+                    if(deleteResult !== null){
+                        ElMessage({
+                            type: 'success',
+                            message: '删除成功',
+                        })
+                        this.filter(this.curFilter);
+                    }
                 })
                 .catch(() => {
                     ElMessage({
@@ -218,6 +250,17 @@ export default {
                     gradeSet.add(element.grade);
             });
             this.uploadGradeList = Array.from(gradeSet);
+        },
+        handelUploadSuccess() {
+            ElMessage.success('上传成功');
+            this.filter(this.curFilter);
+        },
+        handelUploadError() {
+            ElMessage.error('上传失败');
+        },
+        handleSelectionChange(val) {
+            console.log('table select', val);
+            this.fileTableSelected = val;
         }
     },
     async mounted() {

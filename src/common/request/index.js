@@ -734,7 +734,7 @@ export const setIndicator = async (props) => {
     return (response);
 }
 
-// 学生搜索建议列表（待定）
+// 学生搜索建议列表（开发中）
 export const getStudentSuggestion = async (props) => {
     console.log('request', '/student/suggest', props);
     // const response = await axiosRequest('get', '/student/suggest', props);
@@ -780,6 +780,63 @@ export const getStudentScore = async (props) => {
                 }
             ]
         },
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 获取文件列表
+export const getFileList = async (props) => {
+    console.log('request', '/file/list', props);
+    // const response = await axiosRequest('get', '/file/list', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                fileId: 0,
+                grade: 2018,
+                majorName: '计算机',
+                term: 201801,
+                admin: '负责人1',
+                fileUrl: 'url',
+                fileName: '文件名1',
+                uploadTime: '2022-03-28T11:04:23.340Z',
+                state: 0
+            },
+            {
+                fileId: 1,
+                grade: 2018,
+                majorName: '计算机',
+                term: 201801,
+                admin: '负责人2',
+                fileUrl: 'url',
+                fileName: '文件名2',
+                uploadTime: '2022-03-28T11:04:23.340Z',
+                state: 1
+            },
+            {
+                fileId: 2,
+                grade: 2018,
+                majorName: '计算机',
+                term: 201801,
+                admin: '负责人3',
+                fileUrl: 'url',
+                fileName: '文件名3',
+                uploadTime: '2022-03-28T11:04:23.340Z',
+                state: 2
+            }
+        ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 删除文件
+export const deleteFileMulti = async (props) => {
+    console.log('request', '/file/delete', props);
+    // const response = await axiosRequest('post', '/file/delete', props);
+    const response = {
+        "code": 200,
         "msg": "success"
     }
     return (response);
