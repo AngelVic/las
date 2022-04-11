@@ -8,7 +8,7 @@
                     <span class="unReadSize">您有1条未读消息</span>
                 </div>
                 <div class="right">
-                    <el-button type="primary">全部已读</el-button>
+                    <el-button type="primary" @click="handelWarningReadedClick">全部已读</el-button>
                 </div>
             </div>
             <el-divider></el-divider>
@@ -20,7 +20,7 @@
                         <p class="brief">{{ warn.brief }}</p>
                     </div>
                     <div class="right">
-                        <el-button class="detailBtn" type="text" @click="showWarning">查看详情</el-button>
+                        <el-button class="detailBtn" type="text" @click="showWarning(warn.id)">查看详情</el-button>
                     </div>
                 </div>
                 <div class="warningBlock warning-unread" v-for="warn in warningListUnread" :key="warn.id">
@@ -30,7 +30,7 @@
                         <p class="brief">{{ warn.brief }}</p>
                     </div>
                     <div class="right">
-                        <el-button class="detailBtn" type="text" @click="showWarning">查看详情</el-button>
+                        <el-button class="detailBtn" type="text" @click="showWarning(warn.id)">查看详情</el-button>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,9 @@
 
 <script>
 
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import { setAllWarningReaded, setWarningReaded } from '@/common/request'
+import { resParse } from '@/common/methods'
 
 export default {
     name: 'StudentWarning',
@@ -79,7 +81,7 @@ export default {
         }
     },
     methods: {
-        showWarning() {
+        showWarning(id) {
             ElMessageBox.alert(
                 `
                 <p>亲爱的xxx辅导员您好：</p>
@@ -94,9 +96,26 @@ export default {
                 '学生成绩预警',
                 {
                     confirmButtonText: '关闭',
-                    dangerouslyUseHTMLString: true
+                    dangerouslyUseHTMLString: true,
+                    callback: () => { this.handelWarningReaded(id) }
                 }
             )
+        },
+        async handelWarningReaded(id) {
+            const setReadedRes = await setWarningReaded({
+                id
+            });
+            resParse('设置已读', setReadedRes);
+        },
+        async handelWarningReadedClick() {
+            const setReadedRes = await setAllWarningReaded({});
+            const setReadedData = resParse('全部已读', setReadedRes);
+            if(setReadedData!==null) {
+                ElMessage({
+                    type: 'success',
+                    message: '已读成功',
+                })
+            }
         }
     }
 }

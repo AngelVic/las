@@ -841,3 +841,25 @@ export const deleteFileMulti = async (props) => {
     }
     return (response);
 }
+
+// 消息全部已读
+export const setAllWarningReaded = async (props) => {
+    console.log('request', '/warning/allreaded', props);
+    // const response = await axiosRequest('post', '/warning/allreaded', props);
+    const response = {
+        "code": 200,
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 消息已读
+export const setWarningReaded = async (props) => {
+    console.log('request', '/warning/readed', props);
+    // const response = await axiosRequest('post', '/warning/readed', props);
+    const response = {
+        "code": 200,
+        "msg": "success"
+    }
+    return (response);
+}
