@@ -34,15 +34,15 @@
                         <span>班级:</span>
                         <el-select
                             class="classInput" 
-                            v-model="studentInfo.class"
+                            v-model="studentInfo.classId"
                             size="small"
                             :disabled="!studentEditable"
                         >
                             <el-option
                                 v-for="item in classes"
-                                :key="item"
-                                :label="`${studentInfo.major}${item}班`"
-                                :value="item"
+                                :key="item.value"
+                                :label="`${studentInfo.major}${item.label}班`"
+                                :value="item.id"
                             >
                             </el-option>
                         </el-select>
@@ -70,14 +70,14 @@
                 </div>
                 <div class="tableContent">
                     <el-table
-                        :data="scoreData"
+                        :data="studentInfo.scoreData"
                         style="width: 100%"
                     >
                         <el-table-column prop="classRank" label="班级排名" />
                         <el-table-column prop="gradeRank" label="年级排名" />
                         <el-table-column prop="gpa" label="学期绩点" />
                         <el-table-column
-                            v-for="subject in subjectList"
+                            v-for="subject in subjects"
                             :key="subject.id"
                             :label="subject.name"
                             sortable
@@ -96,10 +96,15 @@
             </div>
             <div class="charts">
                 <div class="column-1">
-                    <AdvantageRadar positon="studentScore"></AdvantageRadar>
+                    <AdvantageRadar
+                        type="grade"
+                        :subjects="subjects"
+                        :value="studentInfo.scoreData[0].scores"
+                        positon="studentScore"
+                    ></AdvantageRadar>
                 </div>
                 <div class="column-2">
-                    <GpaChangeLine></GpaChangeLine>
+                    <GpaChangeLine :value="studentInfo.gpaList"></GpaChangeLine>
                 </div>
             </div>
         </div>
@@ -107,14 +112,16 @@
 </template>
 
 <script>
+import { getStudentScore, searchClass, updateStudent } from '@/common/request'
+import AdvantageRadar from '../../../components/AdvantageRadar'
+import GpaChangeLine from '../../../components/GpaChangeLine'
+import { classListParse, resParse, studentDetailParse } from '@/common/methods'
+import { ElMessage } from 'element-plus';
 
 const SCORE_COLOR = {
     normal: '#303133',
     failed: '#f56c6c'
 }
-
-import AdvantageRadar from '../../../components/AdvantageRadar'
-import GpaChangeLine from '../../../components/GpaChangeLine'
 
 export default {
     name: 'StudentScoreDialog',
@@ -123,65 +130,26 @@ export default {
         GpaChangeLine
     },
     props: [
-        'studentScoreVisible'
+        'studentScoreVisible',
+        'subjects',
+        'id',
+        'term',
+        'classId',
+        'major',
+        'gradeMajorId'
     ],
     data () {
         return {
             studentInfo: {
-                studentId: '011111111',
-                name: '你的名字',
-                HMT: false,
-                class: 1,
-                major: '计算机',
-                dormitory: 33,
-                room: 111
+                scoreData:[
+                    {
+                        scores:[]
+                    }
+                ],
+                gpaList: []
             },
             studentEditable: false,
-            classes: [1,2,3,4,5],
-            scoreData: [
-                {
-                    id: 0,
-                    name: '姓名1',
-                    classRank: 12,
-                    gradeRank: 66,
-                    gpa: 2.5,
-                    scores: {
-                        sub1: {
-                            id: 1,
-                            name: '高等数学',
-                            state: 'normal',
-                            score: 76
-                        },
-                        sub2: {
-                            id: 2,
-                            name: '概率论',
-                            state: 'failed',
-                            score: 52,
-                            secScore: 62
-                        },
-                        sub3: {
-                            id: 3,
-                            name: '软件工程',
-                            state: 'normal',
-                            score: 88
-                        }
-                    }
-                }
-            ],
-            subjectList: [
-                {
-                    id: 1,
-                    name: '高等数学'
-                },
-                {
-                    id: 3,
-                    name: '软件工程'
-                },
-                {
-                    id: 2,
-                    name: '概率论'
-                }
-            ]
+            classes: []
         }
     },
     methods: {
@@ -191,25 +159,54 @@ export default {
         changeStudent() {
             this.studentEditable = true;
         },
-        save() {
+        async save() {
             this.studentEditable = false;
+            console.log('new info', this.studentInfo)
+            const changeRes = await updateStudent({
+                "building": this.studentInfo.dormitory,
+                "isSpecial": this.studentInfo.HMT,
+                "room": this.studentInfo.room,
+                "studentId": this.studentInfo.studentId,
+                "class": this.studentInfo.classId
+            });
+            const changeResult = resParse('修改学生信息', changeRes);
+            if(changeResult!==null) {
+                ElMessage.success('修改成功');
+            }
         },
         getScoreWithId(scope, id) {
-            return scope.row.scores[`sub${id}`].score;
+            return scope.row.scores[`${id}`].score;
         },
         getSecScoreWithId(scope, id) {
-            return scope.row.scores[`sub${id}`].secScore;
+            return scope.row.scores[`${id}`].secScore;
         },
         getScoreStateWithId(scope, id) {
-            return scope.row.scores[`sub${id}`].state;
+            return scope.row.scores[`${id}`].state;
         },
         getScoreColor(scope, id) {
-            if(scope.row.scores[`sub${id}`].state == 'failed') {
+            if(scope.row.scores[`${id}`].state == 'failed') {
                 return SCORE_COLOR['failed'];
             } else {
                 return SCORE_COLOR['normal'];
             }
         },
+    },
+    async mounted() {
+        console.log('mounted student score dialog', this.gradeMajorId);
+        // 获取班级列表
+        const classListRes = await searchClass({
+            gradeId: this.gradeMajorId
+        });
+        const classListData = resParse('获取专业下属班级', classListRes);
+        this.classes = classListParse(classListData);
+        // 获取学生信息
+        const studentDetailRes = await getStudentScore({
+            studentId: this.id,
+            term: this.term
+        });
+        const studentDetailData = resParse('获取学生详情', studentDetailRes);
+        this.studentInfo = studentDetailParse(studentDetailData, this.subjects, this.classId, this.major);
+        console.log('studentInfo', this.studentInfo);
     }
 }
 </script>
@@ -326,10 +323,12 @@ export default {
     width: 100%;
 
     .column-1 {
+        flex: 4;
         width: 40%;
     }
 
     .column-2 {
+        flex: 6;
         width: 100%;
         margin-left: 16px;
     }

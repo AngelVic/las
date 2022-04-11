@@ -37,15 +37,16 @@
                 <div class="contentCard scoreCard">
                     <div class="topLine">
                         <span class="cardTitle">班级成绩（黄底中括号内的成绩为该同学的补考成绩）</span>
-                        <el-input
+                        <el-autocomplete
                             class="searchInput"
                             v-model="scoreSearch"
                             placeholder="搜索学号 or 姓名"
+                            :fetch-suggestions="searchStudent"
+                            :trigger-on-focus="false"
+                            @select="handelSearchSelect"
+                            :disabled="studentSearchDisabled"
                         >
-                            <template #append>
-                                <el-button :icon="Search" @click="searchStudent"></el-button>
-                            </template>
-                        </el-input>
+                        </el-autocomplete>
                     </div>
                     <el-table
                         :data="scoreData"
@@ -75,8 +76,15 @@
             </div>
         </div>
         <StudentScoreDialog
+            v-if="scoreDialog.visible"
             :studentScoreVisible="scoreDialog.visible"
-            @on-close="() => {this.scoreDialog.visible = false}"
+            :subjects="subjects"
+            :id="selectedStudentId"
+            :term="curFilter.term"
+            :classId="curFilter.class"
+            :major="curFilter.major"
+            :gradeMajorId="curFilter.gradeMajorId"
+            @on-close="handelStudentDialogClose"
         ></StudentScoreDialog>
     </div>
 </template>
@@ -89,9 +97,9 @@ import GpaDistribution from '../../../components/GpaDistribution';
 import StudentScoreDialog from '../components/StudentScoreDialog'
 import { Column } from '@antv/g2plot';
 import { Search } from '@element-plus/icons-vue'
-import { getClassGradeRate, getClassRadarChart, getClassScorePieChart, getClassScoretList, getClassSubjectList, getGradeMajorClass } from '@/common/request';
-import { averageScoreParse, classGradeRateParse, classScoreListParse, resParse, subjectsParse } from '@/common/methods';
-import { parsePieData } from '@/common/utils';
+import { getClassGradeRate, getClassRadarChart, getClassScorePieChart, getClassScoretList, getClassSubjectList, getGradeMajorClass, getStudentSuggestion } from '@/common/request';
+import { averageScoreParse, classGradeRateParse, classScoreListParse, resParse, studentSuggestionParse, subjectsParse } from '@/common/methods';
+import { parsePieData, StrIsNumber } from '@/common/utils';
 
 const SCORE_COLOR = {
     normal: '#303133',
@@ -125,7 +133,13 @@ export default {
             averageScore: [],
             classGradeRate: [],
             stackedColumnPlot: {},
+            selectedStudentId: 0,
             Search
+        }
+    },
+    computed: {
+        studentSearchDisabled: function() {
+            return (this.curFilter.class === '')
         }
     },
     methods: {
@@ -139,6 +153,7 @@ export default {
             })
             const subjectListData = resParse('获取科目列表', subjectListRes);
             this.subjects = subjectsParse(subjectListData);
+            console.log('get subjects', this.subjects);
             // 优势雷达数据
             this.updateRadarChart();
             // 饼图数据处理
@@ -225,9 +240,27 @@ export default {
                 return SCORE_COLOR['normal'];
             }
         },
-        searchStudent() {
-            console.log('search student', this.scoreSearch);
+        async searchStudent(queryString, callback) {
+            console.log('search student', queryString, callback);
+            if(StrIsNumber(queryString) && queryString.length < 7) {
+                return;
+            }
+            const suggestionRes = await getStudentSuggestion({
+                key: queryString,
+                classId: this.curFilter.class
+            });
+            const suggestionData = resParse('获取搜索建议', suggestionRes);
+            callback(studentSuggestionParse(suggestionData));
+        },
+        handelSearchSelect(value) {
+            console.log('select student', value);
+            this.selectedStudentId = value.id;
             this.scoreDialog.visible = true;
+        },
+        handelStudentDialogClose() {
+            this.scoreDialog.visible = false;
+            this.selectedStudentId = 0;
+            this.filter(this.curFilter);
         },
         onGpaBetweenChange(between) {
             this.updatePieChart(between);

@@ -191,3 +191,60 @@ export const indicatorFormate = (data) => {
         "subjectAB": data.subjectExcellent
     }
 }
+
+export const studentSuggestionParse = (data) => {
+    return data.map(element => {
+        return {
+            value: element.name,
+            id: element.studentId
+        }
+    })
+}
+
+export const studentDetailParse = (data, courseList, classId, major) => {
+    const scoreData = {};
+    const gpaList = [];
+    data.scoreList.forEach(item => {
+        const subject = courseList.find(course => course.id===item.courseId);
+        scoreData[item.courseId] = {
+            id: item.courseId,
+            name: subject.name,
+            state: item.makeUp===0?'normal':'failed',
+            score: item.score,
+            secScore: item.makeUp
+        }
+    })
+    data.gradeList.forEach(item => {
+        gpaList.push({
+            term: item.term,
+            gpa: item.gradePoint
+        });
+    })
+    return {
+        studentId: data.studentId,
+        name: data.name,
+        major: major,
+        'classId': classId,
+        HMT: data.isSpecial,
+        dormitory: data.building,
+        room: data.room,
+        scoreData: [
+            {
+                classRank: data.classRank,
+                gradeRank: data.gradeRank,
+                gpa: data.gradePoint,
+                scores: scoreData
+            }
+        ],
+        gpaList: gpaList
+    }
+}
+
+export const classListParse = (data) => {
+    return data.map(element => {
+        return {
+            label: element.name,
+            id: element.classId
+        }
+    })
+}

@@ -50,3 +50,8 @@ export const parseGradeMajorData = (source) => {
     });
     return Array.from(resData.values());
 }
+
+export const StrIsNumber = (str) => {
+    const reg = /^[0-9]+.?[0-9]*$/;
+    return reg.test(str);
+}

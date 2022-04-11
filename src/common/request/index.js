@@ -172,7 +172,18 @@ export const searchClass = async (props) => {
     const response = {
         "code": 200,
         "data": [
-            {}
+            {
+                "classId": 0,
+                "name": 1
+            },
+            {
+                "classId": 1,
+                "name": 2
+            },
+            {
+                "classId": 2,
+                "name": 3
+            }
         ],
         "msg": "success"
     }
@@ -718,6 +729,75 @@ export const setIndicator = async (props) => {
     // const response = await axiosRequest('post', '/quota', props);
     const response = {
         "code": 200,
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 学生搜索建议列表（待定）
+export const getStudentSuggestion = async (props) => {
+    console.log('request', '/student/suggest', props);
+    // const response = await axiosRequest('get', '/student/suggest', props);
+    const response = {
+        "code": 200,
+        "data": [
+            {
+                "studentId": 0,
+                "name": "学生1",
+            },
+            {
+                "studentId": 1,
+                "name": "学生2",
+            }
+        ],
+        "msg": "success"
+    }
+    return (response);
+}
+
+// 获取学生信息及成绩
+export const getStudentScore = async (props) => {
+    console.log('request', '/student/score', props);
+    // const response = await axiosRequest('get', '/student/score', props);
+    const response = {
+        "code": 200,
+        "data": {
+            "building": 111,
+            "isSpecial": false,
+            "name": "string",
+            "room": 222,
+            "studentId": 333,
+            "classRank": 11,
+            "gradeRank": 12,
+            "gradePoint": 2.0,
+            scoreList: [
+                {
+                    courseId: 0,
+                    score: 66,
+                    makeUp: 0
+                },
+                {
+                    courseId: 1,
+                    score: 51,
+                    makeUp: 65
+                },
+                {
+                    courseId: 2,
+                    score: 71,
+                    makeUp: 0
+                }
+            ],
+            gradeList: [
+                {
+                    term: 201802,
+                    gradePoint: 1.5
+                },
+                {
+                    term: 201901,
+                    gradePoint: 2.1
+                }
+            ]
+        },
         "msg": "success"
     }
     return (response);

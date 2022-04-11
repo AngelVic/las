@@ -15,6 +15,7 @@ import { Line } from '@antv/g2plot';
 export default {
     name: 'GpaChangeLine',
     components: {},
+    props: ['value'],
     data () {
         return {
             gpaChange: [
@@ -42,13 +43,14 @@ export default {
                     term: '202202',
                     gpa: 2.8
                 },
-            ]
+            ],
+            gpaLinePlot: {}
         }
     },
     methods: {
         drawCompareLine() {
-            const line = new Line('gpaLine', {
-                data: this.gpaChange,
+            this.gpaLinePlot = new Line('gpaLine', {
+                data: [],
                 xField: 'term',
                 yField: 'gpa',
                 point: {
@@ -61,8 +63,14 @@ export default {
                     },
                 },
             });
-
-            line.render();
+            this.gpaLinePlot.render();
+        }
+    },
+    watch: {
+        value: function() {
+            this.gpaLinePlot.update({
+                data: this.value
+            })
         }
     },
     mounted() {

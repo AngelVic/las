@@ -67,6 +67,7 @@ export default {
                 subject: '',
                 className: '',
                 majorId: 0,
+                gradeMajorId: 0,
             },
             termList: [],
             gradeList: [],
