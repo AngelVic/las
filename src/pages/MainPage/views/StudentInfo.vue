@@ -15,7 +15,18 @@
             <div class="contentCard">
                 <div class="topLine">
                     <span class="cardTitle">学生信息</span>
-                    <div class="search"></div>
+                    <div class="search">
+                        <el-autocomplete
+                            class="searchInput"
+                            v-model="studentSearch"
+                            :fetch-suggestions="searchStudent"
+                            placeholder="搜索学号 or 姓名"
+                            @select="handelSearchSelect"
+                            :disabled="studentSearchDisabled"
+                            @clear="getStudentTable"
+                            clearable
+                        />
+                    </div>
                 </div>
                 <div class="infoTable">
                     <el-table :data="studentTable" style="width: 100%">
@@ -64,8 +75,10 @@
 
 import FilterBar from '../../../components/FilterBar.vue';
 import StudentInfoDialog from '../components/StudentInfoDialog';
-import { getGradeMajorClass, searchStudent } from '@/common/request';
-import { resParse, studentListParse } from '@/common/methods';
+import { getGradeMajorClass, getStudentSuggestion, searchStudent } from '@/common/request';
+import { resParse, studentListParse, studentSuggestionParse } from '@/common/methods';
+import { StrIsNumber } from '@/common/utils';
+import { ElMessage } from 'element-plus';
 
 export default {
     name: 'StudentInfo',
@@ -83,12 +96,21 @@ export default {
                 visible: false
             },
             editingStudent: {},
+            studentSearch: '',
+        }
+    },
+    computed: {
+        studentSearchDisabled: function() {
+            return (this.curFilter.class === '')
         }
     },
     methods: {
         async filter(data) {
             console.log('file filter', data);
             this.curFilter = data;
+            this.getStudentTable();
+        },
+        async getStudentTable() {
             const studentListRes = await searchStudent({
                 classId: this.curFilter.class,
             })
@@ -104,7 +126,36 @@ export default {
             this.infoDialog.visible = false;
             this.editingStudent = {};
             this.filter(this.curFilter);
-        }
+        },
+        async searchStudent(queryString, callback) {
+            console.log('search student', queryString, callback);
+            if(StrIsNumber(queryString) && queryString.length < 7) {
+                return;
+            }
+            const suggestionRes = await getStudentSuggestion({
+                key: queryString,
+                classId: this.curFilter.class
+            });
+            const suggestionData = resParse('获取搜索建议', suggestionRes);
+            callback(studentSuggestionParse(suggestionData));
+        },
+        async handelSearchSelect(value) {
+            const studentListRes = await searchStudent({
+                classId: this.curFilter.class,
+            })
+            const studentList = resParse('获取班级学生列表', studentListRes);
+            const parsedStudentTable = studentListParse(studentList, this.curFilter.grade, this.curFilter.major, this.curFilter.className, this.curFilter.class);
+            console.log('student select', value, parsedStudentTable);
+            const studentListItem = parsedStudentTable.find((cur) => {
+                return cur.studentId === value.id;
+            });
+            if(studentListItem !== undefined) {
+                this.studentTable = [studentListItem]
+            }
+            else {
+                ElMessage.warning('该学生不存在当前班级');
+            }
+        },
     },
     async mounted() {
         // 筛选数据处理
@@ -126,6 +177,12 @@ export default {
 .mainContent {
     padding: 32px 32px;
     box-sizing: border-box;
+
+    .topLine {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
     .infoTable {
         margin-top: 16px;

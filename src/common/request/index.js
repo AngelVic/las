@@ -203,7 +203,14 @@ export const searchStudent = async (props) => {
               "name": "string",
               "room": 222,
               "studentId": 333
-            }
+            },
+            {
+                "building": 222,
+                "isSpecial": false,
+                "name": "string",
+                "room": 555,
+                "studentId": 444
+              }
           ],
         "msg": "success"
     }
@@ -742,7 +749,7 @@ export const getStudentSuggestion = async (props) => {
         "code": 200,
         "data": [
             {
-                "studentId": 111111111,
+                "studentId": 333,
                 "name": "学生1",
             },
             {
