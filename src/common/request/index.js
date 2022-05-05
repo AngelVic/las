@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 
-const baseUrl = 'http://120.55.53.66:8978';
+const baseUrl = '/api';
 
 // 错误处理
 const errorFilter = (data) => {
@@ -27,7 +27,7 @@ const axiosRequest = async (method, suffix, props) => {
             params: {
                 account: localStorage.getItem('account'),
                 ...props,
-            },
+            }
         }));
     }
     return errorFilter(await axios({
