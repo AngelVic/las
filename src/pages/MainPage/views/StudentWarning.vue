@@ -61,7 +61,7 @@ export default {
                 {
                     confirmButtonText: '关闭',
                     dangerouslyUseHTMLString: true,
-                    callback: () => { this.handelWarningReaded(id) }
+                    callback: () => { this.handelWarningReaded(id) },
                 }
             )
         },
@@ -70,15 +70,19 @@ export default {
                 id
             });
             resParse('设置已读', setReadedRes);
+            if(setReadedRes.code === 200) {
+                this.updateWraningList()
+            }
         },
         async handelWarningReadedClick() {
             const setReadedRes = await setAllWarningReaded({});
-            const setReadedData = resParse('全部已读', setReadedRes);
-            if(setReadedData!==null) {
+            resParse('全部已读', setReadedRes);
+            if(setReadedRes.code==200) {
                 ElMessage({
                     type: 'success',
                     message: '已读成功',
-                })
+                });
+                this.updateWraningList()
             }
         },
         async updateWraningList() {

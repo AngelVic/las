@@ -11,15 +11,25 @@ export const resParse = (key, res) => {
 }
 
 export const gradeClassScoreParse = (data) => {
+    function getTitle(num) {
+        switch(num) {
+            case 0:
+                return '无归属';
+            case 99:
+                return '年级';
+            default:
+                return `${num}班`;
+        }
+    }
     return data.map(element => {
         return {
-            title: element.classNum===0?'年级':`${element.classNum}班`,
+            title: getTitle(element.classNum),
             size: element.totalNum,
-            gpaExcellent: element.gradePointAB,
-            average: element.average,
+            gpaExcellent: (element.gradePointAB*100).toFixed(2),
+            average: element.average.toFixed(2),
             failed: element.failNum,
-            subjectExcellent: element.subjectAB,
-            passed: element.pass,
+            subjectExcellent: (element.subjectAB*100).toFixed(2),
+            passed: (element.pass*100).toFixed(2),
         }
     })
 }
@@ -37,7 +47,7 @@ export const averageScoreParse = (data) => {
     const res = {};
     data.forEach(element => {
         res[`${element.courseId}`] = {
-            score: element.average,
+            score: parseFloat(element.average.toFixed(2)),
             name: element.courseName,
             id: element.courseId
         }
@@ -273,31 +283,36 @@ export const warningListParse = (data) => {
                 detail = `
                     <p>亲爱的辅导员您好：</p>
                     <p>以下学生宿舍在${el.term}学期挂科人数过多，请您及时关注：</p>
+                    <div style="max-height:50vh;overflow-y:scroll;">
                 `
                 roomList.forEach(room => {
                     detail += `
                     <p>${room}：</p>
                     `;
                     const dormitoryInfo = room.split('#');
+                    console.log('read info', dormitoryInfo, el.warningList)
                     el.warningList.forEach(item => {
-                        if(item.building==dormitoryInfo[0] && item.room==dormitoryInfo[1]) {
+                        if(String(item.building)==dormitoryInfo[0] && String(item.room)==dormitoryInfo[1]) {
                             detail += `
                             <p>&emsp;&emsp;${item.studentId} ${item.studentName}；</p>
                             `;
                         }
                     });
                 })
+                detail += `</div>`;
             } else {
                 brief = `以下学生在${el.term}学期挂科科目已超过两门，请您及时关注`;
                 detail = `
                     <p>亲爱的辅导员您好：</p>
                     <p>以下学生在${el.term}学期挂科科目已超过两门，请您及时关注：</p>
+                    <div style="max-height:50vh;">
                 `
                 el.warningList.forEach(item => {
                     detail += `
                     <p>&emsp;&emsp;${item.studentId} ${item.studentName} ${item.failNum}门；</p>
                     `;
                 });
+                detail += `</div>`;
             }
             return {
                 id: el.recordId,
@@ -320,35 +335,35 @@ export const warningListParse = (data) => {
                 detail = `
                     <p>亲爱的辅导员您好：</p>
                     <p>以下学生宿舍在${el.term}学期挂科人数过多，请您及时关注：</p>
+                    <div style="max-height:50vh;">
                 `
                 roomList.forEach(room => {
                     detail += `
                     <p>${room}：</p>
                     `;
                     const dormitoryInfo = room.split('#');
-                    console.log('unread info', dormitoryInfo, el.warningList)
                     el.warningList.forEach(item => {
-                        console.log('find', item)
                         if(item.building==dormitoryInfo[0] && item.room==dormitoryInfo[1]) {
-                            console.log('find detail', item)
                             detail += `
                             <p>&emsp;&emsp;${item.studentId} ${item.studentName}；</p>
                             `;
                         }
                     });
                 })
-                console.log('unread detail', detail)
+                detail += `</div>`;
             } else {
                 brief = `以下学生在${el.term}学期挂科科目已超过两门，请您及时关注`;
                 detail = `
                     <p>亲爱的辅导员您好：</p>
                     <p>以下学生在${el.term}学期挂科科目已超过两门，请您及时关注：</p>
+                    <div style="max-height:50vh;">
                 `
                 el.warningList.forEach(item => {
                     detail += `
                     <p>&emsp;&emsp;${item.studentId} ${item.studentName} ${item.failNum}门；</p>
                     `;
                 });
+                detail += `</div>`;
             }
             return {
                 id: el.recordId,
@@ -359,4 +374,23 @@ export const warningListParse = (data) => {
             }
         }),
     }
+}
+
+export const majorGradeClassListParse = (data) => {
+    const res = [];
+    for(let i in data) {
+        if(data[i].name == 0 || data[i].name == 99) {
+            continue;
+        }
+        else {
+            res.push({
+                id: data[i].gradeId,
+                majorName: data[i].major,
+                grade: data[i].grade,
+                classId: data[i].classId,
+                name: data[i].name
+            })
+        }
+    }
+    return res;
 }

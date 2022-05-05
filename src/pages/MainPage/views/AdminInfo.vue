@@ -204,7 +204,7 @@ export default {
         async handelCreateSuccess(account) {
             console.log('create account success', account);
             const accountDetailRes = await getAccountDetail({
-                account: account
+                account: account.account
             });
             const accountDetaiData = resParse('获取辅导员详情', accountDetailRes);
             this.successDialog.data = accountDetailParse(accountDetaiData);

@@ -100,7 +100,7 @@ import StudentScoreDialog from '../components/StudentScoreDialog'
 import { Column } from '@antv/g2plot';
 import { Search } from '@element-plus/icons-vue'
 import { getClassGradeRate, getClassRadarChart, getClassScorePieChart, getClassScoretList, getClassSubjectList, getGradeMajorClass, getStudentSuggestion } from '@/common/request';
-import { averageScoreParse, classGradeRateParse, classScoreListParse, resParse, studentSuggestionParse, subjectsParse } from '@/common/methods';
+import { averageScoreParse, classGradeRateParse, classScoreListParse, majorGradeClassListParse, resParse, studentSuggestionParse, subjectsParse } from '@/common/methods';
 import { parsePieData, StrIsNumber } from '@/common/utils';
 
 const SCORE_COLOR = {
@@ -281,7 +281,8 @@ export default {
         // 筛选数据处理
         const gradeMajorClassRes = await getGradeMajorClass({});
         console.log('await getGradeMajorClass', gradeMajorClassRes);
-        this.gradeMajorClassList = resParse('获取专业班级列表', gradeMajorClassRes);
+        const gradeMajorClassData = resParse('获取专业班级列表', gradeMajorClassRes);
+        this.gradeMajorClassList = majorGradeClassListParse(gradeMajorClassData);
         console.log('get gradeMajorClassList', this.gradeMajorClassList);
         this.showFilter = true;
         this.drawCompare();

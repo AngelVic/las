@@ -264,7 +264,6 @@ export default {
                 term: this.curFilter.term
             })
             const chartData = resParse('获取年级平均分', radarChartRes);
-            console.log('average data', chartData);
             this.averageScore = averageScoreParse(chartData);
             console.log('average data', this.averageScore);
         },
