@@ -257,3 +257,106 @@ export const fileListParse = (data) => {
         }
     })
 }
+
+export const warningListParse = (data) => {
+    return {
+        warningListReaded: data.readedList.map(el => {
+            const time = Date.parse(el.creatTime);
+            let brief='', detail='';
+            if('building' in el.warningList[0]) {
+                const roomSet = new Set();
+                el.warningList.forEach(item => {
+                    roomSet.add(`${item.building}#${item.room}`);
+                });
+                const roomList = Array.from(roomSet);
+                brief = `以下学生宿舍在${el.term}学期挂科人数过多，请您及时关注`;
+                detail = `
+                    <p>亲爱的辅导员您好：</p>
+                    <p>以下学生宿舍在${el.term}学期挂科人数过多，请您及时关注：</p>
+                `
+                roomList.forEach(room => {
+                    detail += `
+                    <p>${room}：</p>
+                    `;
+                    const dormitoryInfo = room.split('#');
+                    el.warningList.forEach(item => {
+                        if(item.building==dormitoryInfo[0] && item.room==dormitoryInfo[1]) {
+                            detail += `
+                            <p>&emsp;&emsp;${item.studentId} ${item.studentName}；</p>
+                            `;
+                        }
+                    });
+                })
+            } else {
+                brief = `以下学生在${el.term}学期挂科科目已超过两门，请您及时关注`;
+                detail = `
+                    <p>亲爱的辅导员您好：</p>
+                    <p>以下学生在${el.term}学期挂科科目已超过两门，请您及时关注：</p>
+                `
+                el.warningList.forEach(item => {
+                    detail += `
+                    <p>&emsp;&emsp;${item.studentId} ${item.studentName} ${item.failNum}门；</p>
+                    `;
+                });
+            }
+            return {
+                id: el.recordId,
+                time: new Date(time).toLocaleString(),
+                term: el.term,
+                brief,
+                detail,
+            }
+        }),
+        warningListUnread: data.unreadList.map(el => {
+            const time = Date.parse(el.creatTime);
+            let brief='', detail='';
+            if('building' in el.warningList[0]) {
+                const roomSet = new Set();
+                el.warningList.forEach(item => {
+                    roomSet.add(`${item.building}#${item.room}`);
+                });
+                const roomList = Array.from(roomSet);
+                brief = `以下学生宿舍在${el.term}学期挂科人数过多，请您及时关注`;
+                detail = `
+                    <p>亲爱的辅导员您好：</p>
+                    <p>以下学生宿舍在${el.term}学期挂科人数过多，请您及时关注：</p>
+                `
+                roomList.forEach(room => {
+                    detail += `
+                    <p>${room}：</p>
+                    `;
+                    const dormitoryInfo = room.split('#');
+                    console.log('unread info', dormitoryInfo, el.warningList)
+                    el.warningList.forEach(item => {
+                        console.log('find', item)
+                        if(item.building==dormitoryInfo[0] && item.room==dormitoryInfo[1]) {
+                            console.log('find detail', item)
+                            detail += `
+                            <p>&emsp;&emsp;${item.studentId} ${item.studentName}；</p>
+                            `;
+                        }
+                    });
+                })
+                console.log('unread detail', detail)
+            } else {
+                brief = `以下学生在${el.term}学期挂科科目已超过两门，请您及时关注`;
+                detail = `
+                    <p>亲爱的辅导员您好：</p>
+                    <p>以下学生在${el.term}学期挂科科目已超过两门，请您及时关注：</p>
+                `
+                el.warningList.forEach(item => {
+                    detail += `
+                    <p>&emsp;&emsp;${item.studentId} ${item.studentName} ${item.failNum}门；</p>
+                    `;
+                });
+            }
+            return {
+                id: el.recordId,
+                time: new Date(time).toLocaleString(),
+                term: el.term,
+                brief,
+                detail,
+            }
+        }),
+    }
+}

@@ -95,7 +95,9 @@ export default {
                     type: 'success',
                 })
                 // localStorage.setItem('username', data.data.username);
-                const usernameRes = await getUserName({});
+                const usernameRes = await getUserName({
+                    id: this.form.id
+                });
                 const username = resParse('获取辅导员信息', usernameRes);
                 if(username !== null) {
                     localStorage.setItem('account', this.form.id);
@@ -108,7 +110,7 @@ export default {
             }
         },
         handelForgetClick() {
-            ElMessage.error('请您联系学院管理员重置密码，感谢~');
+            ElMessage.warning('请您联系学院管理员重置密码，感谢~');
         }
     }
 }

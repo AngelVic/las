@@ -11,10 +11,12 @@
             </div>
             <div class="compare">
                 <div class="iconContainer"  v-if="type!=='totalSize'">
-                    <img class="icon" src="../assets/img/rise.svg" />
+                    <img v-if="isGrowing" class="icon" src="../assets/img/rise.svg" />
+                    <img v-else class="icon" src="../assets/img/fall.svg" />
                 </div>
-                <div class="rate"  v-if="type!=='totalSize'">
-                    <span>{{ rate }}</span>
+                <div class="rate" v-if="type!=='totalSize'">
+                    <span class="green" v-if="isGrowing">{{ rate }}</span>
+                    <span class="red" v-else>{{ rate }}</span>
                 </div>
                 <div class="description">
                     <span>{{ description }}</span>
@@ -65,6 +67,11 @@ export default {
     data () {
         return {
             imgList
+        }
+    },
+    computed: {
+        isGrowing() {
+            return this.rate[0] !== '-';
         }
     },
     methods: {
@@ -127,7 +134,12 @@ export default {
 
         .rate {
             margin-left: 2px;
-            color: #67c23a;
+            .green {
+                color: #67c23a;
+            }
+            .red {
+                color: #d81e06;
+            }
         }
 
         .description {

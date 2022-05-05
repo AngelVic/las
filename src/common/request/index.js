@@ -1,24 +1,35 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 
-const baseUrl = 'http://.../api';
+const baseUrl = 'http://120.55.53.66:8978';
 
 // 错误处理
 const errorFilter = (data) => {
-    if(data.code !== 200) {
+    console.log('res data', data);
+    if(data.status !== 200) {
         ElMessage({
-            message: `错误${data.code}[${data.msg}]`,
+            message: `错误${data.status}[${data.statusText}]`,
             type: 'error',
         })
         return null;
     }
-    return data;
+    return data.data;
 }
 
 // axios请求
 // eslint-disable-next-line no-unused-vars
 const axiosRequest = async (method, suffix, props) => {
-    const url = `${baseUrl}/${suffix}`;
+    const url = `${baseUrl}${suffix}`;
+    if(method === 'get' || method === 'POST' || method === 'put') {
+        return errorFilter(await axios({
+            method: method,
+            url: url,
+            params: {
+                account: localStorage.getItem('account'),
+                ...props,
+            },
+        }));
+    }
     return errorFilter(await axios({
         method: method,
         url: url,
@@ -29,61 +40,314 @@ const axiosRequest = async (method, suffix, props) => {
     }));
 }
 
-// 登录
+// 登录 done
 export const login = async (props) => {
     console.log('request', '/login', props);
-    // const response = await axiosRequest('post', '/login', {
-    //     account: props.id,
-    //     password: props.password
-    // });
+    const response = await axiosRequest('POST', '/login', {
+        account: props.id,
+        password: props.password
+    });
+    // const response = {
+    //     "code": 200,
+    //     "data": {
+    //         username: '测试名'
+    //     },
+    //     "msg": "login success"
+    // }
+    return (response); 
+}
+
+// 获取辅导员名 done
+export const getUserName = async (props) => {
+    console.log('request', '/counselor/name', props);
+    const response = await axiosRequest('get', '/counselor/name', {
+        account: props.id,
+    });
+    // const response = {
+    //     "code": 200,
+    //     "data": '测试名1',
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 辅导员账号获取管理年级列表 done
+export const getGradeMajor = async (props) => {
+    console.log('request', '/grade', props);
+    const response = await axiosRequest('get', '/grade', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": [
+    //         {
+    //             id: 122333,
+    //             grade: 2018,
+    //             majorName: '软件工程'
+    //         },
+    //         {
+    //             id: 122334,
+    //             grade: 2018,
+    //             majorName: '计算机'
+    //         },
+    //         {
+    //             id: 122335,
+    //             grade: 2017,
+    //             majorName: '计算机'
+    //         }
+    //     ],
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 辅导员获取年级基本信息
+export const getGradeBasic = async (props) => {
+    console.log('request', '/grade/info', props);
+    // const response = await axiosRequest('get', '/grade/info', props);
     const response = {
         "code": 200,
         "data": {
-            username: '测试名'
+            totalSize: 200,
+            failSize: 3,
+            excellentRate: '15%',
+            passRate: '98%',
+            failSizeCompare: '10%',
+            excellentRateComapre: '5%',
+            passRateCompare: '-5%'
         },
-        "msg": "login success"
+        "msg": "success"
     }
     return (response);
 }
 
-// 获取辅导员名
-export const getUserName = async (props) => {
-    console.log('request', '/counselor/name', props);
-    // const response = await axiosRequest('get', '/counselor/name', {
-    //     account: props.id,
-    // });
-    const response = {
-        "code": 200,
-        "data": '测试名1',
-        "msg": "success"
-    }
+// 年级成绩分布饼状图 done
+export const getGradeScorePieChart = async (props) => {
+    console.log('request', '/score/grade/pieChart', props);
+    const response = await axiosRequest('get', '/score/grade/pieChart', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": [2, 32, 52],
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 辅导员可对比课程列表
+export const getGradeSubjectList = async (props) => {
+    console.log('request', '/course/counselorList', props);
+    const response = await axiosRequest('get', '/course/counselorList', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": [
+    //         {
+    //             "courseId": 0,
+    //             "courseName": "课程1"
+    //         },
+    //         {
+    //             "courseId": 1,
+    //             "courseName": "课程2"
+    //         },
+    //         {
+    //             "courseId": 2,
+    //             "courseName": "课程3"
+    //         }
+    //     ],
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 获取优秀率及格率指标 done
+export const getIndicator = async (props) => {
+    console.log('request', '/quota', props);
+    const response = await axiosRequest('get', '/quota', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": {
+    //         "classAB": 1,
+    //         "cutOff": 2,
+    //         "gradeAB": 3,
+    //         "specialCutoff": 4,
+    //         "subjectAB": 5
+    //     },
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 设置优秀率及格率指标 done
+export const setIndicator = async (props) => {
+    console.log('request', '/quota', props);
+    const response = await axiosRequest('post', '/quota', props);
+    // const response = {
+    //     "code": 200,
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 根据账号获取管理班级列表
+export const getGradeMajorClass = async (props) => {
+    console.log('request', '/class/counselor', props);
+    const response = await axiosRequest('get', '/class/counselor', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": [
+    //         {
+    //             id: 122333,
+    //             grade: 2018,
+    //             majorName: '软件工程',
+    //             "classId": 0,
+    //             "name": 1
+    //         },
+    //         {
+    //             id: 122333,
+    //             grade: 2018,
+    //             majorName: '软件工程',
+    //             "classId": 3,
+    //             "name": 2
+    //         },
+    //         {
+    //             id: 122334,
+    //             grade: 2018,
+    //             majorName: '计算机',
+    //             "classId": 1,
+    //             "name": 1
+    //         },
+    //         {
+    //             id: 122335,
+    //             grade: 2017,
+    //             majorName: '计算机',
+    //             "classId": 2,
+    //             "name": 1
+    //         }
+    //     ],
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 获取文件列表
+export const getFileList = async (props) => {
+    console.log('request', '/file', props);
+    const response = await axiosRequest('get', '/file', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": [
+    //         {
+    //             fileId: 0,
+    //             grade: 2018,
+    //             majorName: '计算机',
+    //             term: 201801,
+    //             admin: '负责人1',
+    //             fileUrl: 'url',
+    //             fileName: '文件名1',
+    //             uploadTime: '2022-03-28T11:04:23.340Z',
+    //             state: 0
+    //         },
+    //         {
+    //             fileId: 1,
+    //             grade: 2018,
+    //             majorName: '计算机',
+    //             term: 201801,
+    //             admin: '负责人2',
+    //             fileUrl: 'url',
+    //             fileName: '文件名2',
+    //             uploadTime: '2022-03-28T11:04:23.340Z',
+    //             state: 1
+    //         },
+    //         {
+    //             fileId: 2,
+    //             grade: 2018,
+    //             majorName: '计算机',
+    //             term: 201801,
+    //             admin: '负责人3',
+    //             fileUrl: 'url',
+    //             fileName: '文件名3',
+    //             uploadTime: '2022-03-28T11:04:23.340Z',
+    //             state: 2
+    //         }
+    //     ],
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 上传excel文件
+export const uploadFile = async (props) => {
+    console.log('request', '/file/excel', props);
+    const response = await axiosRequest('post', '/file/excel', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": "string",
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 修改辅导员密码 done
+export const alterAccount = async (props) => {
+    console.log('request', '/account/alter', props);
+    const response = await axiosRequest('put', '/account/alter', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": 0,
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 管理员账号获取管理专业年级
+export const getAdminGradeMajor = async (props) => {
+    console.log('request', '/grade/admin', props);
+    const response = await axiosRequest('get', '/grade/admin', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": [
+    //         {
+    //             id: 122333,
+    //             grade: 2018,
+    //             majorName: '软件工程'
+    //         },
+    //         {
+    //             id: 122334,
+    //             grade: 2018,
+    //             majorName: '计算机'
+    //         },
+    //         {
+    //             id: 122335,
+    //             grade: 2017,
+    //             majorName: '计算机'
+    //         }
+    //     ],
+    //     "msg": "success"
+    // }
     return (response);
 }
 
 // 获取辅导员信息
 export const getAccountDetail = async (props) => {
     console.log('request', '/grade/counselor', props);
-    // const response = await axiosRequest('get', '/grade/counselor', props);
-    const response = {
-        "code": 200,
-        "data": {
-            "account": 111,
-            "gradeList": [
-                {
-                    "grade": 2018,
-                    "id": 122333,
-                    "majorName": "软件工程"
-                },
-                {
-                    "grade": 2017,
-                    "id": 122335,
-                    "majorName": "计算机"
-                }
-            ],
-            "name": "辅导员名"
-        },
-        "msg": "success"
-    }
+    const response = await axiosRequest('get', '/grade/counselor', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": {
+    //         "account": 111,
+    //         "gradeList": [
+    //             {
+    //                 "grade": 2018,
+    //                 "id": 122333,
+    //                 "majorName": "软件工程"
+    //             },
+    //             {
+    //                 "grade": 2017,
+    //                 "id": 122335,
+    //                 "majorName": "计算机"
+    //             }
+    //         ],
+    //         "name": "辅导员名"
+    //     },
+    //     "msg": "success"
+    // }
     return (response);
 }
 
@@ -128,18 +392,6 @@ export const resetAccount = async (props) => {
     // const response = await axiosRequest('delete', '/account', props);
     const response = {
         "code": 200,
-        "msg": "success"
-    }
-    return (response);
-}
-
-// 修改辅导员密码
-export const alterAccount = async (props) => {
-    console.log('request', '/account/alter', props);
-    // const response = await axiosRequest('put', '/account/alter', props);
-    const response = {
-        "code": 200,
-        "data": 0,
         "msg": "success"
     }
     return (response);
@@ -228,34 +480,6 @@ export const updateStudent = async (props) => {
     return (response);
 }
 
-// 辅导员账号获取管理年级列表
-export const getGradeMajor = async (props) => {
-    console.log('request', '/counselor/grade', props);
-    // const response = await axiosRequest('get', '/counselor/grade', props);
-    const response = {
-        "code": 200,
-        "data": [
-            {
-                id: 122333,
-                grade: 2018,
-                majorName: '软件工程'
-            },
-            {
-                id: 122334,
-                grade: 2018,
-                majorName: '计算机'
-            },
-            {
-                id: 122335,
-                grade: 2017,
-                majorName: '计算机'
-            }
-        ],
-        "msg": "success"
-    }
-    return (response);
-}
-
 // 获取科目列表
 export const getCourse = async (props) => {
     console.log('request', '/course', props);
@@ -321,33 +545,21 @@ export const getGradeScore = async (props) => {
     return (response);
 }
 
-// 上传excel文件
-export const uploadFile = async (props) => {
-    console.log('request', '/file/excel', props);
-    // const response = await axiosRequest('post', '/file/excel', props);
-    const response = {
-        "code": 200,
-        "data": "string",
-        "msg": "success"
-    }
-    return (response);
-}
-
 // 获取优秀率规则
 export const getQuota = async (props) => {
     console.log('request', '/quota', props);
-    // const response = await axiosRequest('get', '/quota', props);
-    const response = {
-        "code": 200,
-        "data": {
-            "classAB": 0,
-            "cutOff": 0,
-            "gradeAB": 0,
-            "specialCutoff": 0,
-            "subjectAB": 0
-        },
-        "msg": "success"
-    }
+    const response = await axiosRequest('get', '/quota', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": {
+    //         "classAB": 0,
+    //         "cutOff": 0,
+    //         "gradeAB": 0,
+    //         "specialCutoff": 0,
+    //         "subjectAB": 0
+    //     },
+    //     "msg": "success"
+    // }
     return (response);
 }
 
@@ -362,71 +574,34 @@ export const updateQuota = async (props) => {
     return (response);
 }
 
-// 年级成绩分布饼状图
-export const getGradeScorePieChart = async (props) => {
-    console.log('request', '/score/grade/pieChart', props);
-    // const response = await axiosRequest('get', '/score/grade/pieChart', props);
-    const response = {
-        "code": 200,
-        "data": [2, 32, 52],
-        "msg": "success"
-    }
-    return (response);
-}
-
-// 获取年级成绩列表
+// 辅导员获取年级成绩列表 done
 export const getScoreGradeClass = async (props) => {
     console.log('request', '/score/counselor', props);
-    // const response = await axiosRequest('get', '/score/counselor', props);
-    const response = {
-        "code": 200,
-        "data": [
-            {
-                "average": 0,
-                "classNum": 0,
-                "failNum": 0,
-                "gradePointAB": 0,
-                "pass": 0,
-                "subjectAB": 0,
-                "totalNum": 0
-            },
-            {
-                "average": 1,
-                "classNum": 1,
-                "failNum": 1,
-                "gradePointAB": 1,
-                "pass": 1,
-                "subjectAB": 1,
-                "totalNum": 1
-            }
-          ],
-        "msg": "success"
-    }
-    return (response);
-}
-
-// 辅导员可对比课程列表
-export const getGradeSubjectList = async (props) => {
-    console.log('request', '/course/counselorList', props);
-    // const response = await axiosRequest('get', '/course/counselorList', props);
-    const response = {
-        "code": 200,
-        "data": [
-            {
-                "courseId": 0,
-                "courseName": "课程1"
-            },
-            {
-                "courseId": 1,
-                "courseName": "课程2"
-            },
-            {
-                "courseId": 2,
-                "courseName": "课程3"
-            }
-        ],
-        "msg": "success"
-    }
+    const response = await axiosRequest('get', '/score/counselor', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": [
+    //         {
+    //             "average": 0,
+    //             "classNum": 0,
+    //             "failNum": 0,
+    //             "gradePointAB": 0,
+    //             "pass": 0,
+    //             "subjectAB": 0,
+    //             "totalNum": 0
+    //         },
+    //         {
+    //             "average": 1,
+    //             "classNum": 1,
+    //             "failNum": 1,
+    //             "gradePointAB": 1,
+    //             "pass": 1,
+    //             "subjectAB": 1,
+    //             "totalNum": 1
+    //         }
+    //       ],
+    //     "msg": "success"
+    // }
     return (response);
 }
 
@@ -451,47 +626,6 @@ export const getGradeScoreRadarChart = async (props) => {
                 "average": 90,
                 "courseId": 2,
                 "courseName": "课程3"
-            }
-        ],
-        "msg": "success"
-    }
-    return (response);
-}
-
-// 根据账号获取管理班级列表
-export const getGradeMajorClass = async (props) => {
-    console.log('request', '/class/counselor', props);
-    // const response = await axiosRequest('get', '/class/counselor', props);
-    const response = {
-        "code": 200,
-        "data": [
-            {
-                id: 122333,
-                grade: 2018,
-                majorName: '软件工程',
-                "classId": 0,
-                "name": 1
-            },
-            {
-                id: 122333,
-                grade: 2018,
-                majorName: '软件工程',
-                "classId": 3,
-                "name": 2
-            },
-            {
-                id: 122334,
-                grade: 2018,
-                majorName: '计算机',
-                "classId": 1,
-                "name": 1
-            },
-            {
-                id: 122335,
-                grade: 2017,
-                majorName: '计算机',
-                "classId": 2,
-                "name": 1
             }
         ],
         "msg": "success"
@@ -638,34 +772,6 @@ export const getClassScoretList = async (props) => {
     return (response);
 }
 
-// 管理员账号获取管理专业年级
-export const getAdminGradeMajor = async (props) => {
-    console.log('request', '/admin/grade', props);
-    // const response = await axiosRequest('get', '/counselor/grade', props);
-    const response = {
-        "code": 200,
-        "data": [
-            {
-                id: 122333,
-                grade: 2018,
-                majorName: '软件工程'
-            },
-            {
-                id: 122334,
-                grade: 2018,
-                majorName: '计算机'
-            },
-            {
-                id: 122335,
-                grade: 2017,
-                majorName: '计算机'
-            }
-        ],
-        "msg": "success"
-    }
-    return (response);
-}
-
 // 学院管理的专业列表
 export const getAdminMajor = async (props) => {
     console.log('request', '/major', props);
@@ -707,35 +813,6 @@ export const getMajorCourse = async (props) => {
                 "courseName": "线性代数"
             }
           ],
-        "msg": "success"
-    }
-    return (response);
-}
-
-// 获取优秀率及格率指标
-export const getIndicator = async (props) => {
-    console.log('request', '/quota', props);
-    // const response = await axiosRequest('get', '/quota', props);
-    const response = {
-        "code": 200,
-        "data": {
-            "classAB": 1,
-            "cutOff": 2,
-            "gradeAB": 3,
-            "specialCutoff": 4,
-            "subjectAB": 5
-        },
-        "msg": "success"
-    }
-    return (response);
-}
-
-// 设置优秀率及格率指标
-export const setIndicator = async (props) => {
-    console.log('request', '/quota', props);
-    // const response = await axiosRequest('post', '/quota', props);
-    const response = {
-        "code": 200,
         "msg": "success"
     }
     return (response);
@@ -792,52 +869,6 @@ export const getStudentScore = async (props) => {
     return (response);
 }
 
-// 获取文件列表
-export const getFileList = async (props) => {
-    console.log('request', '/file/list', props);
-    // const response = await axiosRequest('get', '/file/list', props);
-    const response = {
-        "code": 200,
-        "data": [
-            {
-                fileId: 0,
-                grade: 2018,
-                majorName: '计算机',
-                term: 201801,
-                admin: '负责人1',
-                fileUrl: 'url',
-                fileName: '文件名1',
-                uploadTime: '2022-03-28T11:04:23.340Z',
-                state: 0
-            },
-            {
-                fileId: 1,
-                grade: 2018,
-                majorName: '计算机',
-                term: 201801,
-                admin: '负责人2',
-                fileUrl: 'url',
-                fileName: '文件名2',
-                uploadTime: '2022-03-28T11:04:23.340Z',
-                state: 1
-            },
-            {
-                fileId: 2,
-                grade: 2018,
-                majorName: '计算机',
-                term: 201801,
-                admin: '负责人3',
-                fileUrl: 'url',
-                fileName: '文件名3',
-                uploadTime: '2022-03-28T11:04:23.340Z',
-                state: 2
-            }
-        ],
-        "msg": "success"
-    }
-    return (response);
-}
-
 // 删除文件
 export const deleteFileMulti = async (props) => {
     console.log('request', '/file/delete', props);
@@ -849,10 +880,10 @@ export const deleteFileMulti = async (props) => {
     return (response);
 }
 
-// 消息全部已读
+// 预警消息全部已读
 export const setAllWarningReaded = async (props) => {
-    console.log('request', '/warning/allreaded', props);
-    // const response = await axiosRequest('post', '/warning/allreaded', props);
+    console.log('request', '/warning/total', props);
+    // const response = await axiosRequest('get', '/warning/total', props);
     const response = {
         "code": 200,
         "msg": "success"
@@ -860,13 +891,73 @@ export const setAllWarningReaded = async (props) => {
     return (response);
 }
 
-// 消息已读
+// 预警消息已读
 export const setWarningReaded = async (props) => {
-    console.log('request', '/warning/readed', props);
-    // const response = await axiosRequest('post', '/warning/readed', props);
+    console.log('request', '/warning/read', props);
+    // const response = await axiosRequest('get', '/warning/read', props);
     const response = {
         "code": 200,
         "msg": "success"
+    }
+    return (response);
+}
+
+// 预警消息列表
+export const getWarningList = async (props) => {
+    console.log('request', '/warning', props);
+    // const readedResponse = await axiosRequest('get', '/warning', {
+    //     ...props,
+    //     isRead: true
+    // });
+    // const unreadResponse = await axiosRequest('get', '/warning', {
+    //     ...props,
+    //     isRead: false
+    // });
+    // const response = {
+    //     "code": readedResponse.code===200&&unreadResponse.code===200?200:300,
+    //     "data": {
+    //         readedList: readedResponse.data,
+    //         unreadList: unreadResponse.data
+    //     },
+    //     'msg': ''
+    // }
+    const response = {
+        "code": 200,
+        "data": {
+            readedList: [
+                {
+                    "creatTime": "2022-05-05T08:13:54.198Z",
+                    "isRead": false,
+                    "recordId": 0,
+                    "term": 1,
+                    "warningList": [
+                        {
+                            "building": 31,
+                            "failNum": 3,
+                            "room": 111,
+                            "studentId": 11122211,
+                            "studentName": "学生1"
+                        }
+                    ]
+                },
+                {
+                    "creatTime": "2022-05-05T08:13:54.198Z",
+                    "isRead": false,
+                    "recordId": 1,
+                    "term": 2,
+                    "warningList": [
+                        {
+                            "failNum": 3,
+                            "studentId": 11122211,
+                            "studentName": "学生1"
+                        }
+                    ]
+                }
+            ],
+            unreadList: [
+            ],
+        },
+        'msg': ''
     }
     return (response);
 }

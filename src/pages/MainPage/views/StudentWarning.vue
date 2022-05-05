@@ -5,7 +5,7 @@
             <div class="topLine">
                 <div class="left">
                     <span class="cardTitle">学生成绩预警</span>
-                    <span class="unReadSize">您有1条未读消息</span>
+                    <span class="unReadSize">您有{{unReadLength}}条未读消息</span>
                 </div>
                 <div class="right">
                     <el-button type="primary" @click="handelWarningReadedClick">全部已读</el-button>
@@ -13,24 +13,24 @@
             </div>
             <el-divider></el-divider>
             <div class="warningList">
-                <div class="warningBlock warning-readed" v-for="warn in warningListReaded" :key="warn.id">
+                <div class="warningBlock warning-readed" v-for="warn in warningListUnread" :key="warn.id">
                     <div class="left">
                         <span class="time">{{ warn.time }}</span>
                         <span class="title">学生成绩预警</span>
                         <p class="brief">{{ warn.brief }}</p>
                     </div>
                     <div class="right">
-                        <el-button class="detailBtn" type="text" @click="showWarning(warn.id)">查看详情</el-button>
+                        <el-button class="detailBtn" type="text" @click="showWarning(warn.id, warn.detail)">查看详情</el-button>
                     </div>
                 </div>
-                <div class="warningBlock warning-unread" v-for="warn in warningListUnread" :key="warn.id">
+                <div class="warningBlock warning-unread" v-for="warn in warningListReaded" :key="warn.id">
                     <div class="left">
                         <span class="time">{{ warn.time }}</span>
                         <span class="title">学生成绩预警</span>
                         <p class="brief">{{ warn.brief }}</p>
                     </div>
                     <div class="right">
-                        <el-button class="detailBtn" type="text" @click="showWarning(warn.id)">查看详情</el-button>
+                        <el-button class="detailBtn" type="text" @click="showWarning(warn.id, warn.detail)">查看详情</el-button>
                     </div>
                 </div>
             </div>
@@ -41,58 +41,22 @@
 <script>
 
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { setAllWarningReaded, setWarningReaded } from '@/common/request'
-import { resParse } from '@/common/methods'
+import { getWarningList, setAllWarningReaded, setWarningReaded } from '@/common/request'
+import { resParse, warningListParse } from '@/common/methods'
 
 export default {
     name: 'StudentWarning',
     components: {},
     data () {
         return {
-            warningListReaded: [
-                {
-                    id: 1,
-                    time: '2000-00-00 11:11',
-                    brief: '亲爱的xxx辅导员您好：以下学生在202001学期挂科科目已超过2门，请您及时关注：031802101 嘻嘻嘻 2门；031802111 喵喵 3门；371628392 哈哈哈 5门；'
-                },
-                {
-                    id: 2,
-                    time: '2000-00-00 11:12',
-                    brief: '亲爱的xxx辅导员您好：以下学生在202001学期挂科科目已超过2门，请您及时关注：031802101 嘻嘻嘻 2门；031802111 喵喵 3门；371628392 哈哈哈 5门；'
-                }
-            ],
-            warningListUnread: [
-                {
-                    id: 3,
-                    time: '2000-00-00 11:13',
-                    brief: '亲爱的xxx辅导员您好：以下学生在202001学期挂科科目已超过2门，请您及时关注：031802101 嘻嘻嘻 2门；031802111 喵喵 3门；371628392 哈哈哈 5门；'
-                },
-                {
-                    id: 4,
-                    time: '2000-00-00 11:14',
-                    brief: '亲爱的xxx辅导员您好：以下学生在202001学期挂科科目已超过2门，请您及时关注：031802101 嘻嘻嘻 2门；031802111 喵喵 3门；371628392 哈哈哈 5门；'
-                },
-                {
-                    id: 5,
-                    time: '2000-00-00 11:14',
-                    brief: '亲爱的xxx辅导员您好：以下学生在202001学期挂科科目已超过2门，请您及时关注：031802101 嘻嘻嘻 2门；031802111 喵喵 3门；371628392 哈哈哈 5门；'
-                }
-            ],
+            warningListReaded: [],
+            warningListUnread: [],
         }
     },
     methods: {
-        showWarning(id) {
+        showWarning(id, detail) {
             ElMessageBox.alert(
-                `
-                <p>亲爱的xxx辅导员您好：</p>
-                <p>以下学生宿舍在202001学期挂科人数过多，请您及时关注：</p>
-                <p>34#123：</p>
-                <p>&emsp;&emsp;031802101 嘻嘻嘻；</p>
-                <p>&emsp;&emsp;031802111喵喵喵；</p>
-                <p>34#222：</p>
-                <p>&emsp;&emsp;132453625 哈哈；</p>
-                <p>&emsp;&emsp;212134532 嘻嘻；</p>
-                `,
+                detail,
                 '学生成绩预警',
                 {
                     confirmButtonText: '关闭',
@@ -116,7 +80,25 @@ export default {
                     message: '已读成功',
                 })
             }
+        },
+        async updateWraningList() {
+            const listRes = await getWarningList({
+                account: localStorage.getItem('account')
+            })
+            const listData = resParse('获取预警列表', listRes);
+            const parsedListData = warningListParse(listData);
+            this.warningListReaded = parsedListData.warningListReaded;
+            this.warningListUnread = parsedListData.warningListUnread;
+            console.log(this.$data);
         }
+    },
+    computed: {
+        unReadLength() {
+            return this.warningListUnread.length;
+        }
+    },
+    mounted() {
+        this.updateWraningList();
     }
 }
 </script>
