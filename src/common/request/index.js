@@ -635,6 +635,17 @@ export const uploadFile = async (props) => {
     return (response);
 }
 
+// 删除文件 padding
+export const deleteFileMulti = async (props) => {
+    console.log('request', '/file/delete', props);
+    // const response = await axiosRequest('post', '/file/delete', props);
+    const response = {
+        "code": 200,
+        "msg": "success"
+    }
+    return (response);
+}
+
 // 获取学生信息列表 done
 export const getStudentInfoList = async (props) => {
     console.log('request', '/student', props);
@@ -944,17 +955,6 @@ export const getQuota = async (props) => {
 export const updateQuota = async (props) => {
     console.log('request', '/quota', props);
     // const response = await axiosRequest('post', '/quota', props);
-    const response = {
-        "code": 200,
-        "msg": "success"
-    }
-    return (response);
-}
-
-// 删除文件
-export const deleteFileMulti = async (props) => {
-    console.log('request', '/file/delete', props);
-    // const response = await axiosRequest('post', '/file/delete', props);
     const response = {
         "code": 200,
         "msg": "success"
