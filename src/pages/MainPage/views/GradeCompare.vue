@@ -122,7 +122,7 @@ export default {
             this.curFilter = data;
             const gradeScoreRes = await getGradeScore({
                 majorId: this.curFilter.majorId,
-                courseId: this.curFilter.course
+                courseId: this.curFilter.subject
             });
             const gradeScoreData = resParse('获取年级成绩列表', gradeScoreRes);
             this.gradeCompareTable = gradeScoreListParse(gradeScoreData);

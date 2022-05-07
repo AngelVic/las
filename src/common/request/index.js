@@ -20,12 +20,18 @@ const errorFilter = (data) => {
 // eslint-disable-next-line no-unused-vars
 const axiosRequest = async (method, suffix, props) => {
     const url = `${baseUrl}${suffix}`;
+    let defaultParams = {};
+    if(suffix!=='/account') {
+        defaultParams = {
+            account: localStorage.getItem('account'),
+        }
+    }
     if(method === 'get' || method === 'POST' || method === 'put') {
         return errorFilter(await axios({
             method: method,
             url: url,
             params: {
-                account: localStorage.getItem('account'),
+                ...defaultParams,
                 ...props,
             }
         }));
@@ -34,7 +40,7 @@ const axiosRequest = async (method, suffix, props) => {
         method: method,
         url: url,
         data: {
-            account: localStorage.getItem('account'),
+            ...defaultParams,
             ...props,
         }
     }));
@@ -170,7 +176,7 @@ export const getGradeMajor = async (props) => {
     return (response);
 }
 
-// 辅导员获取年级基本信息
+// 辅导员获取年级基本信息 padding-参数不对
 export const getGradeBasic = async (props) => {
     console.log('request', '/score/base', props);
     // const response = await axiosRequest('get', '/score/base', props);
@@ -421,77 +427,77 @@ export const getClassScorePieChart = async (props) => {
     return (response);
 }
 
-// 年级-班级优秀及格率
+// 年级-班级优秀及格率 done
 export const getClassGradeRate = async (props) => {
     console.log('request', '/score/class/comparison', props);
-    // const response = await axiosRequest('get', '/score/class/comparison', props);
-    const response = {
-        "code": 200,
-        "data": {
-            "classAB": 1,
-            "classPass": 2,
-            "gradeAB": 3,
-            "gradePass": 4
-        },
-        "msg": "success"
-    }
+    const response = await axiosRequest('get', '/score/class/comparison', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": {
+    //         "classAB": 1,
+    //         "classPass": 2,
+    //         "gradeAB": 3,
+    //         "gradePass": 4
+    //     },
+    //     "msg": "success"
+    // }
     return (response);
 }
 
-// 班级成绩列表
+// 班级成绩列表 padding-绩点数据可能有误
 export const getClassScoretList = async (props) => {
     console.log('request', '/score/class', props);
-    // const response = await axiosRequest('get', '/score/class', props);
-    const response = {
-        "code": 200,
-        "data": [
-            {
-                "gradePoint": 1.5,
-                "name": "姓名1",
-                "scoreList": [
-                    {
-                        courseId: 0,
-                        score: 66,
-                        makeUp: 0
-                    },
-                    {
-                        courseId: 1,
-                        score: 51,
-                        makeUp: 65
-                    },
-                    {
-                        courseId: 2,
-                        score: 71,
-                        makeUp: 0
-                    }
-                ],
-                "studentId": 111111111
-            },
-            {
-                "gradePoint": 1.7,
-                "name": "姓名2",
-                "scoreList": [
-                    {
-                        courseId: 0,
-                        score: 66,
-                        makeUp: 0
-                    },
-                    {
-                        courseId: 1,
-                        score: 88,
-                        makeUp: 0
-                    },
-                    {
-                        courseId: 2,
-                        score: 71,
-                        makeUp: 0
-                    }
-                ],
-                "studentId": 111111112
-            }
-        ],
-        "msg": "success"
-    }
+    const response = await axiosRequest('get', '/score/class', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": [
+    //         {
+    //             "gradePoint": 1.5,
+    //             "name": "姓名1",
+    //             "scoreList": [
+    //                 {
+    //                     courseId: 0,
+    //                     score: 66,
+    //                     makeUp: 0
+    //                 },
+    //                 {
+    //                     courseId: 1,
+    //                     score: 51,
+    //                     makeUp: 65
+    //                 },
+    //                 {
+    //                     courseId: 2,
+    //                     score: 71,
+    //                     makeUp: 0
+    //                 }
+    //             ],
+    //             "studentId": 111111111
+    //         },
+    //         {
+    //             "gradePoint": 1.7,
+    //             "name": "姓名2",
+    //             "scoreList": [
+    //                 {
+    //                     courseId: 0,
+    //                     score: 66,
+    //                     makeUp: 0
+    //                 },
+    //                 {
+    //                     courseId: 1,
+    //                     score: 88,
+    //                     makeUp: 0
+    //                 },
+    //                 {
+    //                     courseId: 2,
+    //                     score: 71,
+    //                     makeUp: 0
+    //                 }
+    //             ],
+    //             "studentId": 111111112
+    //         }
+    //     ],
+    //     "msg": "success"
+    // }
     return (response);
 }
 
@@ -509,6 +515,61 @@ export const getStudentSuggestion = async (props) => {
     //         {
     //             "studentId": 111111112,
     //             "name": "学生2",
+    //         }
+    //     ],
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 获取学生信息及成绩
+export const getStudentScore = async (props) => {
+    console.log('request', '/student/score', props);
+    const response = await axiosRequest('get', '/student/score', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": {
+    //         "building": 111,
+    //         "isSpecial": false,
+    //         "name": "string",
+    //         "room": 222,
+    //         "studentId": 333,
+    //         "classRank": 11,
+    //         "gradeRank": 12,
+    //         gradeList: [
+    //             {
+    //                 term: 201802,
+    //                 gradePoint: 1.5
+    //             },
+    //             {
+    //                 term: 201901,
+    //                 gradePoint: 2.1
+    //             }
+    //         ]
+    //     },
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 查找专业年级下属班级 done
+export const searchClass = async (props) => {
+    console.log('request', '/class', props);
+    const response = await axiosRequest('get', '/class', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": [
+    //         {
+    //             "classId": 0,
+    //             "name": 1
+    //         },
+    //         {
+    //             "classId": 1,
+    //             "name": 2
+    //         },
+    //         {
+    //             "classId": 2,
+    //             "name": 3
     //         }
     //     ],
     //     "msg": "success"
@@ -574,7 +635,7 @@ export const uploadFile = async (props) => {
     return (response);
 }
 
-// 获取学生信息列表 padding-后端确认参数
+// 获取学生信息列表 done
 export const getStudentInfoList = async (props) => {
     console.log('request', '/student', props);
     const response = await axiosRequest('get', '/student', props);
@@ -596,6 +657,17 @@ export const getStudentInfoList = async (props) => {
     //             "studentId": 444
     //           }
     //       ],
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
+// 编辑学生信息 done
+export const updateStudent = async (props) => {
+    console.log('request', '/student', props);
+    const response = await axiosRequest('post', '/student', props);
+    // const response = {
+    //     "code": 200,
     //     "msg": "success"
     // }
     return (response);
@@ -661,10 +733,12 @@ export const searchCounselor = async (props) => {
     return (response);
 }
 
-// 获取辅导员信息 padding-等待后端确认参数
+// 获取辅导员信息 done
 export const getAccountDetail = async (props) => {
     console.log('request', '/grade/counselor', props);
-    const response = await axiosRequest('get', '/grade/counselor', props);
+    const response = await axiosRequest('get', '/grade/counselor', {
+        'counselor-account': props.account
+    });
     // const response = {
     //     "code": 200,
     //     "data": {
@@ -688,7 +762,7 @@ export const getAccountDetail = async (props) => {
     return (response);
 }
 
-// 创建辅导员账号 padding-创建账号后会导致覆盖
+// 创建辅导员账号 done
 export const createAccount = async (props) => {
     console.log('request', '/account', props);
     const response = await axiosRequest('post', '/account', props);
@@ -700,37 +774,37 @@ export const createAccount = async (props) => {
     return (response);
 }
 
-// 修改辅导员账号 padding-等待后端确认参数
+// 修改辅导员账号 done
 export const updateAccount = async (props) => {
     console.log('request', '/account', props);
-    // const response = await axiosRequest('post', '/account', props);
-    const response = {
-        "code": 200,
-        "data": 11,
-        "msg": "success"
-    }
+    const response = await axiosRequest('post', '/account', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": 11,
+    //     "msg": "success"
+    // }
     return (response);
 }
 
-// 删除账号 padding-等待后端确认参数
+// 删除账号 done
 export const deleteAccount = async (props) => {
     console.log('request', '/account', props);
-    // const response = await axiosRequest('delete', '/account', props);
-    const response = {
-        "code": 200,
-        "msg": "success"
-    }
+    const response = await axiosRequest('delete', '/account', props);
+    // const response = {
+    //     "code": 200,
+    //     "msg": "success"
+    // }
     return (response);
 }
 
-// 重置辅导员账号密码 padding-等待后端确认参数
+// 重置辅导员账号密码 done
 export const resetAccount = async (props) => {
     console.log('request', `/account/${props.account}/pwd`, {});
-    // const response = await axiosRequest('delete', '/account', props);
-    const response = {
-        "code": 200,
-        "msg": "success"
-    }
+    const response = await axiosRequest('delete', '/account', props);
+    // const response = {
+    //     "code": 200,
+    //     "msg": "success"
+    // }
     return (response);
 }
 
@@ -783,7 +857,7 @@ export const getMajorCourse = async (props) => {
     return (response);
 }
 
-// 获取年级成绩列表 padding-等待后端检查数据
+// 获取年级成绩列表 done
 export const getGradeScore = async (props) => {
     console.log('request', '/score/admin', props);
     const response = await axiosRequest('get', '/score/admin', props);
@@ -831,42 +905,6 @@ export const getMajor = async (props) => {
     return (response);
 }
 
-// 查找专业年级下属班级
-export const searchClass = async (props) => {
-    console.log('request', '/class', props);
-    // const response = await axiosRequest('get', '/class', props);
-    const response = {
-        "code": 200,
-        "data": [
-            {
-                "classId": 0,
-                "name": 1
-            },
-            {
-                "classId": 1,
-                "name": 2
-            },
-            {
-                "classId": 2,
-                "name": 3
-            }
-        ],
-        "msg": "success"
-    }
-    return (response);
-}
-
-// 编辑学生信息
-export const updateStudent = async (props) => {
-    console.log('request', '/student', props);
-    // const response = await axiosRequest('post', '/student', props);
-    const response = {
-        "code": 200,
-        "msg": "success"
-    }
-    return (response);
-}
-
 // 获取科目列表
 export const getCourse = async (props) => {
     console.log('request', '/course', props);
@@ -908,36 +946,6 @@ export const updateQuota = async (props) => {
     // const response = await axiosRequest('post', '/quota', props);
     const response = {
         "code": 200,
-        "msg": "success"
-    }
-    return (response);
-}
-
-// 获取学生信息及成绩
-export const getStudentScore = async (props) => {
-    console.log('request', '/student/score', props);
-    // const response = await axiosRequest('get', '/student/score', props);
-    const response = {
-        "code": 200,
-        "data": {
-            "building": 111,
-            "isSpecial": false,
-            "name": "string",
-            "room": 222,
-            "studentId": 333,
-            "classRank": 11,
-            "gradeRank": 12,
-            gradeList: [
-                {
-                    term: 201802,
-                    gradePoint: 1.5
-                },
-                {
-                    term: 201901,
-                    gradePoint: 2.1
-                }
-            ]
-        },
         "msg": "success"
     }
     return (response);

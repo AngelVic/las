@@ -60,22 +60,22 @@ export const classGradeRateParse = (data) => {
         {
             type: '班级',
             xData: '优秀率',
-            yData: data.classAB,
+            yData: Math.floor(data.classAB * 100) / 100,
         },
         {
             type: '班级',
             xData: '及格率',
-            yData: data.classPass,
+            yData: Math.floor(data.classPass * 100) / 100,
         },
         {
             type: '年级',
             xData: '优秀率',
-            yData: data.gradeAB,
+            yData: Math.floor(data.gradeAB * 100) / 100,
         },
         {
             type: '年级',
             xData: '及格率',
-            yData: data.gradePass,
+            yData: Math.floor(data.gradePass * 100) / 100,
         },
     ]
 }
@@ -89,14 +89,18 @@ export const classScoreListParse = (data, courseList) => {
                 id: item.courseId,
                 name: subject.name,
                 state: item.makeUp===0?'normal':'failed',
-                score: item.score,
-                secScore: item.makeUp
+                score: parseFloat(item.score),
+                secScore: parseFloat(item.makeUp)
             }
         })
+        let studentId = t.studentId.toString();
+        if(studentId.length === 8) {
+            studentId = `0${studentId}`;
+        }
         return {
-            studentId: t.studentId,
+            studentId: studentId,
             name: t.name,
-            gpa: t.gradePoint,
+            gpa: t.gradePoint.toFixed(1),
             scores: scoreList
         }
     })
@@ -122,7 +126,6 @@ export const adminListParse = (data, grade, major) => {
     return data.map(element => {
         const time = Date.parse(element.createTime)
         return {
-            id: element.id,
             grade: grade,
             major: major,
             principal: element.name,
@@ -166,10 +169,10 @@ export const gradeScoreListParse = (data) => {
             title: `${element.grade}级`,
             size: element.totalNum,
             gpaExcellent: element.gradeAB,
-            average: `${element.average}`,
+            average: `${element.average.toFixed(2)}`,
             failed: element.failNum,
-            subjectExcellent: element.subjectAB,
-            passed: element.pass
+            subjectExcellent: Math.floor(element.subjectAB * 10000) / 100,
+            passed: Math.floor(element.pass * 10000) / 100
         }
     })
 }
@@ -177,8 +180,8 @@ export const gradeScoreListParse = (data) => {
 export const gradeScoreCompareParse = (data) => {
     const resList = []
     data.forEach(element => {
-        resList.push({ year: element.grade, type: '优秀率', value: element.gradeAB });
-        resList.push({ year: element.grade, type: '及格率', value: element.pass });
+        resList.push({ year: element.grade, type: '优秀率', value: Math.floor(element.subjectAB * 10000) / 100 });
+        resList.push({ year: element.grade, type: '及格率', value: Math.floor(element.pass * 10000) / 100 });
     })
     return resList;
 }
@@ -236,7 +239,7 @@ export const studentDetailParse = (data, courseList, classId, major, gpa, score)
                 scores: score
             }
         ],
-        gpaList: gpaList
+        gpaList: gpaList.reverse()
     }
 }
 

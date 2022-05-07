@@ -42,9 +42,9 @@
                         <el-table-column prop="time" label="账号生成时间" sortable />
                         <el-table-column label="操作">
                             <template #default="scope">
-                                <el-button type="text" @click="editAdmin(scope.row.id)">编辑</el-button>
-                                <el-button type="text" @click="deleteAdmin(scope.row.id)">删除</el-button>
-                                <el-button type="text" @click="resetAdmin(scope.row.id)">重置密码</el-button>
+                                <el-button type="text" @click="editAdmin(scope.row.account)">编辑</el-button>
+                                <el-button type="text" @click="deleteAdmin(scope.row.account)">删除</el-button>
+                                <el-button type="text" @click="resetAdmin(scope.row.account)">重置密码</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -126,6 +126,7 @@ export default {
             });
             const adminListData = resParse('获取负责人列表', adminListRes);
             this.adminTable = adminListParse(adminListData, this.curFilter.grade, this.curFilter.major);
+            console.log('admin list parsed', this.adminTable);
         },
         async editAdmin(id) {
             console.log('edit', id);
@@ -154,8 +155,8 @@ export default {
                 const deleteRes = await deleteAccount({
                     account: id
                 });
-                const deleteResult = resParse('辅导员账号删除', deleteRes);
-                if(deleteResult !== null){
+                resParse('辅导员账号删除', deleteRes);
+                if(deleteRes.code === 200){
                     ElMessage({
                         type: 'success',
                         message: '删除成功',
@@ -185,8 +186,8 @@ export default {
                 const resetRes = await resetAccount({
                     account: id
                 });
-                const resetResult = resParse('辅导员账号删除', resetRes);
-                if(resetResult !== null){
+                resParse('辅导员密码重置', resetRes);
+                if(resetRes.code === 200){
                     ElMessage({
                         type: 'success',
                         message: '重置成功',

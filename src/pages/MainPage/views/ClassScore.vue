@@ -52,15 +52,22 @@
                         :data="scoreData"
                         :default-sort="{ prop: 'studentId', order: 'descending' }"
                         style="width: 100%"
+                        :header-row-style="{'font-size':'12px'}"
+                        max-height="720"
                     >
-                        <el-table-column prop="studentId" label="学号" sortable fixed />
-                        <el-table-column prop="name" label="姓名" fixed />
+                        <el-table-column prop="studentId" label="学号" width="160" sortable fixed />
+                        <el-table-column prop="name" label="姓名" fixed>
+                            <template #default="scope">
+                                <span class="nameClickable" @click="handleTableRowClick(scope.row)">{{scope.row.name}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="gpa" label="学期绩点" sortable fixed />
                         <el-table-column
                             v-for="subject in subjects"
                             :key="subject.id"
                             :label="subject.name"
                             sortable
+                            :sort-by="(row) => { return scoreTableSortVar(row, subject.id) }"
                         >
                             <template #default="scope">
                                 <span
@@ -78,7 +85,6 @@
         <StudentScoreDialog
             v-if="scoreDialog.visible"
             :studentScoreVisible="scoreDialog.visible"
-            :subjects="subjects"
             :id="selectedStudent.id"
             :term="curFilter.term"
             :classId="curFilter.class"
@@ -101,7 +107,8 @@ import { Column } from '@antv/g2plot';
 import { Search } from '@element-plus/icons-vue'
 import { getClassGradeRate, getClassRadarChart, getClassScorePieChart, getClassScoretList, getClassSubjectList, getGradeMajorClass, getStudentSuggestion } from '@/common/request';
 import { averageScoreParse, classGradeRateParse, classScoreListParse, majorGradeClassListParse, resParse, studentSuggestionParse, subjectsParse } from '@/common/methods';
-import { parsePieData, StrIsNumber } from '@/common/utils';
+import { completeStudentId, parsePieData, StrIsNumber } from '@/common/utils';
+import { ElMessage } from 'element-plus';
 
 const SCORE_COLOR = {
     normal: '#303133',
@@ -231,20 +238,26 @@ export default {
             })
         },
         getScoreWithId(scope, id) {
-            return scope.row.scores[`${id}`].score;
+            return scope.row.scores[`${id}`]?.score;
         },
         getSecScoreWithId(scope, id) {
-            return scope.row.scores[`${id}`].secScore;
+            return scope.row.scores[`${id}`]?.secScore;
         },
         getScoreStateWithId(scope, id) {
-            return scope.row.scores[`${id}`].state;
+            const scores = scope.row.scores[`${id}`];
+            return scores?.state;
         },
         getScoreColor(scope, id) {
-            if(scope.row.scores[`${id}`].state == 'failed') {
+            // console.log('get state from', scope.row.scores, id, scope.row.scores[`${id}`]);
+            if(scope.row.scores[`${id}`]?.state == 'failed') {
                 return SCORE_COLOR['failed'];
             } else {
                 return SCORE_COLOR['normal'];
             }
+        },
+        scoreTableSortVar(row, id) {
+            const value = row.scores[`${id}`]?.score;
+            return value?value:0;
         },
         async searchStudent(queryString, callback) {
             console.log('search student', queryString, callback);
@@ -259,14 +272,22 @@ export default {
             callback(studentSuggestionParse(suggestionData));
         },
         handelSearchSelect(value) {
-            this.selectedStudent.id = value.id;
+            console.log('test value', value);
+            const studentId = completeStudentId(value.id);
+            this.selectedStudent.id = studentId;
             const selectData = Array.from(this.scoreData.values()).find(t => {
-                return t.studentId === value.id
+                return t.studentId === studentId
             });
-            console.log('selectedStudent', selectData)
-            this.selectedStudent.scores = selectData.scores;
-            this.selectedStudent.gpa = selectData.gpa;
-            this.scoreDialog.visible = true;
+            console.log('selected Student', selectData, Array.from(this.scoreData.values()), studentId)
+            if(selectData) {
+                this.selectedStudent.scores = selectData.scores;
+                this.selectedStudent.gpa = selectData.gpa;
+                this.scoreDialog.visible = true;
+            }
+            else {
+                ElMessage.warning('该学生不在当前班级中');
+            }
+            
         },
         handelStudentDialogClose() {
             this.scoreDialog.visible = false;
@@ -275,6 +296,12 @@ export default {
         },
         onGpaBetweenChange(between) {
             this.updatePieChart(between);
+        },
+        handleTableRowClick(data) {
+            console.log('handleTableRowClick', data);
+            this.handelSearchSelect({
+                id: data.studentId
+            })
         }
     },
     async mounted() {
@@ -292,6 +319,13 @@ export default {
 <style lang='scss' scoped>
 .ClassScore {
     width: 100%;
+    .nameClickable {
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .nameClickable:hover {
+        opacity: 0.8;
+    }
 }
 
 .charts {
