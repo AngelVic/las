@@ -1,6 +1,6 @@
 <!-- 班级成绩 -->
 <template>
-    <div class='ClassScore'>
+    <div class='ClassScore' v-loading="pageLoading">
         <div class="filter">
             <FilterBar
                 v-if="showFilter"
@@ -15,6 +15,7 @@
             <div class="row-1">
                 <div class="column-1">
                     <AdvantageRadar
+                        v-loading="radarLoading"
                         type="class"
                         :subjects="subjects"
                         :value="averageScore"
@@ -22,10 +23,15 @@
                     ></AdvantageRadar>
                 </div>
                 <div class="column-2">
-                    <GpaDistribution type="class" :value="gpaDistribution" @betweenChange="onGpaBetweenChange"></GpaDistribution>
+                    <GpaDistribution
+                        v-loading="destributionLoading"
+                        type="class"
+                        :value="gpaDistribution"
+                        @betweenChange="onGpaBetweenChange"
+                    ></GpaDistribution>
                 </div>
                 <div class="column-3">
-                    <div class="contentCard compare">
+                    <div class="contentCard compare" v-loading="compareLoading">
                         <span class="cardTitle">年级-班级对比</span>
                         <div class="chartContainer">
                             <div id="compareChart" ref="compareContainer"></div>
@@ -34,7 +40,7 @@
                 </div>
             </div>
             <div class="row-2">
-                <div class="contentCard scoreCard">
+                <div class="contentCard scoreCard" v-loading="tableLoading">
                     <div class="topLine">
                         <span class="cardTitle">班级成绩（黄底中括号内的成绩为该同学的补考成绩）</span>
                         <el-autocomplete
@@ -147,6 +153,11 @@ export default {
                 gpa: 0,
                 scores: []
             },
+            pageLoading: false,
+            radarLoading: false,
+            destributionLoading: false,
+            compareLoading: false,
+            tableLoading: false,
             Search
         }
     },
@@ -158,6 +169,10 @@ export default {
     methods: {
         async filter(data) {
             console.log('class filter', data);
+            this.radarLoading = true;
+            this.destributionLoading = true;
+            this.compareLoading = true;
+            this.tableLoading = true;
             this.curFilter = data;
             // 科目列表获取
             const subjectListRes = await getClassSubjectList({
@@ -179,6 +194,7 @@ export default {
             const rateData = resParse('获取优秀及格率', rateRes);
             this.classGradeRate = classGradeRateParse(rateData);
             this.updateCompare();
+            this.compareLoading = false;
             // 成绩列表
             const scoreListRes = await getClassScoretList({
                 classId: this.curFilter.class,
@@ -186,6 +202,7 @@ export default {
             })
             const scoreListData = resParse('获取班级成绩列表', scoreListRes);
             this.scoreData = classScoreListParse(scoreListData, this.subjects);
+            this.tableLoading = false;
             console.log('dealed scoreData', this.scoreData)
         },
         async updateRadarChart() {
@@ -195,6 +212,7 @@ export default {
             })
             const chartData = resParse('获取班级平均分', radarChartRes);
             this.averageScore = averageScoreParse(chartData);
+            this.radarLoading = false;
             console.log('average data', this.averageScore);
         },
         async updatePieChart(between) {
@@ -205,6 +223,7 @@ export default {
             })
             const chartData = resParse('获取班级绩点分布', pieChartRes);
             this.gpaDistribution = parsePieData(chartData, between);
+            this.destributionLoading = false;
         },
         drawCompare() {
             const data = this.classGradeRate;
@@ -305,6 +324,7 @@ export default {
         }
     },
     async mounted() {
+        this.pageLoading = true;
         // 筛选数据处理
         const gradeMajorClassRes = await getGradeMajorClass({});
         console.log('await getGradeMajorClass', gradeMajorClassRes);
@@ -313,6 +333,7 @@ export default {
         console.log('get gradeMajorClassList', this.gradeMajorClassList);
         this.showFilter = true;
         this.drawCompare();
+        this.pageLoading = false;
     }
 }
 </script>

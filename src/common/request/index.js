@@ -183,10 +183,10 @@ export const getGradeBasic = async (props) => {
     const response = {
         "code": 200,
         "data": {
-            totalSize: 200,
-            failSize: 3,
+            totalNum: 200,
+            failNum: 3,
             excellentRate: '15%',
-            passRate: '98%',
+            pass: '98%',
             failSizeCompare: '10%',
             excellentRateComapre: '5%',
             passRateCompare: '-5%'
@@ -233,7 +233,7 @@ export const getGradeSubjectList = async (props) => {
     return (response);
 }
 
-// 辅导员获取年级成绩列表 padding-更改年级的id为99
+// 辅导员获取年级成绩列表 done
 export const getScoreGradeClass = async (props) => {
     console.log('request', '/score/counselor', props);
     const response = await axiosRequest('get', '/score/counselor', props);
@@ -444,7 +444,7 @@ export const getClassGradeRate = async (props) => {
     return (response);
 }
 
-// 班级成绩列表 padding-绩点数据可能有误
+// 班级成绩列表 done
 export const getClassScoretList = async (props) => {
     console.log('request', '/score/class', props);
     const response = await axiosRequest('get', '/score/class', props);

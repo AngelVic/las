@@ -51,7 +51,7 @@
                                     class="upload"
                                     :auto-upload="false"
                                     :limit="1"
-                                    action="/file/excel"
+                                    action="/api/file/excel"
                                     :data="uploadParams"
                                     :on-success="handelUploadSuccess"
                                     :on-error="handelUploadError"
