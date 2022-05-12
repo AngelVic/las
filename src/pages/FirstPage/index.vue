@@ -89,7 +89,7 @@ export default {
             this.dealLogin(res);
         },
         async dealLogin(data) {
-            if(data.code === 200) {
+            if(data.msg === 'Login success') {
                 ElMessage({
                     message: '登录成功',
                     type: 'success',
@@ -102,6 +102,7 @@ export default {
                 if(username !== null) {
                     localStorage.setItem('account', this.form.id);
                     localStorage.setItem('username', username);
+                    localStorage.setItem('usertype', data.data===1?'admin':'user');
                     router.push('/main');
                 }
             }
