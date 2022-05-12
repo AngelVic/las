@@ -53,7 +53,7 @@
                         <el-icon><User /></el-icon>
                         <span>账号管理</span>
                     </el-menu-item>
-                    <el-sub-menu index="Admin">
+                    <el-sub-menu index="Admin" v-if="isAdmin">
                         <template #title>
                             <el-icon><UserFilled /></el-icon>
                             <span>管理员</span>
@@ -90,6 +90,7 @@ export default {
         return {
             menuActive: '',
             username: '-',
+            isAdmin: false
         }
     },
     methods: {
@@ -114,6 +115,8 @@ export default {
         const path = router.options.history.location.split('/');
         console.log(path[path.length-1]);
         this.menuActive = path[path.length-1];
+        const usertype = localStorage.getItem('usertype');
+        this.isAdmin = usertype==='admin'
     }
 }
 </script>

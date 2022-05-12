@@ -10,7 +10,7 @@
         <div class="dialogContent">
             <div class="studentInfo">
                 <div class="row-1">
-                    <span>{{studentInfo.studentId}}</span>
+                    <span>{{parsedStudentId}}</span>
                     <span class="name">{{studentInfo.name}}</span>
                     <el-button type="text" class="changeBtn" @click="changeStudent" :disabled="studentEditable">修改学生信息</el-button>
                 </div>
@@ -117,6 +117,7 @@ import AdvantageRadar from '../../../components/AdvantageRadar'
 import GpaChangeLine from '../../../components/GpaChangeLine'
 import { classListParse, resParse, studentDetailParse } from '@/common/methods'
 import { ElMessage } from 'element-plus';
+import { completeStudentId } from '@/common/utils'
 
 const SCORE_COLOR = {
     normal: '#303133',
@@ -131,7 +132,6 @@ export default {
     },
     props: [
         'studentScoreVisible',
-        'subjects',
         'id',
         'term',
         'classId',
@@ -143,6 +143,7 @@ export default {
     data () {
         return {
             studentInfo: {
+                studentId: '',
                 scoreData:[
                     {
                         scores:[]
@@ -151,7 +152,13 @@ export default {
                 gpaList: []
             },
             studentEditable: false,
-            classes: []
+            classes: [],
+            subjects: []
+        }
+    },
+    computed: {
+        parsedStudentId() {
+            return completeStudentId(this.studentInfo.studentId)
         }
     },
     methods: {
@@ -177,16 +184,16 @@ export default {
             }
         },
         getScoreWithId(scope, id) {
-            return scope.row.scores[`${id}`].score;
+            return scope.row.scores[`${id}`]?.score;
         },
         getSecScoreWithId(scope, id) {
-            return scope.row.scores[`${id}`].secScore;
+            return scope.row.scores[`${id}`]?.secScore;
         },
         getScoreStateWithId(scope, id) {
-            return scope.row.scores[`${id}`].state;
+            return scope.row.scores[`${id}`]?.state;
         },
         getScoreColor(scope, id) {
-            if(scope.row.scores[`${id}`].state == 'failed') {
+            if(scope.row.scores[`${id}`]?.state == 'failed') {
                 return SCORE_COLOR['failed'];
             } else {
                 return SCORE_COLOR['normal'];
@@ -215,6 +222,15 @@ export default {
             this.gpa,
             this.score
         );
+        const socreObj = this.studentInfo.scoreData[0].scores;
+        const newSubjects = [];
+        for(let i in socreObj) {
+            newSubjects.push({
+                id: socreObj[i].id,
+                name: socreObj[i].name,
+            })
+        }
+        this.subjects = newSubjects;
         console.log('studentInfo', this.studentInfo);
     }
 }

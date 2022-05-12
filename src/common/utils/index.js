@@ -55,3 +55,11 @@ export const StrIsNumber = (str) => {
     const reg = /^[0-9]+.?[0-9]*$/;
     return reg.test(str);
 }
+
+export const completeStudentId = (id) => {
+    let idStr = id.toString();
+    if(idStr.length === 8) {
+        return `0${idStr}`
+    }
+    return idStr;
+}

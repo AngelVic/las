@@ -1,6 +1,6 @@
 <!-- 班级成绩 -->
 <template>
-    <div class='ClassScore'>
+    <div class='ClassScore' v-loading="pageLoading">
         <div class="filter">
             <FilterBar
                 v-if="showFilter"
@@ -15,6 +15,7 @@
             <div class="row-1">
                 <div class="column-1">
                     <AdvantageRadar
+                        v-loading="radarLoading"
                         type="class"
                         :subjects="subjects"
                         :value="averageScore"
@@ -22,10 +23,15 @@
                     ></AdvantageRadar>
                 </div>
                 <div class="column-2">
-                    <GpaDistribution type="class" :value="gpaDistribution" @betweenChange="onGpaBetweenChange"></GpaDistribution>
+                    <GpaDistribution
+                        v-loading="destributionLoading"
+                        type="class"
+                        :value="gpaDistribution"
+                        @betweenChange="onGpaBetweenChange"
+                    ></GpaDistribution>
                 </div>
                 <div class="column-3">
-                    <div class="contentCard compare">
+                    <div class="contentCard compare" v-loading="compareLoading">
                         <span class="cardTitle">年级-班级对比</span>
                         <div class="chartContainer">
                             <div id="compareChart" ref="compareContainer"></div>
@@ -34,7 +40,7 @@
                 </div>
             </div>
             <div class="row-2">
-                <div class="contentCard scoreCard">
+                <div class="contentCard scoreCard" v-loading="tableLoading">
                     <div class="topLine">
                         <span class="cardTitle">班级成绩（黄底中括号内的成绩为该同学的补考成绩）</span>
                         <el-autocomplete
@@ -52,15 +58,22 @@
                         :data="scoreData"
                         :default-sort="{ prop: 'studentId', order: 'descending' }"
                         style="width: 100%"
+                        :header-row-style="{'font-size':'12px'}"
+                        max-height="720"
                     >
-                        <el-table-column prop="studentId" label="学号" sortable fixed />
-                        <el-table-column prop="name" label="姓名" fixed />
+                        <el-table-column prop="studentId" label="学号" width="160" sortable fixed />
+                        <el-table-column prop="name" label="姓名" fixed>
+                            <template #default="scope">
+                                <span class="nameClickable" @click="handleTableRowClick(scope.row)">{{scope.row.name}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="gpa" label="学期绩点" sortable fixed />
                         <el-table-column
                             v-for="subject in subjects"
                             :key="subject.id"
                             :label="subject.name"
                             sortable
+                            :sort-by="(row) => { return scoreTableSortVar(row, subject.id) }"
                         >
                             <template #default="scope">
                                 <span
@@ -78,7 +91,6 @@
         <StudentScoreDialog
             v-if="scoreDialog.visible"
             :studentScoreVisible="scoreDialog.visible"
-            :subjects="subjects"
             :id="selectedStudent.id"
             :term="curFilter.term"
             :classId="curFilter.class"
@@ -100,8 +112,9 @@ import StudentScoreDialog from '../components/StudentScoreDialog'
 import { Column } from '@antv/g2plot';
 import { Search } from '@element-plus/icons-vue'
 import { getClassGradeRate, getClassRadarChart, getClassScorePieChart, getClassScoretList, getClassSubjectList, getGradeMajorClass, getStudentSuggestion } from '@/common/request';
-import { averageScoreParse, classGradeRateParse, classScoreListParse, resParse, studentSuggestionParse, subjectsParse } from '@/common/methods';
-import { parsePieData, StrIsNumber } from '@/common/utils';
+import { averageScoreParse, classGradeRateParse, classScoreListParse, majorGradeClassListParse, resParse, studentSuggestionParse, subjectsParse } from '@/common/methods';
+import { completeStudentId, parsePieData, StrIsNumber } from '@/common/utils';
+import { ElMessage } from 'element-plus';
 
 const SCORE_COLOR = {
     normal: '#303133',
@@ -140,6 +153,11 @@ export default {
                 gpa: 0,
                 scores: []
             },
+            pageLoading: false,
+            radarLoading: false,
+            destributionLoading: false,
+            compareLoading: false,
+            tableLoading: false,
             Search
         }
     },
@@ -151,6 +169,10 @@ export default {
     methods: {
         async filter(data) {
             console.log('class filter', data);
+            this.radarLoading = true;
+            this.destributionLoading = true;
+            this.compareLoading = true;
+            this.tableLoading = true;
             this.curFilter = data;
             // 科目列表获取
             const subjectListRes = await getClassSubjectList({
@@ -172,6 +194,7 @@ export default {
             const rateData = resParse('获取优秀及格率', rateRes);
             this.classGradeRate = classGradeRateParse(rateData);
             this.updateCompare();
+            this.compareLoading = false;
             // 成绩列表
             const scoreListRes = await getClassScoretList({
                 classId: this.curFilter.class,
@@ -179,6 +202,7 @@ export default {
             })
             const scoreListData = resParse('获取班级成绩列表', scoreListRes);
             this.scoreData = classScoreListParse(scoreListData, this.subjects);
+            this.tableLoading = false;
             console.log('dealed scoreData', this.scoreData)
         },
         async updateRadarChart() {
@@ -188,6 +212,7 @@ export default {
             })
             const chartData = resParse('获取班级平均分', radarChartRes);
             this.averageScore = averageScoreParse(chartData);
+            this.radarLoading = false;
             console.log('average data', this.averageScore);
         },
         async updatePieChart(between) {
@@ -198,6 +223,7 @@ export default {
             })
             const chartData = resParse('获取班级绩点分布', pieChartRes);
             this.gpaDistribution = parsePieData(chartData, between);
+            this.destributionLoading = false;
         },
         drawCompare() {
             const data = this.classGradeRate;
@@ -231,20 +257,26 @@ export default {
             })
         },
         getScoreWithId(scope, id) {
-            return scope.row.scores[`${id}`].score;
+            return scope.row.scores[`${id}`]?.score;
         },
         getSecScoreWithId(scope, id) {
-            return scope.row.scores[`${id}`].secScore;
+            return scope.row.scores[`${id}`]?.secScore;
         },
         getScoreStateWithId(scope, id) {
-            return scope.row.scores[`${id}`].state;
+            const scores = scope.row.scores[`${id}`];
+            return scores?.state;
         },
         getScoreColor(scope, id) {
-            if(scope.row.scores[`${id}`].state == 'failed') {
+            // console.log('get state from', scope.row.scores, id, scope.row.scores[`${id}`]);
+            if(scope.row.scores[`${id}`]?.state == 'failed') {
                 return SCORE_COLOR['failed'];
             } else {
                 return SCORE_COLOR['normal'];
             }
+        },
+        scoreTableSortVar(row, id) {
+            const value = row.scores[`${id}`]?.score;
+            return value?value:0;
         },
         async searchStudent(queryString, callback) {
             console.log('search student', queryString, callback);
@@ -259,14 +291,22 @@ export default {
             callback(studentSuggestionParse(suggestionData));
         },
         handelSearchSelect(value) {
-            this.selectedStudent.id = value.id;
+            console.log('test value', value);
+            const studentId = completeStudentId(value.id);
+            this.selectedStudent.id = studentId;
             const selectData = Array.from(this.scoreData.values()).find(t => {
-                return t.studentId === value.id
+                return t.studentId === studentId
             });
-            console.log('selectedStudent', selectData)
-            this.selectedStudent.scores = selectData.scores;
-            this.selectedStudent.gpa = selectData.gpa;
-            this.scoreDialog.visible = true;
+            console.log('selected Student', selectData, Array.from(this.scoreData.values()), studentId)
+            if(selectData) {
+                this.selectedStudent.scores = selectData.scores;
+                this.selectedStudent.gpa = selectData.gpa;
+                this.scoreDialog.visible = true;
+            }
+            else {
+                ElMessage.warning('该学生不在当前班级中');
+            }
+            
         },
         handelStudentDialogClose() {
             this.scoreDialog.visible = false;
@@ -275,22 +315,38 @@ export default {
         },
         onGpaBetweenChange(between) {
             this.updatePieChart(between);
+        },
+        handleTableRowClick(data) {
+            console.log('handleTableRowClick', data);
+            this.handelSearchSelect({
+                id: data.studentId
+            })
         }
     },
     async mounted() {
+        this.pageLoading = true;
         // 筛选数据处理
         const gradeMajorClassRes = await getGradeMajorClass({});
         console.log('await getGradeMajorClass', gradeMajorClassRes);
-        this.gradeMajorClassList = resParse('获取专业班级列表', gradeMajorClassRes);
+        const gradeMajorClassData = resParse('获取专业班级列表', gradeMajorClassRes);
+        this.gradeMajorClassList = majorGradeClassListParse(gradeMajorClassData);
         console.log('get gradeMajorClassList', this.gradeMajorClassList);
         this.showFilter = true;
         this.drawCompare();
+        this.pageLoading = false;
     }
 }
 </script>
 <style lang='scss' scoped>
 .ClassScore {
     width: 100%;
+    .nameClickable {
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .nameClickable:hover {
+        opacity: 0.8;
+    }
 }
 
 .charts {

@@ -13,6 +13,7 @@
                     ref="changeFormRef"
                 >
                     <el-form-item
+                        :error="changeFormError.oldPass"
                         label="旧密码"
                         prop="oldPass"
                     >
@@ -41,7 +42,7 @@
 
 <script>
 import { alterAccount } from '@/common/request';
-import { resParse } from '@/common/methods';
+// import { resParse } from '@/common/methods';
 import { ElMessage } from 'element-plus';
 
 export default {
@@ -77,18 +78,30 @@ export default {
                     },
                     { validator: this.validatePassConfirm, trigger: 'blur' }
                 ]
-            }
+            },
+            changeFormError: {
+                oldPass: '',
+            },
         }
     },
     methods: {
         async confirmChange(formRef) {
+            this.changeFormError.oldPass = '';
             await formRef.validate();
             const alterRes = await alterAccount({
                 oldPwd: this.changeForm.oldPass,
                 newPwd: this.changeForm.newPass
             });
-            if(resParse('修改密码', alterRes) !== null) {
+            if(alterRes.code === 200) {
                 ElMessage.success('修改成功');
+                this.changeForm = {
+                    oldPass: '',
+                    newPass: '',
+                    confirmPass: ''
+                }
+            }
+            else {
+                this.changeFormError.oldPass = alterRes.msg
             }
         },
         validatePassConfirm(rule , value , callback ) {

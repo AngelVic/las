@@ -58,6 +58,7 @@ export default {
         async save() {
             console.log('save', this.adminInfoForm);
             const changeRes = await updateAccount({
+                account: this.adminInfoForm.account,
                 gradeIdList: this.adminInfoForm.gradeClass.map(t => t[1]),
                 name: this.adminInfoForm.name
             });

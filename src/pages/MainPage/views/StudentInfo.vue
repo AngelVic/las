@@ -75,8 +75,8 @@
 
 import FilterBar from '../../../components/FilterBar.vue';
 import StudentInfoDialog from '../components/StudentInfoDialog';
-import { getGradeMajorClass, getStudentSuggestion, searchStudent } from '@/common/request';
-import { resParse, studentListParse, studentSuggestionParse } from '@/common/methods';
+import { getGradeMajorClass, getStudentSuggestion, getStudentInfoList } from '@/common/request';
+import { majorGradeClassListParse, resParse, studentListParse, studentSuggestionParse } from '@/common/methods';
 import { StrIsNumber } from '@/common/utils';
 import { ElMessage } from 'element-plus';
 
@@ -111,7 +111,7 @@ export default {
             this.getStudentTable();
         },
         async getStudentTable() {
-            const studentListRes = await searchStudent({
+            const studentListRes = await getStudentInfoList({
                 classId: this.curFilter.class,
             })
             const studentList = resParse('获取班级学生列表', studentListRes);
@@ -140,7 +140,7 @@ export default {
             callback(studentSuggestionParse(suggestionData));
         },
         async handelSearchSelect(value) {
-            const studentListRes = await searchStudent({
+            const studentListRes = await getStudentInfoList({
                 classId: this.curFilter.class,
             })
             const studentList = resParse('获取班级学生列表', studentListRes);
@@ -160,8 +160,8 @@ export default {
     async mounted() {
         // 筛选数据处理
         const gradeMajorClassRes = await getGradeMajorClass({});
-        console.log('await getGradeMajorClass', gradeMajorClassRes);
-        this.gradeMajorClassList = resParse('获取专业班级列表', gradeMajorClassRes);
+        const gradeMajorClassData = resParse('获取专业班级列表', gradeMajorClassRes);
+        this.gradeMajorClassList = majorGradeClassListParse(gradeMajorClassData);
         console.log('get gradeMajorClassList', this.gradeMajorClassList);
         this.showFilter = true;
     }

@@ -143,8 +143,8 @@ export default {
                 "classId": this.studentInfoForm.class,
             });
             console.log('changeRes', changeRes);
-            const changeData = resParse('修改学生信息', changeRes);
-            if(changeData!==null) {
+            resParse('修改学生信息', changeRes);
+            if(changeRes.code===200) {
                 ElMessage({
                     message: '修改成功',
                     type: 'success',

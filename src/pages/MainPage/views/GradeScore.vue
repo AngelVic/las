@@ -1,6 +1,6 @@
 <!-- 年级成绩 -->
 <template>
-    <div class='GradeScore'>
+    <div class='GradeScore' v-loading="pageLoading">
         <div class="filter">
             <FilterBar
                 v-if="showFilter"
@@ -15,6 +15,7 @@
                 <div class="column-1">
                     <div class="stastic" v-for="stastic in stasticList" :key="stastic.type">
                         <StasticCard
+                            v-loading="loadingStastic"
                             :label="stastic.label"
                             :data="stastic.data"
                             :rate="stastic.rate"
@@ -26,7 +27,12 @@
                     </div>
                 </div>
                 <div class="column-2">
-                    <GpaDistribution type="grade" :value="gpaDistribution" @betweenChange="onGpaBetweenChange"></GpaDistribution>
+                    <GpaDistribution
+                        v-loading="loadingDistribution"
+                        type="grade"
+                        :value="gpaDistribution"
+                        @betweenChange="onGpaBetweenChange"
+                    ></GpaDistribution>
                 </div>
             </div>
             <div class="row-2">
@@ -62,6 +68,7 @@
                         </div>
                         <div class="table">
                             <el-table
+                                v-loading="loadingTable"
                                 :data="compareTable"
                                 :default-sort="{ prop: 'title', order: 'descending' }"
                                 height="296px"
@@ -103,6 +110,7 @@
                 </div>
                 <div class="column-2">
                     <AdvantageRadar
+                        v-loading="loadingRadar"
                         type="grade"
                         :subjects="subjects"
                         :value="averageScore"
@@ -127,9 +135,10 @@ import FilterBar from '../../../components/FilterBar';
 import AdvantageRadar from '../../../components/AdvantageRadar';
 import GpaDistribution from '../../../components/GpaDistribution';
 import IndicatorSetDialog from '../components/IndicatorSetDialog';
-import { getGradeMajor, getGradeScorePieChart, getGradeScoreRadarChart, getGradeSubjectList, getScoreGradeClass } from '@/common/request';
+import { getGradeBasic, getGradeMajor, getGradeScorePieChart, getGradeScoreRadarChart, getGradeSubjectList, getScoreGradeClass } from '@/common/request';
 import { averageScoreParse, gradeClassScoreParse, subjectsParse, resParse } from '@/common/methods';
 import { parsePieData } from '@/common/utils';
+import { ElMessage } from 'element-plus'
 
 export default {
     name: 'GradeScore',
@@ -186,22 +195,62 @@ export default {
                 tab: 'excellent'
             },
             gpaDistribution: [],
-            averageScore: []
+            averageScore: [],
+            loadingStastic: false,
+            loadingDistribution: false,
+            loadingTable: false,
+            loadingRadar: false,
+            pageLoading: false,
         }
     },
     methods: {
         async filter(data) {
             console.log('grade filter', data);
+            this.loadingStastic = true;
+            this.loadingDistribution = true;
+            this.loadingRadar = true;
+            this.loadingTable = true;
             this.curFilter = data;
             // 统计数据以及对比列表处理
-            const scoreRes = await getScoreGradeClass({
+            const infoRes = await getGradeBasic({
                 gradeId: this.curFilter.gradeMajorId,
-                term: this.curFilter.term
+                term: this.curFilter.term,
             })
-            const scoreData = resParse('获取成绩概览', scoreRes);
+            const infoData = resParse('获取成绩概览', infoRes);
+            this.stasticList = [
+                {
+                    label: '总人数',
+                    data: infoData.totalNum,
+                    type: 'totalSize'
+                },
+                {
+                    label: '挂科人数',
+                    data: infoData.failNum,
+                    type: 'failSize',
+                    rate: infoData.failSizeCompare,
+                    description: '自上学期以来'
+                },
+                {
+                    label: '优秀率',
+                    data: infoData.excellentRate,
+                    type: 'excellentRate',
+                    rule: '优秀率规则',
+                    rate: infoData.excellentRateComapre,
+                    description: '自上学期以来'
+                },
+                {
+                    label: '及格率 (通过所有科目)',
+                    data: infoData.pass,
+                    type: 'passRate',
+                    rule: '及格分数线',
+                    rate: infoData.passRateCompare,
+                    description: '自上学期以来'
+                },
+            ];
+            this.loadingStastic = false;
             // 年级成绩
             // const gradeScoreData = scoreData.find(element => (element.classNum === 0));
-            this.compareTable = gradeClassScoreParse(scoreData);
+            // this.compareTable = gradeClassScoreParse(scoreData);
             // 科目列表获取
             const subjectListRes = await getGradeSubjectList({
                 gradeId: this.curFilter.gradeMajorId,
@@ -209,6 +258,7 @@ export default {
             })
             const subjectListData = resParse('获取科目列表', subjectListRes);
             this.subjects = subjectsParse(subjectListData);
+            this.loadingTable = false;
             // 饼图数据处理
             this.updatePieChart(1);
             // 雷达图数据处理
@@ -226,6 +276,7 @@ export default {
             })
             const chartData = resParse('获取年级绩点分布', pieChartRes);
             this.gpaDistribution = parsePieData(chartData, between);
+            this.loadingDistribution = false;
         },
         async updateRadarChart() {
             const radarChartRes = await getGradeScoreRadarChart({
@@ -233,15 +284,16 @@ export default {
                 term: this.curFilter.term
             })
             const chartData = resParse('获取年级平均分', radarChartRes);
-            console.log('average data', chartData);
             this.averageScore = averageScoreParse(chartData);
             console.log('average data', this.averageScore);
+            this.loadingRadar = false;
         },
         onGpaBetweenChange(between) {
             this.updatePieChart(between);
         },
         async onCompareSubjectSelect(subject) {
             // 对比列表更新
+            this.loadingTable = true;
             const scoreRes = await getScoreGradeClass({
                 gradeId: this.curFilter.gradeMajorId,
                 term: this.curFilter.term,
@@ -249,18 +301,22 @@ export default {
             });
             const scoreData = resParse('获取成绩概览', scoreRes);
             this.compareTable = gradeClassScoreParse(scoreData);
+            this.loadingTable = false;
         },
         handelIndicatorSave() {
             this.indicatorDialog.visible = false;
-            this.filter(this.curFilter)
+            ElMessage.success('修改成功');
+            this.filter(this.curFilter);
         }
     },
     async mounted() {
         // 筛选数据处理
+        this.pageLoading = true;
         const gradeMajorRes = await getGradeMajor({});
         this.gradeMajorList = resParse('获取专业列表', gradeMajorRes);
         console.log('get gradeMajorList', this.gradeMajorList);
         this.showFilter = true;
+        this.pageLoading = false;
     }
 }
 </script>

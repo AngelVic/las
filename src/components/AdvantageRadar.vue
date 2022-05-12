@@ -10,6 +10,7 @@
                 collapse-tags
                 placeholder="选择显示的科目"
                 @change="changeShowSubject"
+                :disabled="!subjectSelectAvailable"
             >
                 <el-option
                     v-for="subject in subjects"
@@ -45,6 +46,12 @@ export default {
             advantageRadarPlot: null
         }
     },
+    computed: {
+        subjectSelectAvailable() {
+            console.log('this.value', this.value);
+            return (this.subjects.length>0 && Object.keys(this.value).length>0);
+        }
+    },
     methods: {
         changeShowSubject(value) {
             // 切换展示学科
@@ -62,11 +69,15 @@ export default {
                     name: {
                         formatter: (value) => {
                             if(value == 0) {
-                                return 0;
+                                return value;
                             }
                             let subjectName = value.replace(/.{5}/g,'$&\n');
                             return subjectName;
                         }
+                    },
+                    score: {
+                        min: 40,
+                        max: 100,
                     }
                 }
             });
@@ -78,6 +89,7 @@ export default {
             for(let i=0; i<selectedSubject.length; i++) {
                 newData.push(this.value[selectedSubject[i]]);
             }
+            console.log('update radar', newData);
             this.advantageRadarPlot.update({
                 data: newData
             })
