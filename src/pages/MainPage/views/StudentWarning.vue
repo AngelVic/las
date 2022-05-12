@@ -1,6 +1,6 @@
 <!-- 学生成绩预警 -->
 <template>
-    <div class='studentWarning'>
+    <div class='studentWarning' v-loading="pageLoading">
         <div class="contentCard warningCard">
             <div class="topLine">
                 <div class="left">
@@ -51,6 +51,7 @@ export default {
         return {
             warningListReaded: [],
             warningListUnread: [],
+            pageLoading:false,
         }
     },
     methods: {
@@ -86,6 +87,7 @@ export default {
             }
         },
         async updateWraningList() {
+            this.pageLoading = true;
             const listRes = await getWarningList({
                 account: localStorage.getItem('account')
             })
@@ -94,6 +96,7 @@ export default {
             this.warningListReaded = parsedListData.warningListReaded;
             this.warningListUnread = parsedListData.warningListUnread;
             console.log(this.$data);
+            this.pageLoading = false;
         }
     },
     computed: {

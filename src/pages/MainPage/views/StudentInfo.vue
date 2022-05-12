@@ -1,6 +1,6 @@
 <!-- 学生信息 -->
 <template>
-    <div class='StudentInfo'>
+    <div class='StudentInfo' v-loading="pageLoading">
         <div class="filter">
             <FilterBar
                 v-if="showFilter"
@@ -12,7 +12,7 @@
             ></FilterBar>
         </div>
         <div class="mainContent">
-            <div class="contentCard">
+            <div class="contentCard" v-loading="tableLoading">
                 <div class="topLine">
                     <span class="cardTitle">学生信息</span>
                     <div class="search">
@@ -97,6 +97,8 @@ export default {
             },
             editingStudent: {},
             studentSearch: '',
+            pageLoading: false,
+            tableLoading: false,
         }
     },
     computed: {
@@ -106,6 +108,7 @@ export default {
     },
     methods: {
         async filter(data) {
+            this.tableLoading = true;
             console.log('file filter', data);
             this.curFilter = data;
             this.getStudentTable();
@@ -116,6 +119,7 @@ export default {
             })
             const studentList = resParse('获取班级学生列表', studentListRes);
             this.studentTable = studentListParse(studentList, this.curFilter.grade, this.curFilter.major, this.curFilter.className, this.curFilter.class);
+            this.tableLoading = false;
         },
         editStudent(data) {
             console.log('editing student', data);
@@ -158,12 +162,14 @@ export default {
         },
     },
     async mounted() {
+        this.pageLoading = true;
         // 筛选数据处理
         const gradeMajorClassRes = await getGradeMajorClass({});
         const gradeMajorClassData = resParse('获取专业班级列表', gradeMajorClassRes);
         this.gradeMajorClassList = majorGradeClassListParse(gradeMajorClassData);
         console.log('get gradeMajorClassList', this.gradeMajorClassList);
         this.showFilter = true;
+        this.pageLoading = false;
     }
 }
 </script>

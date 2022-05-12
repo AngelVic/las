@@ -1,6 +1,6 @@
 <!-- 年级成绩对比 -->
 <template>
-    <div class='GradeCompare'>
+    <div class='GradeCompare'  v-loading="pageLoading">
         <div class="filter">
             <FilterBar
                 v-if="showFilter"
@@ -12,7 +12,7 @@
         <div class="compareContent">
             <div class="row-1">
                 <div class="column-1">
-                    <div class="contentCard tableCard">
+                    <div class="contentCard tableCard" v-loading="compareLoading">
                         <div class="topLine">
                             <span class="cardTitle">科目成绩分析对比-年级对比</span>
                             <div class="ops">
@@ -28,7 +28,7 @@
                                 >及格分数线</el-button>
                             </div>
                         </div>
-                        <div class="gradeScoreTable">
+                        <div class="gradeScoreTable" v-loading="tableLoading">
                             <el-table
                                 :data="gradeCompareTable"
                                 :default-sort="{ prop: 'title', order: 'descending' }"
@@ -70,7 +70,7 @@
                     </div>
                 </div>
                 <div class="column-2">
-                    <div class="contentCard scoreLineCard">
+                    <div class="contentCard scoreLineCard" v-loading="compareLoading">
                         <span class="cardTitle">科目成绩分析对比-年级对比</span>
                         <div class="ScoreLine">
                             <div id="compareLineContainer" ref="compareLineContainer"></div>
@@ -113,11 +113,16 @@ export default {
                 visible: false,
                 tab: 'excellent'
             },
-            compareLine: {}
+            compareLine: {},
+            pageLoading: false,
+            compareLoading: false,
+            tableLoading: false,
         }
     },
     methods: {
         async filter(data) {
+            this.compareLoading = true;
+            this.tableLoading = true;
             console.log('grade compare filter', data);
             this.curFilter = data;
             const gradeScoreRes = await getGradeScore({
@@ -128,6 +133,8 @@ export default {
             this.gradeCompareTable = gradeScoreListParse(gradeScoreData);
             this.gradeCompareData = gradeScoreCompareParse(gradeScoreData);
             this.compareLine.changeData(this.gradeCompareData);
+            this.compareLoading = false;
+            this.tableLoading = false;
         },
         drawCompareLine() {
             this.compareLine = new Line('compareLineContainer', {
@@ -158,6 +165,7 @@ export default {
         },
     },
     async mounted() {
+        this.pageLoading = true;
         const majorListRes = await getAdminMajor({
             'admin-account': localStorage.getItem('account')
         })
@@ -165,6 +173,7 @@ export default {
         this.majorList = majorListParse(majorListData);
         this.drawCompareLine();
         this.showFilter = true;
+        this.pageLoading = false;
     }
 }
 </script>

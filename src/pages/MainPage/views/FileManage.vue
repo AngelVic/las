@@ -1,6 +1,6 @@
 <!-- 文件管理 -->
 <template>
-    <div class='FileManage'>
+    <div class='FileManage' v-loading="pageLoading">
         <div class="filter">
             <FilterBar
                 v-if="showFilter"
@@ -76,7 +76,7 @@
                 </div>
             </div>
             <div class="row-2">
-                <div class="contentCard">
+                <div class="contentCard" v-loading="tableLoading">
                     <div class="topLine">
                         <span class="cardTitle">文件列表</span>
                         <el-button type="primary" @click="multiDeleteFile" :disabled="fileTableSelected.length===0">批量删除</el-button>
@@ -150,6 +150,8 @@ export default {
             uploadMajorList: [],
             fileTable: [],
             fileTableSelected: [],
+            pageLoading: false,
+            tableLoading: false,
             Upload
         }
     },
@@ -163,6 +165,7 @@ export default {
     },
     methods: {
         async filter(data) {
+            this.tableLoading = true;
             console.log('file filter', data);
             this.curFilter = data;
             const fileListRes = await getFileList({
@@ -171,6 +174,7 @@ export default {
             });
             const fileListData = resParse('获取文件列表', fileListRes);
             this.fileTable = fileListParse(fileListData);
+            this.tableLoading = false;
         },
         async submitUpload(formRef, fileRef) {
             await formRef.validate();
@@ -264,6 +268,7 @@ export default {
         }
     },
     async mounted() {
+        this.pageLoading = true;
         // 筛选数据处理
         const gradeMajorRes = await getGradeMajor({});
         this.gradeMajorList = resParse('获取专业列表', gradeMajorRes);
@@ -274,6 +279,7 @@ export default {
         });
         this.uploadMajorList = Array.from(majorSet);
         this.showFilter = true;
+        this.pageLoading = false;
     }
 }
 </script>

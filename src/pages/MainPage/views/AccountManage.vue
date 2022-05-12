@@ -1,6 +1,6 @@
 <!-- 账号管理 -->
 <template>
-    <div class='AccountManage'>
+    <div class='AccountManage' >
         <div class="contentCard">
             <span class="cardTitle">修改密码</span>
             <div class="changeForm">

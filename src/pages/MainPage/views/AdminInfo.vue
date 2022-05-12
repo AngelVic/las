@@ -1,6 +1,6 @@
 <!-- 管理员信息 -->
 <template>
-    <div class='AdminInfo'>
+    <div class='AdminInfo' v-loading="pageLoading">
         <div class="filter">
             <FilterBar
                 v-if="showFilter"
@@ -10,7 +10,7 @@
             ></FilterBar>
         </div>
         <div class="tableContent">
-            <div class="contentCard">
+            <div class="contentCard" v-loading="tableLoading">
                 <div class="topLine">
                     <div class="left">
                         <span class="cardTitle">负责人信息</span>
@@ -113,11 +113,14 @@ export default {
                 data: {}
             },
             adminSearch: '',
+            pageLoading: false,
+            tableLoading: false,
             Search
         }
     },
     methods: {
         async filter(data) {
+            this.tableLoading = true;
             console.log('adminInfo filter', data);
             this.curFilter = data;
             // 获取负责人列表
@@ -127,6 +130,7 @@ export default {
             const adminListData = resParse('获取负责人列表', adminListRes);
             this.adminTable = adminListParse(adminListData, this.curFilter.grade, this.curFilter.major);
             console.log('admin list parsed', this.adminTable);
+            this.tableLoading = false;
         },
         async editAdmin(id) {
             console.log('edit', id);
@@ -227,10 +231,12 @@ export default {
         }
     },
     async mounted() {
+        this.pageLoading = true;
         // 筛选数据处理
         const gradeMajorRes = await getAdminGradeMajor({});
         this.gradeMajorList = resParse('获取专业列表', gradeMajorRes);
         this.showFilter = true;
+        this.pageLoading = false;
     }
 }
 </script>

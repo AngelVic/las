@@ -577,7 +577,7 @@ export const searchClass = async (props) => {
     return (response);
 }
 
-// 获取文件列表 padding-文件列表为空
+// 获取文件列表 done
 export const getFileList = async (props) => {
     console.log('request', '/file', props);
     const response = await axiosRequest('get', '/file', props);
