@@ -13,7 +13,7 @@
         <div class="main_container">
             <div class="row-1">
                 <div class="contentCard">
-                    <span class="cardTitle">成绩上传</span>
+                    <span class="cardTitle">文件上传</span>
                     <div class="uploadForm">
                         <el-form :inline="true" :model="uploadForm" ref="uploadFormRef">
                             
@@ -78,7 +78,7 @@
             <div class="row-2">
                 <div class="contentCard">
                     <div class="topLine">
-                        <span class="cardTitle">成绩上传</span>
+                        <span class="cardTitle">文件列表</span>
                         <el-button type="primary" @click="multiDeleteFile" :disabled="fileTableSelected.length===0">批量删除</el-button>
                     </div>
                     <div class="table">

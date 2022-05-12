@@ -1,0 +1,44 @@
+Date : 2022-04-03 16:34:44
+Directory : c:\Users\Miracle\Desktop\LAS\frontend\las\src
+Total : 12 files,  -21343 codes, -13 comments, -12 blanks, all -21368 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| Log                |          1 |         -2 |          0 |         -1 |         -3 |
+| XML                |          4 |         -4 |          0 |          0 |         -4 |
+| JSON with Comments |          1 |         -8 |        -12 |          0 |        -20 |
+| JavaScript         |          2 |         -9 |          0 |         -2 |        -11 |
+| HTML               |          1 |        -16 |         -1 |         -1 |        -18 |
+| Markdown           |          1 |        -19 |          0 |         -6 |        -25 |
+| JSON               |          2 |    -21,285 |          0 |         -2 |    -21,287 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                         | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                            |         12 |    -21,343 |        -13 |        -12 |    -21,368 |
+| ..                                                           |         12 |    -21,343 |        -13 |        -12 |    -21,368 |
+| ..\public                                                    |          5 |        -20 |         -1 |         -1 |        -22 |
++--------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                     | language           | code       | comment    | blank      | total      |
++--------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\Miracle\Desktop\LAS\frontend\las\README.md          | Markdown           |        -19 |          0 |         -6 |        -25 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\babel.config.js    | JavaScript         |         -5 |          0 |         -1 |         -6 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\debug.log          | Log                |         -2 |          0 |         -1 |         -3 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\jsconfig.json      | JSON with Comments |         -8 |        -12 |          0 |        -20 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\package-lock.json  | JSON               |    -21,233 |          0 |         -1 |    -21,234 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\package.json       | JSON               |        -52 |          0 |         -1 |        -53 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\public\failure.svg | XML                |         -1 |          0 |          0 |         -1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\public\graph.svg   | XML                |         -1 |          0 |          0 |         -1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\public\index.html  | HTML               |        -16 |         -1 |         -1 |        -18 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\public\medal.svg   | XML                |         -1 |          0 |          0 |         -1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\public\user.svg    | XML                |         -1 |          0 |          0 |         -1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\vue.config.js      | JavaScript         |         -4 |          0 |         -1 |         -5 |
+| Total                                                        |                    |    -21,343 |        -13 |        -12 |    -21,368 |
++--------------------------------------------------------------+--------------------+------------+------------+------------+------------+

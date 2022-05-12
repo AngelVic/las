@@ -1,0 +1,90 @@
+Date : 2022-04-03 16:33:43
+Directory : c:\Users\Miracle\Desktop\LAS\frontend\las
+Total : 43 files,  25276 codes, 67 comments, 282 blanks, all 25625 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          2 |     21,285 |          0 |          2 |     21,287 |
+| Vue                |         23 |      3,628 |         16 |        238 |      3,882 |
+| JavaScript         |          6 |        293 |         34 |         31 |        358 |
+| Markdown           |          1 |         19 |          0 |          6 |         25 |
+| SCSS               |          2 |         19 |          4 |          3 |         26 |
+| HTML               |          1 |         16 |          1 |          1 |         18 |
+| JSON with Comments |          1 |          8 |         12 |          0 |         20 |
+| XML                |          6 |          6 |          0 |          0 |          6 |
+| Log                |          1 |          2 |          0 |          1 |          3 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                               | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                  |         43 |     25,276 |         67 |        282 |     25,625 |
+| public                                                                                             |          5 |         20 |          1 |          1 |         22 |
+| src                                                                                                |         31 |      3,933 |         54 |        270 |      4,257 |
+| src\assets                                                                                         |          4 |         21 |          4 |          3 |         28 |
+| src\assets\img                                                                                     |          2 |          2 |          0 |          0 |          2 |
+| src\assets\styles                                                                                  |          2 |         19 |          4 |          3 |         26 |
+| src\common                                                                                         |          1 |        201 |         32 |         21 |        254 |
+| src\common\request                                                                                 |          1 |        201 |         32 |         21 |        254 |
+| src\components                                                                                     |          5 |        591 |          7 |         44 |        642 |
+| src\pages                                                                                          |         17 |      3,016 |          9 |        189 |      3,214 |
+| src\pages\FirstPage                                                                                |          1 |        135 |          0 |         11 |        146 |
+| src\pages\MainPage                                                                                 |         16 |      2,881 |          9 |        178 |      3,068 |
+| src\pages\MainPage\components                                                                      |          7 |        996 |          2 |         65 |      1,063 |
+| src\pages\MainPage\views                                                                           |          8 |      1,680 |          7 |         94 |      1,781 |
+| src\router                                                                                         |          1 |         62 |          0 |          4 |         66 |
+| src\store                                                                                          |          1 |         13 |          0 |          2 |         15 |
++----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                           | language           | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\Miracle\Desktop\LAS\frontend\las\README.md                                                | Markdown           |         19 |          0 |          6 |         25 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\babel.config.js                                          | JavaScript         |          5 |          0 |          1 |          6 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\debug.log                                                | Log                |          2 |          0 |          1 |          3 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\jsconfig.json                                            | JSON with Comments |          8 |         12 |          0 |         20 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\package-lock.json                                        | JSON               |     21,233 |          0 |          1 |     21,234 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\package.json                                             | JSON               |         52 |          0 |          1 |         53 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\public\failure.svg                                       | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\public\graph.svg                                         | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\public\index.html                                        | HTML               |         16 |          1 |          1 |         18 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\public\medal.svg                                         | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\public\user.svg                                          | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\App.vue                                              | Vue                |         21 |          0 |          5 |         26 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\assets\img\quit.svg                                  | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\assets\img\rise.svg                                  | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\assets\styles\base.scss                              | SCSS               |         15 |          0 |          0 |         15 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\assets\styles\default.scss                           | SCSS               |          4 |          4 |          3 |         11 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\common\request\index.js                              | JavaScript         |        201 |         32 |         21 |        254 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\components\AdvantageRadar.vue                        | Vue                |        137 |          4 |          8 |        149 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\components\FilterBar.vue                             | Vue                |         87 |          0 |          4 |         91 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\components\GpaChangeLine.vue                         | Vue                |         86 |          0 |          6 |         92 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\components\GpaDistribution.vue                       | Vue                |        135 |          2 |         11 |        148 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\components\StasticCard.vue                           | Vue                |        146 |          1 |         15 |        162 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\main.js                                              | JavaScript         |          8 |          2 |          2 |         12 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\FirstPage\index.vue                            | Vue                |        135 |          0 |         11 |        146 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\AdminCreateDialog.vue      | Vue                |        113 |          0 |          4 |        117 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\AdminInfoDialog.vue        | Vue                |        119 |          0 |          4 |        123 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\AdminInfoSuccessDialog.vue | Vue                |        121 |          0 |          4 |        125 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\IndicatorSetDialog.vue     | Vue                |        143 |          1 |         12 |        156 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\StudentInfoDialog.vue      | Vue                |        158 |          0 |         10 |        168 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\StudentScoreDialog.vue     | Vue                |        314 |          0 |         27 |        341 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\StudentWarningDialog.vue   | Vue                |         28 |          1 |          4 |         33 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\index.vue                             | Vue                |        205 |          0 |         19 |        224 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\AccountManage.vue               | Vue                |         92 |          0 |          5 |         97 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\AdminInfo.vue                   | Vue                |        194 |          0 |          8 |        202 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\ClassScore.vue                  | Vue                |        291 |          6 |         16 |        313 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\FileManage.vue                  | Vue                |        233 |          0 |         12 |        245 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\GradeCompare.vue                | Vue                |        226 |          0 |         15 |        241 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\GradeScore.vue                  | Vue                |        335 |          0 |         16 |        351 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\StudentInfo.vue                 | Vue                |        120 |          0 |          5 |        125 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\StudentWarning.vue              | Vue                |        189 |          1 |         17 |        207 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\router\index.js                                      | JavaScript         |         62 |          0 |          4 |         66 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\store\index.js                                       | JavaScript         |         13 |          0 |          2 |         15 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\vue.config.js                                            | JavaScript         |          4 |          0 |          1 |          5 |
+| Total                                                                                              |                    |     25,276 |         67 |        282 |     25,625 |
++----------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

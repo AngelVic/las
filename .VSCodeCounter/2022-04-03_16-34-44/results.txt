@@ -1,0 +1,71 @@
+Date : 2022-04-03 16:34:44
+Directory : c:\Users\Miracle\Desktop\LAS\frontend\las\src
+Total : 31 files,  3933 codes, 54 comments, 270 blanks, all 4257 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| Vue        |         23 |      3,628 |         16 |        238 |      3,882 |
+| JavaScript |          4 |        284 |         34 |         29 |        347 |
+| SCSS       |          2 |         19 |          4 |          3 |         26 |
+| XML        |          2 |          2 |          0 |          0 |          2 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                               | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                  |         31 |      3,933 |         54 |        270 |      4,257 |
+| assets                                                                                             |          4 |         21 |          4 |          3 |         28 |
+| assets\img                                                                                         |          2 |          2 |          0 |          0 |          2 |
+| assets\styles                                                                                      |          2 |         19 |          4 |          3 |         26 |
+| common                                                                                             |          1 |        201 |         32 |         21 |        254 |
+| common\request                                                                                     |          1 |        201 |         32 |         21 |        254 |
+| components                                                                                         |          5 |        591 |          7 |         44 |        642 |
+| pages                                                                                              |         17 |      3,016 |          9 |        189 |      3,214 |
+| pages\FirstPage                                                                                    |          1 |        135 |          0 |         11 |        146 |
+| pages\MainPage                                                                                     |         16 |      2,881 |          9 |        178 |      3,068 |
+| pages\MainPage\components                                                                          |          7 |        996 |          2 |         65 |      1,063 |
+| pages\MainPage\views                                                                               |          8 |      1,680 |          7 |         94 |      1,781 |
+| router                                                                                             |          1 |         62 |          0 |          4 |         66 |
+| store                                                                                              |          1 |         13 |          0 |          2 |         15 |
++----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                           | language   | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\App.vue                                              | Vue        |         21 |          0 |          5 |         26 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\assets\img\quit.svg                                  | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\assets\img\rise.svg                                  | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\assets\styles\base.scss                              | SCSS       |         15 |          0 |          0 |         15 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\assets\styles\default.scss                           | SCSS       |          4 |          4 |          3 |         11 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\common\request\index.js                              | JavaScript |        201 |         32 |         21 |        254 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\components\AdvantageRadar.vue                        | Vue        |        137 |          4 |          8 |        149 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\components\FilterBar.vue                             | Vue        |         87 |          0 |          4 |         91 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\components\GpaChangeLine.vue                         | Vue        |         86 |          0 |          6 |         92 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\components\GpaDistribution.vue                       | Vue        |        135 |          2 |         11 |        148 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\components\StasticCard.vue                           | Vue        |        146 |          1 |         15 |        162 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\main.js                                              | JavaScript |          8 |          2 |          2 |         12 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\FirstPage\index.vue                            | Vue        |        135 |          0 |         11 |        146 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\AdminCreateDialog.vue      | Vue        |        113 |          0 |          4 |        117 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\AdminInfoDialog.vue        | Vue        |        119 |          0 |          4 |        123 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\AdminInfoSuccessDialog.vue | Vue        |        121 |          0 |          4 |        125 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\IndicatorSetDialog.vue     | Vue        |        143 |          1 |         12 |        156 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\StudentInfoDialog.vue      | Vue        |        158 |          0 |         10 |        168 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\StudentScoreDialog.vue     | Vue        |        314 |          0 |         27 |        341 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\components\StudentWarningDialog.vue   | Vue        |         28 |          1 |          4 |         33 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\index.vue                             | Vue        |        205 |          0 |         19 |        224 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\AccountManage.vue               | Vue        |         92 |          0 |          5 |         97 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\AdminInfo.vue                   | Vue        |        194 |          0 |          8 |        202 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\ClassScore.vue                  | Vue        |        291 |          6 |         16 |        313 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\FileManage.vue                  | Vue        |        233 |          0 |         12 |        245 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\GradeCompare.vue                | Vue        |        226 |          0 |         15 |        241 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\GradeScore.vue                  | Vue        |        335 |          0 |         16 |        351 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\StudentInfo.vue                 | Vue        |        120 |          0 |          5 |        125 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\pages\MainPage\views\StudentWarning.vue              | Vue        |        189 |          1 |         17 |        207 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\router\index.js                                      | JavaScript |         62 |          0 |          4 |         66 |
+| c:\Users\Miracle\Desktop\LAS\frontend\las\src\store\index.js                                       | JavaScript |         13 |          0 |          2 |         15 |
+| Total                                                                                              |            |      3,933 |         54 |        270 |      4,257 |
++----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

@@ -200,14 +200,14 @@ export const searchStudent = async (props) => {
             {
               "building": 111,
               "isSpecial": false,
-              "name": "string",
+              "name": "姓名1",
               "room": 222,
               "studentId": 333
             },
             {
                 "building": 222,
                 "isSpecial": false,
-                "name": "string",
+                "name": "姓名2",
                 "room": 555,
                 "studentId": 444
               }
@@ -438,17 +438,17 @@ export const getGradeScoreRadarChart = async (props) => {
         "code": 200,
         "data": [
             {
-                "average": 60,
+                "average": 66,
                 "courseId": 0,
                 "courseName": "课程1"
             },
             {
-                "average": 70,
+                "average": 69.5,
                 "courseId": 1,
                 "courseName": "课程2"
             },
             {
-                "average": 90,
+                "average": 71,
                 "courseId": 2,
                 "courseName": "课程3"
             }
@@ -507,17 +507,17 @@ export const getClassRadarChart = async (props) => {
         "code": 200,
         "data": [
             {
-                "average": 60,
+                "average": 66,
                 "courseId": 0,
                 "courseName": "课程1"
             },
             {
-                "average": 70,
+                "average": 69.5,
                 "courseId": 1,
                 "courseName": "课程2"
             },
             {
-                "average": 90,
+                "average": 71,
                 "courseId": 2,
                 "courseName": "课程3"
             }
