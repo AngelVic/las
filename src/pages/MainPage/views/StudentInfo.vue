@@ -31,7 +31,11 @@
                 <div class="infoTable">
                     <el-table :data="studentTable" style="width: 100%">
                         <el-table-column type="index" />
-                        <el-table-column prop="studentId" label="学号" />
+                        <el-table-column prop="studentId" label="学号">
+                            <template #default="scope">
+                                <span>{{ completeStudentId(scope.row.studentId) }}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="name" label="姓名" />
                         <el-table-column label="年级">
                             <template #default="scope">
@@ -79,6 +83,7 @@ import { getGradeMajorClass, getStudentSuggestion, getStudentInfoList } from '@/
 import { majorGradeClassListParse, resParse, studentListParse, studentSuggestionParse } from '@/common/methods';
 import { StrIsNumber } from '@/common/utils';
 import { ElMessage } from 'element-plus';
+import { completeStudentId } from '@/common/utils';
 
 export default {
     name: 'StudentInfo',
@@ -160,6 +165,7 @@ export default {
                 ElMessage.warning('该学生不存在当前班级');
             }
         },
+        completeStudentId
     },
     async mounted() {
         this.pageLoading = true;

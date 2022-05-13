@@ -26,7 +26,7 @@ export const gradeClassScoreParse = (data) => {
             title: getTitle(element.classNum),
             size: element.totalNum,
             gpaExcellent: (element.gradePointAB*100).toFixed(2),
-            average: element.average.toFixed(2),
+            average: (element.average*1).toFixed(2),
             failed: element.failNum,
             subjectExcellent: (element.subjectAB*100).toFixed(2),
             passed: (element.pass*100).toFixed(2),
@@ -396,4 +396,16 @@ export const majorGradeClassListParse = (data) => {
         }
     }
     return res;
+}
+
+export const basicGradeDataParse = (data) => {
+    return {
+        totalNum: data.totalNum,
+        failNum: data.failNum,
+        failSizeCompare: data.failChange,
+        excellentRate: `${Math.floor(data.gradePointAB * 10000) / 100}%`,
+        excellentRateComapre: `${Math.floor(data.ABChange * 10000) / 100}%`,
+        pass: `${Math.floor(data.pass * 10000) / 100}%`,
+        passRateCompare: `${Math.floor(data.passChange * 10000) / 100}%`
+    };
 }

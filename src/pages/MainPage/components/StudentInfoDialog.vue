@@ -8,7 +8,7 @@
         destroy-on-close
     >
         <div class="topLine">
-            <span>{{studentInfoForm.studentId}}</span>
+            <span>{{parsedStudentId}}</span>
             <span class="name">{{studentInfoForm.name}}</span>
         </div>
         <el-form class="infoForm" :model="studentInfoForm" ref="infoFormRef" :rules="formRules">
@@ -92,6 +92,7 @@
 import { updateStudent } from '@/common/request';
 import { resParse } from '@/common/methods';
 import { ElMessage } from 'element-plus'
+import { completeStudentId } from '@/common/utils'
 
 export default {
     name: 'StudentInfoDialog',
@@ -127,6 +128,11 @@ export default {
                     { required: true, message: '请输入', trigger: 'blur' },
                 ],
             },
+        }
+    },
+    computed: {
+        parsedStudentId() {
+            return completeStudentId(this.studentInfoForm.studentId)
         }
     },
     methods: {

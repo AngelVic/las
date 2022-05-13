@@ -179,20 +179,20 @@ export const getGradeMajor = async (props) => {
 // 辅导员获取年级基本信息 padding-参数不对
 export const getGradeBasic = async (props) => {
     console.log('request', '/score/base', props);
-    // const response = await axiosRequest('get', '/score/base', props);
-    const response = {
-        "code": 200,
-        "data": {
-            totalNum: 200,
-            failNum: 3,
-            excellentRate: '15%',
-            pass: '98%',
-            failSizeCompare: '10%',
-            excellentRateComapre: '5%',
-            passRateCompare: '-5%'
-        },
-        "msg": "success"
-    }
+    const response = await axiosRequest('get', '/score/base', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": {
+    //         totalNum: 200,
+    //         failNum: 3,
+    //         excellentRate: '15%',
+    //         pass: '98%',
+    //         failSizeCompare: '10%',
+    //         excellentRateComapre: '5%',
+    //         passRateCompare: '-5%'
+    //     },
+    //     "msg": "success"
+    // }
     return (response);
 }
 

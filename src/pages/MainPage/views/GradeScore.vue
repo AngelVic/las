@@ -136,7 +136,7 @@ import AdvantageRadar from '../../../components/AdvantageRadar';
 import GpaDistribution from '../../../components/GpaDistribution';
 import IndicatorSetDialog from '../components/IndicatorSetDialog';
 import { getGradeBasic, getGradeMajor, getGradeScorePieChart, getGradeScoreRadarChart, getGradeSubjectList, getScoreGradeClass } from '@/common/request';
-import { averageScoreParse, gradeClassScoreParse, subjectsParse, resParse } from '@/common/methods';
+import { averageScoreParse, gradeClassScoreParse, subjectsParse, resParse, basicGradeDataParse } from '@/common/methods';
 import { parsePieData } from '@/common/utils';
 import { ElMessage } from 'element-plus'
 
@@ -211,43 +211,6 @@ export default {
             this.loadingRadar = true;
             this.loadingTable = true;
             this.curFilter = data;
-            // 统计数据以及对比列表处理
-            const infoRes = await getGradeBasic({
-                gradeId: this.curFilter.gradeMajorId,
-                term: this.curFilter.term,
-            })
-            const infoData = resParse('获取成绩概览', infoRes);
-            this.stasticList = [
-                {
-                    label: '总人数',
-                    data: infoData.totalNum,
-                    type: 'totalSize'
-                },
-                {
-                    label: '挂科人数',
-                    data: infoData.failNum,
-                    type: 'failSize',
-                    rate: infoData.failSizeCompare,
-                    description: '自上学期以来'
-                },
-                {
-                    label: '优秀率',
-                    data: infoData.excellentRate,
-                    type: 'excellentRate',
-                    rule: '优秀率规则',
-                    rate: infoData.excellentRateComapre,
-                    description: '自上学期以来'
-                },
-                {
-                    label: '及格率 (通过所有科目)',
-                    data: infoData.pass,
-                    type: 'passRate',
-                    rule: '及格分数线',
-                    rate: infoData.passRateCompare,
-                    description: '自上学期以来'
-                },
-            ];
-            this.loadingStastic = false;
             // 年级成绩
             // const gradeScoreData = scoreData.find(element => (element.classNum === 0));
             // this.compareTable = gradeClassScoreParse(scoreData);
@@ -263,6 +226,44 @@ export default {
             this.updatePieChart(1);
             // 雷达图数据处理
             this.updateRadarChart();
+            // 统计数据以及对比列表处理
+            const infoRes = await getGradeBasic({
+                gradeId: this.curFilter.gradeMajorId,
+                term: this.curFilter.term,
+            })
+            const infoData = resParse('获取成绩概览', infoRes);
+            const infoDataParsed = basicGradeDataParse(infoData);
+            this.stasticList = [
+                {
+                    label: '总人数',
+                    data: infoDataParsed.totalNum,
+                    type: 'totalSize'
+                },
+                {
+                    label: '挂科人数',
+                    data: infoDataParsed.failNum,
+                    type: 'failSize',
+                    rate: infoDataParsed.failSizeCompare,
+                    description: '自上学期以来'
+                },
+                {
+                    label: '优秀率',
+                    data: infoDataParsed.excellentRate,
+                    type: 'excellentRate',
+                    rule: '优秀率规则',
+                    rate: infoDataParsed.excellentRateComapre,
+                    description: '自上学期以来'
+                },
+                {
+                    label: '及格率 (通过所有科目)',
+                    data: infoDataParsed.pass,
+                    type: 'passRate',
+                    rule: '及格分数线',
+                    rate: infoDataParsed.passRateCompare,
+                    description: '自上学期以来'
+                },
+            ];
+            this.loadingStastic = false;
         },
         openIndicatorDialog(tab) {
             this.indicatorDialog.tab = tab;

@@ -61,7 +61,11 @@
                         :header-row-style="{'font-size':'12px'}"
                         max-height="720"
                     >
-                        <el-table-column prop="studentId" label="学号" width="160" sortable fixed />
+                        <el-table-column prop="studentId" label="学号" width="160" sortable fixed>
+                            <template #default="scope">
+                                <span>{{ completeStudentId(scope.row.studentId) }}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="name" label="姓名" fixed>
                             <template #default="scope">
                                 <span class="nameClickable" @click="handleTableRowClick(scope.row)">{{scope.row.name}}</span>
@@ -321,7 +325,8 @@ export default {
             this.handelSearchSelect({
                 id: data.studentId
             })
-        }
+        },
+        completeStudentId
     },
     async mounted() {
         this.pageLoading = true;
