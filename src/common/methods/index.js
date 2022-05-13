@@ -25,11 +25,11 @@ export const gradeClassScoreParse = (data) => {
         return {
             title: getTitle(element.classNum),
             size: element.totalNum,
-            gpaExcellent: (element.gradePointAB*100).toFixed(2),
-            average: (element.average*1).toFixed(2),
+            gpaExcellent: ((element.gradePointAB==='NaN'?0:element.gradePointAB)*100).toFixed(2),
+            average: ((element.average==='NaN'?0:element.average)*1).toFixed(2),
             failed: element.failNum,
-            subjectExcellent: (element.subjectAB*100).toFixed(2),
-            passed: (element.pass*100).toFixed(2),
+            subjectExcellent: ((element.subjectAB==='NaN'?0:element.subjectAB)*100).toFixed(2),
+            passed: ((element.pass==='NaN'?0:element.pass)*100).toFixed(2),
         }
     })
 }
