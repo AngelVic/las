@@ -52,7 +52,7 @@ export default {
             },
             columnPlot: null,
             spaceBetween: 1,
-            betweens: [0.3, 0.5, 1]
+            betweens: [0.5, 0.8, 1]
         }
     },
     methods: {

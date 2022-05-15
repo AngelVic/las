@@ -9,14 +9,15 @@ export const getTermByGrade = (term) => {
 
 export const parsePieData = (source, between) => {
     const pieData = [];
-    let i=1;
+    let i=0;
     let index = 0;
     while(i<4) {
+        const plusI = (i*10+between*10)/10;
         pieData.push({
-            type: `${i}≤x<${i+between}`,
+            type: `${i}≤x<${plusI}`,
             value: source[index]
         })
-        i = i+between;
+        i = plusI;
         index = index+1;
     }
     return pieData;

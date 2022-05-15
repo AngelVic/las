@@ -100,7 +100,7 @@ export const classScoreListParse = (data, courseList) => {
         return {
             studentId: studentId,
             name: t.name,
-            gpa: t.gradePoint.toFixed(1),
+            gpa: t.gradePoint.toFixed(2),
             scores: scoreList
         }
     })
@@ -382,10 +382,10 @@ export const warningListParse = (data) => {
 export const majorGradeClassListParse = (data) => {
     const res = [];
     for(let i in data) {
-        if(data[i].name == 0 || data[i].name == 99) {
-            continue;
-        }
-        else {
+        // if(data[i].name == 0 || data[i].name == 99) {
+        //     continue;
+        // }
+        // else {
             res.push({
                 id: data[i].gradeId,
                 majorName: data[i].major,
@@ -393,7 +393,7 @@ export const majorGradeClassListParse = (data) => {
                 classId: data[i].classId,
                 name: data[i].name
             })
-        }
+        // }
     }
     return res;
 }

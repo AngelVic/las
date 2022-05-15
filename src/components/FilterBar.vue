@@ -96,6 +96,7 @@ export default {
             // 增加className参数
             console.log('check class', this.classList);
             if(this.classFilter) {
+                console.log('check class selecr', this.classList);
                 const classItem = this.classList.find(element => {
                     return (element.id===this.filterForm.class)
                 })
@@ -146,13 +147,19 @@ export default {
                 this.filterForm.class = '';
                 const classSet = new Set();
                 this.sourceList.forEach(element => {
+                    console.log('check class filte', element, value, this.filterForm.major);
                     if(element.grade === value && element.majorName === this.filterForm.major)
                         classSet.add({
                             id: element.classId,
-                            name: element.name
+                            name: element.name===0?'无归属':element.name
                         });
                 });
-                this.classList = Array.from(classSet);
+                const sortedClassList = Array.from(classSet);
+                sortedClassList.sort((a, b) => {
+                    return a.name-b.name
+                });
+                this.classList = sortedClassList;
+                console.log('class list check', this.classList);
             }
         }
     },
