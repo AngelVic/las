@@ -799,8 +799,8 @@ export const updateAccount = async (props) => {
 
 // 删除账号 done
 export const deleteAccount = async (props) => {
-    console.log('request', '/account', props);
-    const response = await axiosRequest('delete', '/account', props);
+    console.log('request', '/account/delete', props);
+    const response = await axiosRequest('post', '/account/delete', props);
     // const response = {
     //     "code": 200,
     //     "msg": "success"
