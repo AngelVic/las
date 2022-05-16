@@ -811,7 +811,7 @@ export const deleteAccount = async (props) => {
 // 重置辅导员账号密码 done
 export const resetAccount = async (props) => {
     console.log('request', `/account/${props.account}/pwd`, {});
-    const response = await axiosRequest('delete', '/account', props);
+    const response = await axiosRequest('put', `/account/${props.account}/pwd`, props);
     // const response = {
     //     "code": 200,
     //     "msg": "success"
