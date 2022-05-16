@@ -26,23 +26,36 @@ const axiosRequest = async (method, suffix, props) => {
             account: localStorage.getItem('account'),
         }
     }
+    const data = {
+        ...defaultParams,
+        ...props,
+    }
     if(method === 'get' || method === 'POST' || method === 'put') {
         return errorFilter(await axios({
             method: method,
             url: url,
-            params: {
-                ...defaultParams,
-                ...props,
+            params: data
+        }));
+    }
+    if(suffix==='/account/delete') {
+        // 账户删除需要form-data 特殊处理
+        const formData = new FormData();
+        for(let key in data) {
+            formData.append(key, data[key]);
+        }
+        return errorFilter(await axios({
+            method: method,
+            url: url,
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data'
             }
         }));
     }
     return errorFilter(await axios({
         method: method,
         url: url,
-        data: {
-            ...defaultParams,
-            ...props,
-        }
+        data: data
     }));
 }
 
