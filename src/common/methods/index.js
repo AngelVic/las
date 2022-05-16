@@ -189,7 +189,7 @@ export const gradeScoreCompareParse = (data) => {
 export const indicatorParse = (data) => {
     return {
         gradeExcellent: data.gradeAB,
-        classExcellent: data.classAB,
+        classExcellent: (data.classAB)*100,
         subjectExcellent: data.subjectAB,
         normalPass: data.cutOff,
         specilalPass: data.specialCutoff
@@ -198,7 +198,7 @@ export const indicatorParse = (data) => {
 
 export const indicatorFormate = (data) => {
     return {
-        "classAB": data.classExcellent,
+        "classAB": data.classExcellent/100,
         "cutOff": data.normalPass,
         "gradeAB": data.gradeExcellent,
         "specialCutoff": data.specilalPass,

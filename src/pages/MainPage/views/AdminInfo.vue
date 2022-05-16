@@ -177,7 +177,7 @@ export default {
         },
         resetAdmin(id) {
             ElMessageBox.confirm(
-                '是否重置密码，重置后该账号的密码将被重置为“12345678”，需用新密码才可登录账号？',
+                '是否重置密码，重置后该账号的密码将被重置为“123456”，需用新密码才可登录账号？',
                 '重置密码',
                 {
                     confirmButtonText: '确认',

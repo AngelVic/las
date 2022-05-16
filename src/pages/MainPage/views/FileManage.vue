@@ -14,7 +14,7 @@
             <div class="row-1">
                 <div class="contentCard">
                     <span class="cardTitle">文件上传</span>
-                    <div class="uploadForm">
+                    <div class="uploadForm" v-loading="uploadLoading">
                         <el-form :inline="true" :model="uploadForm" ref="uploadFormRef">
                             
                             <el-form-item label="上传专业" :rules="[
@@ -70,7 +70,7 @@
                         </el-form>
                         <div class="tip">
                             <span>请上传与教务处下载的成绩格式一致的excel文件。</span>
-                            <el-link type="primary">示例文件.excel</el-link>
+                            <el-link type="primary" download href="https://las-oss.oss-cn-beijing.aliyuncs.com/%E7%A4%BA%E4%BE%8B%E6%96%87%E4%BB%B6.xlsx">示例文件.excel</el-link>
                         </div>
                     </div>
                 </div>
@@ -152,6 +152,7 @@ export default {
             fileTableSelected: [],
             pageLoading: false,
             tableLoading: false,
+            uploadLoading: false,
             Upload
         }
     },
@@ -175,10 +176,12 @@ export default {
             const fileListData = resParse('获取文件列表', fileListRes);
             this.fileTable = fileListParse(fileListData);
             this.tableLoading = false;
+            this.uploadLoading = false;
         },
         async submitUpload(formRef, fileRef) {
             await formRef.validate();
             console.log('submitUpload', this.uploadForm, fileRef);
+            this.uploadLoading = true;
             this.uploadParams.account = localStorage.getItem('account');
             const uploadGradeData = this.gradeMajorList.find(t => {
                 return (t.majorName===this.uploadForm.major && t.grade===this.uploadForm.grade)
@@ -257,10 +260,13 @@ export default {
         },
         handelUploadSuccess() {
             ElMessage.success('上传成功');
-            this.filter(this.curFilter);
+            // setTimeout(this.filter(), 3000)
+            // this.filter();
+            this.uploadLoading = false;
         },
         handelUploadError() {
             ElMessage.error('上传失败');
+            this.uploadLoading = false;
         },
         handleSelectionChange(val) {
             console.log('table select', val);
