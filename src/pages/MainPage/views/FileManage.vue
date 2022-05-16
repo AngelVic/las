@@ -69,8 +69,8 @@
                             </el-form-item>
                         </el-form>
                         <div class="tip">
-                            <span>请上传与教务处下载的成绩格式一致的excel文件。</span>
-                            <el-link type="primary" download href="https://las-oss.oss-cn-beijing.aliyuncs.com/%E7%A4%BA%E4%BE%8B%E6%96%87%E4%BB%B6.xlsx">示例文件.excel</el-link>
+                            <span>请上传与示例文件格式一致的excel文件。</span>
+                            <el-link type="primary" download href="https://las-oss.oss-cn-beijing.aliyuncs.com/%E7%A4%BA%E4%BE%8B%E6%96%87%E4%BB%B6.xlsx">查看示例文件</el-link>
                         </div>
                     </div>
                 </div>
