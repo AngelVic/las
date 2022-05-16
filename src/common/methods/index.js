@@ -346,7 +346,7 @@ export const warningListParse = (data) => {
                     `;
                     const dormitoryInfo = room.split('#');
                     el.warningList.forEach(item => {
-                        if(item.building==dormitoryInfo[0] && item.room==dormitoryInfo[1]) {
+                        if(String(item.building)==dormitoryInfo[0] && String(item.room)==dormitoryInfo[1]) {
                             detail += `
                             <p>&emsp;&emsp;${item.studentId} ${item.studentName}；</p>
                             `;
