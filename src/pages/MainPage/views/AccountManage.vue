@@ -41,9 +41,10 @@
 </template>
 
 <script>
-import { alterAccount } from '@/common/request';
+import { alterAccount, alterAdminAccount } from '@/common/request';
 import { resParse } from '@/common/methods';
 import { ElMessage } from 'element-plus';
+import router from '@/router';
 
 export default {
     name: 'AccountManage',
@@ -88,7 +89,19 @@ export default {
         async confirmChange(formRef) {
             this.changeFormError.oldPass = '';
             await formRef.validate();
-            const alterRes = await alterAccount({
+            let alertFunction = alterAccount;
+            const usertype = localStorage.getItem('usertype');
+            if(usertype) {
+                if(usertype === 'admin') {
+                    alertFunction = alterAdminAccount;
+                }
+            }
+            else {
+                ElMessage.warning('登录过期，请重新登陆');
+                router.push('/');
+                localStorage.clear();
+            }
+            const alterRes = await alertFunction({
                 oldPwd: this.changeForm.oldPass,
                 newPwd: this.changeForm.newPass
             });

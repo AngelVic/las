@@ -709,6 +709,18 @@ export const alterAccount = async (props) => {
     return (response);
 }
 
+// 修改管理员密码 done
+export const alterAdminAccount = async (props) => {
+    console.log('request', '/admin/alter', props);
+    const response = await axiosRequest('put', '/admin/alter', props);
+    // const response = {
+    //     "code": 200,
+    //     "data": 0,
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
 // 管理员账号获取管理专业年级 done
 export const getAdminGradeMajor = async (props) => {
     console.log('request', '/grade/admin', props);
