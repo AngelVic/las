@@ -650,12 +650,12 @@ export const uploadFile = async (props) => {
 
 // 删除文件 padding
 export const deleteFileMulti = async (props) => {
-    console.log('request', '/file/delete', props);
-    // const response = await axiosRequest('post', '/file/delete', props);
-    const response = {
-        "code": 200,
-        "msg": "success"
-    }
+    console.log('request', '/file', props);
+    const response = await axiosRequest('delete', '/file', props);
+    // const response = {
+    //     "code": 200,
+    //     "msg": "success"
+    // }
     return (response);
 }
 
