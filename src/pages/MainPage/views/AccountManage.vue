@@ -42,7 +42,7 @@
 
 <script>
 import { alterAccount } from '@/common/request';
-// import { resParse } from '@/common/methods';
+import { resParse } from '@/common/methods';
 import { ElMessage } from 'element-plus';
 
 export default {
@@ -92,7 +92,9 @@ export default {
                 oldPwd: this.changeForm.oldPass,
                 newPwd: this.changeForm.newPass
             });
-            if(alterRes.code === 200) {
+            const alterData = resParse('修改密码', alterRes);
+            console.log('check alert res', alterData);
+            if(alterData == 1) {
                 ElMessage.success('修改成功');
                 this.changeForm = {
                     oldPass: '',
@@ -101,7 +103,7 @@ export default {
                 }
             }
             else {
-                this.changeFormError.oldPass = alterRes.msg
+                this.changeFormError.oldPass = '原密码有误'
             }
         },
         validatePassConfirm(rule , value , callback ) {
