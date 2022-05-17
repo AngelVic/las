@@ -56,13 +56,16 @@ const axiosRequest = async (method, suffix, props) => {
         return errorFilter(await axios({
             method: method,
             url: url,
-            params: data
+            data: JSON.stringify(props),
+            headers: {
+                'Content-Type': 'application/json'
+            }
         }));
     }
     return errorFilter(await axios({
         method: method,
         url: url,
-        data: props
+        data: data
     }));
 }
 
