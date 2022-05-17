@@ -648,6 +648,17 @@ export const uploadFile = async (props) => {
     return (response);
 }
 
+// 生成预警信息
+export const generateWarning = async (props) => {
+    console.log('request', '/warning', props);
+    const response = await axiosRequest('POST', '/warning', props);
+    // const response = {
+    //     "code": 200,
+    //     "msg": "success"
+    // }
+    return (response);
+}
+
 // 删除文件 padding
 export const deleteFileMulti = async (props) => {
     console.log('request', '/file', props);

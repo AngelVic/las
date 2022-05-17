@@ -125,7 +125,7 @@
 import FilterBar from '../../../components/FilterBar.vue'
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { deleteFileMulti, getFileList, getGradeMajor } from '@/common/request';
+import { deleteFileMulti, getFileList, getGradeMajor, generateWarning } from '@/common/request';
 import { resParse, fileListParse } from '@/common/methods';
 
 export default {
@@ -258,11 +258,20 @@ export default {
             });
             this.uploadGradeList = Array.from(gradeSet);
         },
-        handelUploadSuccess() {
+        handelUploadSuccess(res) {
             ElMessage.success('上传成功');
-            // setTimeout(this.filter(), 3000)
+            console.log('upload success', res);
+            if(res.code === 200) {
+                // setTimeout(this.generateWarning(), 5000)
+                this.generateWarning(res.data);
+            }
             // this.filter();
             this.uploadLoading = false;
+        },
+        generateWarning(term) {
+            generateWarning({
+                term
+            });
         },
         handelUploadError() {
             ElMessage.error('上传失败');

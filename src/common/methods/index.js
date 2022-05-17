@@ -276,6 +276,9 @@ export const warningListParse = (data) => {
         warningListReaded: data.readedList.map(el => {
             const time = Date.parse(el.creatTime);
             let brief='', detail='';
+            if(el.warningList.length === 0) {
+                return {}
+            }
             if('building' in el.warningList[0]) {
                 const roomSet = new Set();
                 el.warningList.forEach(item => {
@@ -328,6 +331,9 @@ export const warningListParse = (data) => {
         warningListUnread: data.unreadList.map(el => {
             const time = Date.parse(el.creatTime);
             let brief='', detail='';
+            if(el.warningList.length === 0) {
+                return {}
+            }
             if('building' in el.warningList[0]) {
                 const roomSet = new Set();
                 el.warningList.forEach(item => {
