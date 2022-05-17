@@ -203,8 +203,9 @@ export default {
                     const deleteRes = await deleteFileMulti({
                         fileIdList: [id] 
                     });
-                    const deleteResult = resParse('文件删除', deleteRes);
-                    if(deleteResult !== null){
+                    resParse('文件删除', deleteRes);
+                    console.log('delete res check', deleteRes)
+                    if(deleteRes.code === 200){
                         ElMessage({
                             type: 'success',
                             message: '删除成功',
@@ -233,8 +234,8 @@ export default {
                     const deleteRes = await deleteFileMulti({
                         fileIdList: this.fileTableSelected.map(t => t.id)
                     });
-                    const deleteResult = resParse('文件删除', deleteRes);
-                    if(deleteResult !== null){
+                    resParse('文件删除', deleteRes);
+                    if(deleteRes.code === 200){
                         ElMessage({
                             type: 'success',
                             message: '删除成功',
