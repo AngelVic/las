@@ -52,10 +52,17 @@ const axiosRequest = async (method, suffix, props) => {
             }
         }));
     }
+    if(method === 'delete') {
+        return errorFilter(await axios({
+            method: method,
+            url: url,
+            params: data
+        }));
+    }
     return errorFilter(await axios({
         method: method,
         url: url,
-        data: data
+        data: props
     }));
 }
 
@@ -662,7 +669,7 @@ export const generateWarning = async (props) => {
 // 删除文件 padding
 export const deleteFileMulti = async (props) => {
     console.log('request', '/file', props);
-    const response = await axiosRequest('delete', '/file', props);
+    const response = await axiosRequest('delete', '/file', props.fileIdList);
     // const response = {
     //     "code": 200,
     //     "msg": "success"
