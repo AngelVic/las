@@ -52,7 +52,7 @@
                     <el-option
                         v-for="item in classes"
                         :key="item.id"
-                        :label="`${studentInfoForm.major}${item.name}班`"
+                        :label="`${studentInfoForm.major}${item.name===0?'无归属':item.name}班`"
                         :value="item.id"
                     >
                     </el-option>

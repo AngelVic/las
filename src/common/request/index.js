@@ -19,6 +19,7 @@ const errorFilter = (data) => {
 // axios请求
 // eslint-disable-next-line no-unused-vars
 const axiosRequest = async (method, suffix, props) => {
+    try{
     const url = `${baseUrl}${suffix}`;
     let defaultParams = {};
     if(suffix!=='/account') {
@@ -67,6 +68,21 @@ const axiosRequest = async (method, suffix, props) => {
         url: url,
         data: data
     }));
+    }
+    catch(error) {
+        console.log('now error', error.response.status);
+        if(error?.response?.status === 500) {
+            ElMessage({
+                message: `暂无数据`,
+                type: 'error',
+            })
+            return;
+        }
+        ElMessage({
+            message: `网络请求错误 ${error}`,
+            type: 'error',
+        })
+    }
 }
 
 // 登录 done

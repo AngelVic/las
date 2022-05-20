@@ -4,6 +4,9 @@ export const resParse = (key, res) => {
     switch(res.code) {
         case 200:
             return res.data;
+        case 400:
+            ElMessage.error(`暂无数据`);
+            return null;
         default:
             ElMessage.error(`${key}错误 错误码:${res.code}`);
             return null;
@@ -100,7 +103,7 @@ export const classScoreListParse = (data, courseList) => {
         return {
             studentId: studentId,
             name: t.name,
-            gpa: t.gradePoint.toFixed(2),
+            gpa: t.gradePoint==='NaN'?0:t.gradePoint.toFixed(2),
             scores: scoreList
         }
     })

@@ -41,7 +41,7 @@
                             <el-option
                                 v-for="item in classes"
                                 :key="item.value"
-                                :label="`${studentInfo.major}${item.label}班`"
+                                :label="`${studentInfo.major}${item.label===0?'无归属':item.label}班`"
                                 :value="item.id"
                             >
                             </el-option>
@@ -176,7 +176,7 @@ export default {
                 "isSpecial": this.studentInfo.HMT,
                 "room": this.studentInfo.room,
                 "studentId": this.studentInfo.studentId,
-                "class": this.studentInfo.classId
+                "classId": this.studentInfo.classId
             });
             const changeResult = resParse('修改学生信息', changeRes);
             if(changeResult!==null) {
