@@ -60,6 +60,8 @@
                         style="width: 100%"
                         :header-row-style="{'font-size':'12px'}"
                         max-height="720"
+                        fit="true"
+                        table-layout="auto"
                     >
                         <el-table-column prop="studentId" label="学号" width="160" sortable fixed>
                             <template #default="scope">
@@ -73,13 +75,27 @@
                         </el-table-column>
                         <el-table-column prop="gpa" label="学期绩点" sortable fixed />
                         <el-table-column
+                        
+                    
                             v-for="subject in subjects"
+                       
                             :key="subject.id"
                             :label="subject.name"
                             sortable
                             :sort-by="(row) => { return scoreTableSortVar(row, subject.id) }"
                         >
+                        <template #header >
+    <el-tooltip
+      effect="dark"
+      :content="subject.name"
+      placement="top"
+    >
+     <span>{{subject.name.substr(0,4)}}</span>
+    </el-tooltip>
+  </template>
                             <template #default="scope">
+                            
+        
                                 <span
                                     :style="{color: getScoreColor(scope, subject.id)}"
                                 >{{ getScoreWithId(scope, subject.id) }}</span>
@@ -227,7 +243,7 @@ export default {
                 term: this.curFilter.term
             })
             const chartData = resParse('获取班级绩点分布', pieChartRes);
-            console.log(chartData)
+            
             this.gpaDistribution = parsePieData(chartData, between);
             this.destributionLoading = false;
         },
