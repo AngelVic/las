@@ -7,7 +7,7 @@
         width="80%"
         destroy-on-close
     >
-        <div class="dialogContent">
+        <div class="dialogContent" v-loading="loading">
             <div class="studentInfo">
                 <div class="row-1">
                     <span>{{parsedStudentId}}</span>
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <el-divider></el-divider>
-            <div class="scoreTable">
+            <div class="scoreTable" >
                 <div class="title">
                     <span>个人成绩（括号内为补考后成绩）</span>
                 </div>
@@ -72,6 +72,7 @@
                     <el-table
                         :data="studentInfo.scoreData"
                         style="width: 100%"
+                        table-layout="auto" 
                     >
                         <el-table-column prop="classRank" label="班级排名" />
                         <el-table-column prop="gradeRank" label="年级排名" />
@@ -116,7 +117,7 @@ import { getStudentScore, searchClass, updateStudent } from '@/common/request'
 import AdvantageRadar from '../../../components/AdvantageRadar'
 import GpaChangeLine from '../../../components/GpaChangeLine'
 import { classListParse, resParse, studentDetailParse } from '@/common/methods'
-import { ElMessage } from 'element-plus';
+import { ElMessage} from 'element-plus';
 import { completeStudentId } from '@/common/utils'
 
 const SCORE_COLOR = {
@@ -153,8 +154,10 @@ export default {
             },
             studentEditable: false,
             classes: [],
-            subjects: []
+            subjects: [],
+            loading:true  //
         }
+
     },
     computed: {
         parsedStudentId() {
@@ -213,7 +216,9 @@ export default {
             studentId: this.id,
             term: this.term
         });
+       
         const studentDetailData = resParse('获取学生详情', studentDetailRes);
+        console.log(studentDetailData)
         this.studentInfo = studentDetailParse(
             studentDetailData,
             this.subjects,
@@ -232,6 +237,7 @@ export default {
         }
         this.subjects = newSubjects;
         console.log('studentInfo', this.studentInfo);
+        this.loading = false
     }
 }
 </script>
@@ -242,6 +248,7 @@ export default {
     align-items: center;
     width: 100%;
 }
+
 
 .studentInfo {
     display: flex;

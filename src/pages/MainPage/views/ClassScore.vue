@@ -60,6 +60,8 @@
                         style="width: 100%"
                         :header-row-style="{'font-size':'12px'}"
                         max-height="720"
+                        fit="true"
+                        table-layout="auto"
                     >
                         <el-table-column prop="studentId" label="学号" width="160" sortable fixed>
                             <template #default="scope">
@@ -73,13 +75,27 @@
                         </el-table-column>
                         <el-table-column prop="gpa" label="学期绩点" sortable fixed />
                         <el-table-column
+                        
+                    
                             v-for="subject in subjects"
+                       
                             :key="subject.id"
                             :label="subject.name"
                             sortable
                             :sort-by="(row) => { return scoreTableSortVar(row, subject.id) }"
                         >
+                        <template #header >
+    <el-tooltip
+      effect="dark"
+      :content="subject.name"
+      placement="top"
+    >
+     <span>{{subject.name.substr(0,4)}}</span>
+    </el-tooltip>
+  </template>
                             <template #default="scope">
+                            
+        
                                 <span
                                     :style="{color: getScoreColor(scope, subject.id)}"
                                 >{{ getScoreWithId(scope, subject.id) }}</span>
@@ -119,6 +135,7 @@ import { getClassGradeRate, getClassRadarChart, getClassScorePieChart, getClassS
 import { averageScoreParse, classGradeRateParse, classScoreListParse, majorGradeClassListParse, resParse, studentSuggestionParse, subjectsParse } from '@/common/methods';
 import { completeStudentId, parsePieData, StrIsNumber } from '@/common/utils';
 import { ElMessage } from 'element-plus';
+// import { ConcatenationScope } from 'webpack';
 
 const SCORE_COLOR = {
     normal: '#303133',
@@ -226,6 +243,7 @@ export default {
                 term: this.curFilter.term
             })
             const chartData = resParse('获取班级绩点分布', pieChartRes);
+            
             this.gpaDistribution = parsePieData(chartData, between);
             this.destributionLoading = false;
         },
@@ -305,6 +323,7 @@ export default {
             if(selectData) {
                 this.selectedStudent.scores = selectData.scores;
                 this.selectedStudent.gpa = selectData.gpa;
+           
                 this.scoreDialog.visible = true;
             }
             else {
