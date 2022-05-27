@@ -249,12 +249,6 @@ export default {
     width: 100%;
 }
 
-.tableContent {
-    .el-scrollbar__bar.is-horizontal > div {
-    height: 100%;
-    width: 800px !important;
-}
-}
 
 .studentInfo {
     display: flex;
