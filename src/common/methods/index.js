@@ -220,10 +220,24 @@ export const studentSuggestionParse = (data) => {
 
 export const studentDetailParse = (data, courseList, classId, major, gpa, score) => {
     const gpaList = [];
+    let parseGpa = (gpa)=>{
+      // 绩点截取
+      if(gpa=='NaN'){
+          return 'NaN'
+      }
+      else{
+        gpa = (gpa*100).toFixed(0)
+        return gpa/100
+      }
+    
+
+
+
+     }
     data.gradeList.forEach(item => {
         gpaList.push({
             term: item.term,
-            gpa: item.gradePoint
+            gpa: parseGpa(item.gradePoint)
         });
     })
     return {

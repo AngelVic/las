@@ -119,6 +119,7 @@ import { getClassGradeRate, getClassRadarChart, getClassScorePieChart, getClassS
 import { averageScoreParse, classGradeRateParse, classScoreListParse, majorGradeClassListParse, resParse, studentSuggestionParse, subjectsParse } from '@/common/methods';
 import { completeStudentId, parsePieData, StrIsNumber } from '@/common/utils';
 import { ElMessage } from 'element-plus';
+// import { ConcatenationScope } from 'webpack';
 
 const SCORE_COLOR = {
     normal: '#303133',
@@ -226,6 +227,7 @@ export default {
                 term: this.curFilter.term
             })
             const chartData = resParse('获取班级绩点分布', pieChartRes);
+            console.log(chartData)
             this.gpaDistribution = parsePieData(chartData, between);
             this.destributionLoading = false;
         },
@@ -305,6 +307,7 @@ export default {
             if(selectData) {
                 this.selectedStudent.scores = selectData.scores;
                 this.selectedStudent.gpa = selectData.gpa;
+           
                 this.scoreDialog.visible = true;
             }
             else {

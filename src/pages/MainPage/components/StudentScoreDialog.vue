@@ -214,6 +214,7 @@ export default {
             term: this.term
         });
         const studentDetailData = resParse('获取学生详情', studentDetailRes);
+        console.log(studentDetailData)
         this.studentInfo = studentDetailParse(
             studentDetailData,
             this.subjects,
