@@ -237,5 +237,3 @@ export default {
 }
 
 </style>
-
-<!-- test -->
